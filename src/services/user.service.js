@@ -49,6 +49,7 @@ async function login(credentials) {
             token: user.token
         }));
     }
+
     return user
 };
 
