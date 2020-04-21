@@ -1,0 +1,28 @@
+[{
+        "id": "1",
+        "title": "Steak 1",
+        "price": "30",
+        "currency": "Euro",
+        "currencySymbol": "€",
+        "description": "Fresh Meat from Happy Cows",
+        "imgSrc": "https://www.fuersie.de/sites/fuersie/files/styles/1024x768/public/images/perfektes-steak.jpg?itok=iwGZvlND"
+    },
+    {
+        "id": "2",
+        "title": "Eggs",
+        "price": "5",
+        "currency": "Euro",
+        "currencySymbol": "€",
+        "description": "Fresh Eggs from Happy Chicken",
+        "imgSrc": "https://media.npr.org/assets/img/2018/01/03/gettyimages-182717335-30-355069be313ad674537c51219c269b654d5fc05a-s800-c85.jpg"
+    },
+    {
+        "id": "3",
+        "title": "Milk",
+        "price": "10",
+        "currency": "Euro",
+        "currencySymbol": "€",
+        "description": "Fresh Milk from Happy Cows",
+        "imgSrc": "https://www.washingtonpost.com/resizer/DR2OXrvWdVNWUh70e_m-bmPhYDA=/arc-anglerfish-washpost-prod-washpost/public/OAEOY5GKSII6LJ5SLIXYESYCZE.jpg"
+    }
+]

@@ -1,0 +1,39 @@
+[{
+        "location": {
+            "lat": 48.137336,
+            "lng": 11.575062
+        },
+        "title": "Munich Plantage 1",
+        "subtitle": "We are a small family business",
+        "offerings": "Eggs, Milk, Cheese",
+        "img": "http://i.stack.imgur.com/g672i.png"
+    },
+    {
+        "location": {
+            "lat": 48.763943,
+            "lng": 11.424562
+        },
+        "title": "Ingolstadt",
+        "subtitle": "This is Munich",
+        "offerings": "Eggs, Milk, Cheese",
+        "img": "http://i.stack.imgur.com/g672i.png"
+    }, {
+        "location": {
+            "lat": 49.450801,
+            "lng": 11.077765
+        },
+        "title": "Nuremberg",
+        "subtitle": "This is Munich",
+        "offerings": "Eggs, Milk, Cheese",
+        "img": "http://i.stack.imgur.com/g672i.png"
+    }, {
+        "location": {
+            "lat": 52.520402,
+            "lng": 13.408364
+        },
+        "title": "Berlin",
+        "subtitle": "This is Munich",
+        "offerings": "Eggs, Milk, Cheese",
+        "img": "http://i.stack.imgur.com/g672i.png"
+    }
+]
