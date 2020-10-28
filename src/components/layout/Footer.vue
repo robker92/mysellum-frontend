@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="py-4" dark height="auto">
+  <v-footer absolute dark height="auto">
     <v-container mx-auto>
       <v-layout wrap>
         <v-flex xs9>
@@ -39,34 +39,34 @@ export default {
   data: () => ({
     items: [
       {
-        href: '#!',
-        icon: 'mdi-twitter'
+        href: "#!",
+        icon: "mdi-twitter"
       },
       {
-        href: '#!',
-        icon: 'mdi-instagram'
+        href: "#!",
+        icon: "mdi-instagram"
       },
       {
-        href: '#!',
-        icon: 'mdi-facebook'
+        href: "#!",
+        icon: "mdi-facebook"
       },
       {
-        href: '#!',
-        icon: 'mdi-google-plus'
+        href: "#!",
+        icon: "mdi-google-plus"
       },
       {
-        href: '#!',
-        icon: 'mdi-reddit'
+        href: "#!",
+        icon: "mdi-reddit"
       },
       {
-        href: '#!',
-        icon: 'mdi-discord'
+        href: "#!",
+        icon: "mdi-discord"
       },
       {
-        href: '#!',
-        icon: 'mdi-pinterest'
+        href: "#!",
+        icon: "mdi-pinterest"
       }
     ]
   })
-}
+};
 </script>

@@ -25,7 +25,19 @@ async function addToCart(userId, product, amount) {
         '/loginUser',
         data
     )
-}
+};
+
+async function removeFromCart(userId, product, amount) {
+    var data = {
+        userId: userId,
+        product: product,
+        amount: amount
+    }
+    let response = await cartClient.post(
+        '/loginUser',
+        data
+    )
+};
 
 export const userService = {
     addToCart

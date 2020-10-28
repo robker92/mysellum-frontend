@@ -3,6 +3,10 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import About from "../views/About.vue";
 import StoreProfile from "../views/StoreProfile.vue";
+import Search from "../views/Search.vue";
+import SearchDelivery from "../views/SearchDelivery.vue";
+import ShoppingCart from "../views/ShoppingCart.vue";
+import SuccessfulOrder from "../views/SuccessfulOrder.vue";
 
 Vue.use(VueRouter);
 
@@ -22,9 +26,29 @@ const routes = [{
     component: About
   },
   {
-    path: "/storeprofile",
+    path: "/storeprofile/:id",
     name: "StoreProfile",
     component: StoreProfile
+  },
+  {
+    path: "/search",
+    name: "Search",
+    component: Search
+  },
+  {
+    path: "/searchDelivery",
+    name: "SearchDelivery",
+    component: SearchDelivery
+  },
+  {
+    path: "/shoppingCart",
+    name: "ShoppingCart",
+    component: ShoppingCart
+  },
+  {
+    path: "/successfulOrder",
+    name: "SuccessfulOrder",
+    component: SuccessfulOrder
   },
   // otherwise redirect to home
   {
@@ -39,7 +63,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // redirect to home page if not logged in and trying to access a restricted page
-  const publicPages = ["/", "/about"]; //insert all public pages
+  const publicPages = ["/", "/storeprofile"]; //insert all public pages
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem("user"); // -> Check content as well -> Security
 

@@ -9,13 +9,13 @@ import axios from 'axios'
 const usersBaseURL = 'http://127.0.0.1:3000/users'
 
 const usersClient = axios.create({
+    baseURL: usersBaseURL,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     },
     timeout: 20000,
-    withCredentials: true,
-    baseURL: usersBaseURL
+    withCredentials: true
 });
 
 // var registerClient = axios.create({
@@ -77,28 +77,43 @@ async function register(data) {
     return user
 };
 
-async function addToShoppingCart(userId, product, amount) {
-    var data = {
-        userId: userId,
-        product: product,
-        amount: amount
-    }
-    let response = await usersClient.post(
-        '/addToShoppingCart',
-        data,
+async function addToShoppingCart(data) {
+    var token = (JSON.parse(localStorage.getItem('user')))["token"]
+
+    // var data = {
+    //     email: email,
+    //     product: product,
+    //     amount: amount
+    // }
+    let response = await usersClient.patch(
+        `/cart/${data["email"]}`,
+        data, {
+            headers: {
+                'x-access-token': token
+            }
+        }
     )
-    //console.log("@register function")
-    var user = response.data.user
-    //console.log(user)
-    //var user = handleResponse(response.data.user)
-    //console.log(user)
-    if (user.token) {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(user));
-    }
-    return user
+    console.log(response.data)
+    var shoppingCart = response.data.shoppingCart
+
+    return shoppingCart
 };
 
+async function removeFromShoppingCart(data) {
+    var token = (JSON.parse(localStorage.getItem('user')))["token"]
+
+    let response = await usersClient.patch(
+        `/cartRemove/${data["email"]}`,
+        data, {
+            headers: {
+                'x-access-token': token
+            }
+        }
+    )
+
+    var shoppingCart = response.data.shoppingCart
+    return shoppingCart
+};
 
 //REFACTOR
 // eslint-disable-next-line no-unused-vars
@@ -124,7 +139,8 @@ export const userService = {
     login,
     logout,
     register,
-    addToShoppingCart
+    addToShoppingCart,
+    removeFromShoppingCart
     // getAll,
     // getById,
     // update,

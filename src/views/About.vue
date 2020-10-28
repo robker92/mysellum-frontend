@@ -2,23 +2,38 @@
   <div id="aboutViewDiv" class="about">
     <router-link to="/">Home</router-link>
     <h1>This is an about page</h1>
-    <GoogleMap v-bind:markers="markers" />
+    <!-- <GoogleMap v-if="mapData" v-bind:markers="mapData" /> -->
   </div>
 </template>
 
 <script>
-import GoogleMap from "../components/GoogleMap.vue";
+//import GoogleMap from "../components/GoogleMap.vue";
 import fakeBackendData from "../fakeBackend/retailerMapInfo.json";
+
+import axios from "axios";
 
 export default {
   name: "AboutView",
   components: {
-    GoogleMap
+    //GoogleMap
   },
   data() {
     return {
-      markers: fakeBackendData
+      markers: fakeBackendData,
+      mapData: null,
+      dataset: null
     };
+  },
+  mounted() {
+    axios
+      //.get("http://localhost:3000/stores/5edfa27995ec324a216ea1c0")
+      .get("http://localhost:3000/stores")
+      .then(response => {
+        console.log(response.data);
+        this.dataset = response.data;
+        this.mapData = response.data;
+        //this.productList = response.data.profileData
+      });
   },
   methods: {
     loadMarkerData() {

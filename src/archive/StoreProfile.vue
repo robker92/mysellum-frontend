@@ -1,73 +1,6 @@
 <template>
   <div class="mainDiv">
-    <v-speed-dial
-      v-if="checkForStoreOwner"
-      absolute
-      top
-      right
-      v-model="fab"
-      direction="bottom"
-      :open-on-hover="true"
-      transition="scale-transition"
-    >
-      <template v-slot:activator>
-        <v-btn v-model="fab" color="pink" dark fab small>
-          <v-icon v-if="fab">
-            mdi-close
-          </v-icon>
-          <v-icon v-else>
-            mdi-dots-vertical
-          </v-icon>
-        </v-btn>
-      </template>
-      <v-btn fab dark small color="orange">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn fab dark small color="red">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-      <v-btn color="pink" outlined @click="showEditStoreDialog = true">
-        <v-icon color="pink">mdi-pencil</v-icon>
-        Edit Store
-      </v-btn>
-    </v-speed-dial>
-
-    <!-- <div v-if="checkForStoreOwner"> -->
-    <v-btn
-      v-if="checkForStoreOwner"
-      absolut
-      top
-      right
-      color="pink"
-      outlined
-      @click="showEditStoreDialog = true"
-    >
-      <v-icon color="pink">mdi-pencil</v-icon>
-      Edit Store
-    </v-btn>
-    <!--       <v-btn
-        v-if="editMode == false"
-        color="pink"
-        icon
-        outlined
-        @click="
-          editMode = true;
-          $vuetify.goTo(0);
-        "
-      >
-        <v-icon color="pink">mdi-pencil</v-icon>
-      </v-btn> -->
-    <!--       <v-btn
-        v-if="editMode == true"
-        color="indigo"
-        icon
-        outlined
-        @click="saveStoreChanges"
-      >
-        <v-icon color="indigo">mdi-content-save</v-icon>
-      </v-btn> -->
-    <!-- </div> -->
-    <!--  <div v-if="editMode">
+    <div v-if="editMode">
       <v-row v-if="profileData">
         <v-col cols="12" sm="6" offset-sm="3">
           <v-card>
@@ -96,7 +29,7 @@
                         color="white"
                         @click="deleteImage(index)"
                       >
-                      
+                        <!-- -->
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
                       <template v-slot:placeholder>
@@ -120,83 +53,72 @@
         </v-col>
       </v-row>
     </div>
-    <div v-else> -->
-    <!--style="width:500px;" -->
-    <v-row>
-      <v-col cols="12" lg="5">
-        <v-card flat>
-          <v-carousel
-            v-if="profileData"
-            cycle
-            show-arrows-on-hover
-            height="400px"
-          >
-            <v-carousel-item
-              v-for="(img, i) in profileData.images"
-              :key="i"
-              eager
-            >
-              <v-img :src="img.src" height="100%" eager>
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey lighten-2"
-                    ></v-progress-circular>
-                  </v-row>
-                </template>
-                <!--                 <v-container fill-height fluid pa-0 ma-0 pb-3>
-                  <v-layout fill-height align-start pb-4 mb-4>
-                    <v-flex xs12>
-                      <v-card color="white" flat class="pa-2">
-                        <span class="headline white--text" v-text="img.title">
-                        </span>
-                      </v-card>
-                    </v-flex>
-                  </v-layout>
-                </v-container> -->
-              </v-img>
-            </v-carousel-item>
-          </v-carousel>
-          <!-- <v-card-title>
-            {{ img.title }}
-          </v-card-title> -->
-        </v-card>
-      </v-col>
-      <v-col cols="12" lg="7">
-        <div class="text-h4" v-if="profileData">{{ profileData.title }}</div>
-        <v-chip
-          outlined
-          class="ma-1"
-          color="primary"
-          v-for="(tag, index) in this.profileData.tags"
-          :key="index"
-          >{{ tag }}</v-chip
-        >
-        <div
-          class="text-body-1"
-          v-if="profileData"
-          v-html="profileData.description"
-        />
-        <!--  {{ profileData.description }}
-        </div> -->
-      </v-col>
-    </v-row>
-    <!-- </div> -->
+    <div v-else>
+      <v-carousel
+        v-if="profileData"
+        cycle
+        show-arrows-on-hover
+        height="400px"
+        style="width:500px;"
+      >
+        <v-carousel-item v-for="(img, i) in profileData.images" :key="i" eager>
+          <v-img :src="img.src" height="100%" eager>
+            <template v-slot:placeholder>
+              <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-progress-circular
+                  indeterminate
+                  color="grey lighten-2"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+            <v-container fill-height fluid pa-0 ma-0 pb-3>
+              <v-layout fill-height align-start pb-4 mb-4>
+                <v-flex xs12>
+                  <v-card color="transparent" flat class="pa-2">
+                    <span class="headline white--text" v-text="img.title">
+                    </span>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-img>
+        </v-carousel-item>
+      </v-carousel>
+    </div>
     <v-btn @click="printData">Print</v-btn>
     <EditStoreDialog
       v-model="showEditStoreDialog"
       :profileData="profileData"
       v-on:edit-store="submitEditStore"
-      v-on:overlay-start="startLoadingOverlay"
-      v-on:overlay-end="endLoadingOverlay"
     />
-    <!--  <v-divider /> -->
-    <!-- <div v-if="editMode" id="titleDiv">
+    <div v-if="checkForStoreOwner">
+      <v-btn
+        v-if="editMode == false"
+        color="pink"
+        icon
+        outlined
+        @click="
+          editMode = true;
+          $vuetify.goTo(0);
+        "
+      >
+        <v-icon color="pink">mdi-pencil</v-icon>
+      </v-btn>
+      <v-btn color="pink" outlined @click="showEditStoreDialog = true">
+        <v-icon color="pink">mdi-pencil</v-icon>
+        Edit Store
+      </v-btn>
+      <v-btn
+        v-if="editMode == true"
+        color="indigo"
+        icon
+        outlined
+        @click="saveStoreChanges"
+      >
+        <v-icon color="indigo">mdi-content-save</v-icon>
+      </v-btn>
+    </div>
+    <div v-if="editMode" id="titleDiv">
       <v-btn @click="showAddStoreImageDialog = true">Add Image</v-btn>
       <AddStoreImageDialog
         v-model="showAddStoreImageDialog"
@@ -223,22 +145,20 @@
         deletable-chips
       />
     </div>
-    <div v-else> -->
-    <!--     <div class="text-h4" v-if="profileData">{{ profileData.title }}</div>
-    <div class="text-body-1" v-if="profileData">
-      {{ profileData.description }}
+    <div v-else>
+      <h1 v-if="profileData">{{ profileData.title }}</h1>
+      <p v-if="profileData">{{ profileData.description }}</p>
+      <v-chip
+        outlined
+        class="ma-1"
+        color="primary"
+        v-for="(tag, index) in this.profileData.tags"
+        :key="index"
+        >{{ tag }}</v-chip
+      >
     </div>
-    <v-chip
-      outlined
-      class="ma-1"
-      color="primary"
-      v-for="(tag, index) in this.profileData.tags"
-      :key="index"
-      >{{ tag }}</v-chip
-    > -->
-    <!--  </div>
 
-    <v-container v-if="productList">
+    <!-- <v-container v-if="productList">
       <StoreProfileListItem
         v-for="prod in productList"
         v-bind:key="prod.productId"
@@ -268,7 +188,22 @@
         </v-col>
       </v-row>
     </v-container> -->
-
+    <v-card class="mx-auto" max-width="344" outlined v-if="dataset">
+      <v-card-title>Address</v-card-title>
+      <v-card-text>
+        {{ dataset.mapData.address.street }}
+        {{ dataset.mapData.address.houseNumber }},
+        {{ dataset.mapData.address.city }}
+        {{ dataset.mapData.address.postalCode }}
+      </v-card-text>
+      <v-card-text>
+        Lat: {{ dataset.mapData.location.lat }} Lng:
+        {{ dataset.mapData.location.lng }}
+      </v-card-text>
+    </v-card>
+    <div v-if="dataset" height="400px">
+      <GoogleMapProfile :mapData="mapData" />
+    </div>
     <!-- <v-divider></v-divider>
     Average Rating:
     {{ this.avgRatingComputed }}
@@ -325,8 +260,6 @@
       v-on:update-product="editExistingProduct"
       v-on:productToEdit-to-null="nullifyProductToEdit"
       v-on:change-productToEdit-title="changeTitleProductToEdit"
-      v-on:overlay-start="startLoadingOverlay"
-      v-on:overlay-end="endLoadingOverlay"
     />
     <v-tabs color="indigo" right icons-and-text centered>
       <v-tab>
@@ -382,8 +315,6 @@
                 v-bind:modifiable="checkForStoreOwner"
                 v-on:delete-product="removeProductFromArray"
                 v-on:edit-product="showProductDialogEdit"
-                v-on:overlay-start="startLoadingOverlay"
-                v-on:overlay-end="endLoadingOverlay"
               />
             </v-col>
           </v-row>
@@ -401,34 +332,32 @@
         </v-card>
       </v-tab-item> -->
       <v-tab-item>
-        <v-row>
-          <div class="text-left">
-            Average Rating:
-            {{ this.avgRatingComputed }}
-            ({{ profileData.reviews ? profileData.reviews.length : 0 }})
-            <v-rating
-              v-model="avgRatingComputed"
-              background-color="orange lighten-3"
-              color="orange"
-              dense
-              half-increments
-              readonly
-            />
-          </div>
-          <v-btn
-            @click.stop="showReviewDialogNew"
-            v-show="!addButtonHidden"
-            dark
-            color="pink"
-            class="ml-5"
-          >
-            <v-icon>mdi-plus</v-icon>
-            Add Review
-          </v-btn>
-        </v-row>
-        <!--            absolute
-            top
-            right -->
+        <div class="text-left">
+          Average Rating:
+          {{ this.avgRatingComputed }}
+          ({{ profileData.reviews ? profileData.reviews.length : 0 }})
+          <v-rating
+            v-model="avgRatingComputed"
+            background-color="orange lighten-3"
+            color="orange"
+            dense
+            half-increments
+            readonly
+          />
+        </div>
+        <v-btn
+          @click.stop="showReviewDialogNew"
+          v-show="!addButtonHidden"
+          absolute
+          top
+          right
+          dark
+          color="pink"
+        >
+          <v-icon>mdi-plus</v-icon>
+          Add Review
+        </v-btn>
+
         <ReviewDialog
           v-model="showReviewDialog"
           :reviewToEdit="reviewToEdit"
@@ -437,10 +366,8 @@
           v-on:reviewToEdit-to-null="nullifyReviewToEdit"
           v-on:change-reviewToEdit-rating="changeRatingReviewToEdit"
           v-on:change-reviewToEdit-text="changeTextReviewToEdit"
-          v-on:overlay-start="startLoadingOverlay"
-          v-on:overlay-end="endLoadingOverlay"
         />
-        <!-- <v-divider></v-divider> -->
+        <v-divider></v-divider>
         <div v-if="profileData.reviews">
           <StoreProfileReviewListItem
             v-for="rvw in computedReviews"
@@ -448,8 +375,6 @@
             v-bind:review="rvw"
             v-on:remove-review="removeReviewfromArray"
             v-on:edit-review="showReviewDialogEdit"
-            v-on:overlay-start="startLoadingOverlay"
-            v-on:overlay-end="endLoadingOverlay"
           />
         </div>
         <div v-if="profileData.reviews">
@@ -461,39 +386,8 @@
         </div>
       </v-tab-item>
     </v-tabs>
-    <v-divider />
-    <v-row>
-      <v-col cols="12" lg="6">
-        <v-card class="mx-auto" max-width="344" flat v-if="dataset">
-          <v-card-title>Address</v-card-title>
-          <v-card-text>
-            <div>
-              Store GmbH
-            </div>
-            <div>
-              {{ dataset.mapData.address.street }}
-              {{ dataset.mapData.address.houseNumber }}
-            </div>
-            <div>
-              {{ dataset.mapData.address.city }}
-              {{ dataset.mapData.address.postalCode }}
-            </div>
-            <div>
-              Lat: {{ dataset.mapData.location.lat }} Lng:
-              {{ dataset.mapData.location.lng }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" lg="6">
-        <div v-if="dataset" height="200px">
-          <GoogleMapProfile :mapData="mapData" />
-        </div>
-      </v-col>
-    </v-row>
-
     <v-overlay v-model="overlay">
-      <v-progress-circular indeterminate size="80"></v-progress-circular>
+      <v-progress-circular indeterminate size="128"></v-progress-circular>
     </v-overlay>
   </div>
 </template>
@@ -514,7 +408,7 @@ import StoreProfileReviewListItem from "../components/StoreProfileReviewListItem
 import EditStoreDialog from "../components/EditStoreDialog";
 import ReviewDialog from "../components/ReviewDialog";
 import AddProductDialog from "../components/AddProductDialog";
-//import AddStoreImageDialog from "../components/AddStoreImageDialog";
+import AddStoreImageDialog from "../components/AddStoreImageDialog";
 import GoogleMapProfile from "../components/GoogleMapProfile";
 
 //import axios from "axios";
@@ -530,7 +424,7 @@ export default {
     EditStoreDialog: EditStoreDialog,
     ReviewDialog: ReviewDialog,
     AddProductDialog: AddProductDialog,
-    //AddStoreImageDialog: AddStoreImageDialog,
+    AddStoreImageDialog: AddStoreImageDialog,
     GoogleMapProfile: GoogleMapProfile
   },
 
@@ -539,7 +433,6 @@ export default {
       // profileData: storeData[0].profileData,
       // productList: storeData[0].profileData.products,
       editMode: false,
-      fab: false,
       overlay: false,
       profileData: {},
       productList: {},
@@ -575,7 +468,7 @@ export default {
       val &&
         setTimeout(() => {
           this.overlay = false;
-        }, 3000);
+        }, 1000);
     }
   },
 
@@ -653,10 +546,9 @@ export default {
       console.log(this.dataset);
       console.log(this.avgRating);
       console.log(Math.round(this.avgRating * 10) / 10);
-      this.drawer = true;
-      //this.overlay = true;
+      this.overlay = true;
     },
-    /*     saveStoreChanges: async function() {
+    saveStoreChanges: async function() {
       this.editMode = false;
       var payload = {
         storeId: this.$route.params.id,
@@ -666,9 +558,9 @@ export default {
       };
       var editResult = await storeService.editStore(payload);
       console.log(editResult);
-    }, */
+    },
     submitEditStore: async function(data) {
-      /*       var payload = {
+      var payload = {
         storeId: this.$route.params.id,
         title: data.title,
         description: data.description,
@@ -676,8 +568,8 @@ export default {
         images: data.images
       };
       this.overlay = true;
-      var editResult = await storeService.editStore(payload); */
-      //console.log(editResult);
+      var editResult = await storeService.editStore(payload);
+      console.log(editResult);
       this.profileData.title = data.title;
       this.profileData.description = data.description;
       this.profileData.tags = data.tags;
@@ -766,14 +658,6 @@ export default {
       );
       //replace array element
       this.profileData.products.splice(index, 1, updatedProduct);
-    },
-
-    //Overlay
-    startLoadingOverlay() {
-      this.overlay = true;
-    },
-    endLoadingOverlay() {
-      this.overlay = false;
     }
   }
 };

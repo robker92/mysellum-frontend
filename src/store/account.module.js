@@ -30,7 +30,7 @@ const actions = {
         state
     }, credentials) {
         // set state to loggingIn with email only
-        commit("loginRequest", credentials.email);
+        //commit("loginRequest", credentials.email);
         // console.log("@login");
         // console.log(credentials)
         //console.log(password)
@@ -60,7 +60,7 @@ const actions = {
         commit,
         state
     }, user) {
-        commit("registerRequest", user);
+        //commit("registerRequest", user);
         //console.log("@register");
         userService.register(user).then(
             user => {
@@ -80,18 +80,90 @@ const actions = {
                 // });
             }
         );
+    },
+
+    addProduct({
+        commit
+    }, data) {
+        //commit('increaseproductCounter', amount)
+
+        userService.addToShoppingCart(data).then(
+            shoppingCart => {
+                //commit("loginSuccess", shoppingCart);
+                commit('addProductSuccess', shoppingCart);
+            },
+            error => {
+                commit("addProductFailure", error);
+                // dispatch("alert/error", error, {
+                //     root: true
+                // });
+            }
+            //commit("loginSuccess", user)
+        );
+    },
+    decreaseAmountByValue({
+        commit
+    }, data) {
+        //commit('increaseproductCounter', amount)
+
+        userService.removeFromShoppingCart(data).then(
+            shoppingCart => {
+                //commit("loginSuccess", shoppingCart);
+                commit('decreaseAmountByValueSuccess', shoppingCart);
+            },
+            error => {
+                commit("decreaseAmountByValueFailure", error);
+                // dispatch("alert/error", error, {
+                //     root: true
+                // });
+            }
+            //commit("loginSuccess", user)
+        );
+    },
+    deleteProduct({
+        commit
+    }, data) {
+        //commit('increaseproductCounter', amount)
+
+        userService.deleteProductInShoppingCart(data).then(
+            shoppingCart => {
+                //commit("loginSuccess", shoppingCart);
+                commit('addProductSuccess', shoppingCart);
+            },
+            error => {
+                commit("addProductFailure", error);
+                // dispatch("alert/error", error, {
+                //     root: true
+                // });
+            }
+            //commit("loginSuccess", user)
+        );
     }
 };
 
+function shoppingCartRoutine(state, shoppingCart) {
+    state.user.shoppingCart = shoppingCart
+    console.log("current cart:")
+    console.log(shoppingCart)
+
+    //Count the products which are in the cart
+    var counter = 0;
+    for (var i = 0; i < shoppingCart.length; i++) {
+        counter = counter + shoppingCart[i][1];
+    }
+    console.log(counter)
+    state.user.productCounter = counter
+}
+
 const mutations = {
-    loginRequest(state, user) {
-        // state.status = {
-        //     loggingIn: true
-        // };
-        state.user = user;
-        //state.loggedIn = true;
-        state.loggingIn = true;
-    },
+    // loginRequest(state, user) {
+    //     // state.status = {
+    //     //     loggingIn: true
+    //     // };
+    //     state.user = user;
+    //     //state.loggedIn = true;
+    //     state.loggingIn = true;
+    // },
     loginSuccess(state, user) {
         // state.status = {
         //     loggedIn: true
@@ -128,6 +200,39 @@ const mutations = {
         //state.status = {};
         state.loggedIn = false;
         state.user = {};
+    },
+    addProductSuccess(state, shoppingCart) {
+        shoppingCartRoutine(state, shoppingCart)
+        //add shopping cart to state
+        // state.shoppingCart = shoppingCart
+        // console.log(state.shoppingCart)
+
+        // //Count the products which are in the cart
+        // var counter = 0;
+        // for (var i = 0; i < shoppingCart.length; i++) {
+        //     counter = counter + shoppingCart[i][1];
+        // }
+        // console.log(counter)
+        // state.user.productCounter = counter
+    },
+    deleteProductSuccess(state, shoppingCart) {
+        shoppingCartRoutine(state, shoppingCart)
+        //add shopping cart to state
+        // state.shoppingCart = shoppingCart
+        // console.log(state.shoppingCart)
+
+        // //Count the products which are in the cart
+        // var counter = 0;
+        // for (var i = 0; i < shoppingCart.length; i++) {
+        //     counter = counter + shoppingCart[i][1];
+        // }
+        // console.log(counter)
+        // state.user.productCounter = counter
+    },
+    decreaseAmountByValueSuccess(state, shoppingCart) {
+        shoppingCartRoutine(state, shoppingCart)
+        // state.shoppingCart = shoppingCart
+        // console.log(state.shoppingCart)
     }
 };
 

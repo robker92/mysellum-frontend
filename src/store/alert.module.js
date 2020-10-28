@@ -1,40 +1,73 @@
 /* eslint-disable prettier/prettier */
 const state = {
-    type: null,
-    message: null
+    //     type: null,
+    //     message: null,
+    alertArray: []
 }
 
 const actions = {
-    success({
+    /*     success({
+            commit
+        }, message) {
+            commit('success', message)
+        },
+        error({
+            commit
+        }, message) {
+            commit('error', message)
+        },
+        clear({
+            commit
+        }) {
+            commit('clear')
+        }, */
+
+    successAlert({
         commit
     }, message) {
-        commit('success', message)
+        commit('successAlert', message)
     },
-    error({
+    errorAlert({
         commit
     }, message) {
-        commit('error', message)
+        commit('errorAlert', message)
     },
-    clear({
+    clearAlert({
         commit
     }) {
-        commit('clear')
+        commit('clearAlert')
     }
 }
 
 const mutations = {
-    success(state, message) {
-        state.type = 'alert-success'
-        state.message = message
+    /*     success(state, message) {
+            state.type = 'alert-success'
+            state.message = message
+        },
+        error(state, message) {
+            state.type = 'alert-danger'
+            state.message = message
+        },
+        clear(state) {
+            state.type = null
+            state.message = null
+        }, */
+    successAlert(state, message) {
+        state.alertArray.push({
+            type: "success",
+            message
+        });
     },
-    error(state, message) {
-        state.type = 'alert-danger'
-        state.message = message
+    errorAlert(state, message) {
+        state.alertArray.push({
+            type: "error",
+            message
+        });
     },
-    clear(state) {
-        state.type = null
-        state.message = null
+    clearAlert(state) {
+        state.alertArray.shift();
     }
+
 }
 
 export const alert = {
