@@ -56,20 +56,6 @@
     <v-main>
       <v-container fluid>
         <v-container>
-          <!--           <transition-group name="slide-x-transition">
-            <v-alert
-              v-for="(alert, index) in alertArray"
-              v-bind:key="index"
-              :type="alert.type"
-              outlined
-              text
-              dense
-              dismissible
-              elevation="3"
-            >
-              {{ alert.message }}
-            </v-alert>
-          </transition-group> -->
           <v-alert
             v-for="(alert, index) in alertArray"
             v-bind:key="index"
@@ -83,33 +69,6 @@
           >
             {{ alert.message }}
           </v-alert>
-
-          <!--  <transition-group name="slide-x-transition">
-            <v-snackbar
-              v-for="(snack, index) in snackbarArray"
-              v-bind:key="index"
-              :value="1"
-              :color="snack.type"
-              outlined
-              text
-              top
-              shaped
-              timeout="5000"
-              transition="slide-x-transition"
-            >
-              {{ snack.message }}
-              <template v-slot:action="{ attrs }">
-                <v-btn
-                  icon
-                  :color="snack.closeButtonColor"
-                  v-bind="attrs"
-                  @click="removeSnackbarByIndex(index)"
-                >
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </template>
-            </v-snackbar>
-          </transition-group> -->
 
           <v-snackbar
             v-model="computedShowSnackbar"
@@ -134,14 +93,14 @@
             </template>
           </v-snackbar>
 
-          Alert Testing:
+          <!-- Alert Testing:
           <v-btn @click="addSuccessAlert()">Success</v-btn>
           <v-btn @click="addErrorAlert()">Error</v-btn>
           <v-btn @click="removeAlert()">Remove</v-btn>
           <v-btn @click="print()">Print</v-btn>
-          <v-btn @click="addSuccessSnackbar()">SnackbarSucc</v-btn>
-          <v-btn @click="addErrorSnackbar()">SnackbarErr</v-btn>
-          <v-btn @click="clearSnack()">Snackbar clear</v-btn>
+          <v-btn @click="addSuccessSnack()">SnackbarSucc</v-btn>
+          <v-btn @click="addErrorSnack()">SnackbarErr</v-btn>
+          <v-btn @click="clearSnack()">Snackbar clear</v-btn> -->
         </v-container>
         <router-view></router-view>
       </v-container>
@@ -184,7 +143,7 @@ export default {
         return this.snackbarObjct.showSnackbar;
       },
       set() {
-        this.closeSnackbar();
+        this.closeSnack();
       }
     },
     computedTimeout: {
@@ -201,9 +160,9 @@ export default {
   methods: {
     ...mapActions("alert", ["successAlert", "errorAlert", "clearAlert"]),
     ...mapActions("snackbar", [
-      "successSnackbar",
-      "errorSnackbar",
-      "closeSnackbar"
+      "addSuccessSnackbar",
+      "addErrorSnackbar",
+      "addCloseSnackbar"
     ]),
 
     setGoogleMapLoader() {
@@ -226,17 +185,17 @@ export default {
       this.clearAlert();
     },
     //Snackbar
-    addSuccessSnackbar() {
-      this.successSnackbar("Successfully logged in!");
+    addSuccessSnack() {
+      this.addSuccessSnackbar("Successfully logged in!");
     },
-    addErrorSnackbar() {
+    addErrorSnack() {
       // if (this.snackbarObjct.showSnackbar == true) {
       //   this.closeSnackbar();
       // }
-      this.errorSnackbar("Log in attempt failed!");
+      this.addErrorSnackbar("Log in attempt failed!");
     },
     closeSnack() {
-      this.closeSnackbar();
+      this.addCloseSnackbar();
     },
     print() {
       console.log(this.alertArray);

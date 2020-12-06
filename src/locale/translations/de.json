@@ -1,0 +1,102 @@
+{
+    "header": {
+        "userMenu": {
+            "loginButton": "Login",
+            "userSubtitle": "Eingeloggt",
+            "registerButton": "Registrieren",
+            "logoutButton": "Logout",
+            "yourStoreButton": "Dein Laden",
+            "openStoreButton": "Einen Laden eröffnen",
+            "yourOrdersButton": "Deine Bestellungen",
+            "settings": "Einstellungen"
+        },
+        "cartButton": "Wagen",
+        "receivedOrdersButton": "Erhaltene Bestellungen"
+    },
+
+    "loginDialog": {
+        "dialogTitle": "Login",
+
+        "emailField": "E-Mail",
+        "emailFieldRequiredError": "Eine E-Mail Adresse wird benötigt.",
+        "emailFieldValidError": "Es muss sich um eine valide E-Mail Adresse handeln.",
+
+        "passwordField": "Passwort",
+        "passwordFieldRequiredError": "Ein Passwort wird benötigt.",
+
+        "forgotPasswordLabel": "Passwort vergessen?",
+        "requiredFieldDescription": "kennzeichnet benötigte Felder",
+        "showPasswordTooltip": "Passwort anzeigen",
+        "closeButton": "Schließen",
+        "submitButton": "Anmelden"
+    },
+
+    "registerDialog": {
+        "dialogTitle": "Registrieren",
+
+        "firstNameField": "Vorname",
+        "firstNameFieldRequiredError": "Ein Vorname wird benötigt.",
+        "firstNameFieldLengthError": "Der Vorname darf maximal 20 Zeichen lang sein.",
+
+        "lastNameField": "Nachname",
+        "lastNameFieldRequiredError": "Ein Nachname wird benötigt.",
+        "lastNameFieldLengthError": "Der Nachname darf maximal 20 Zeichen lang sein.",
+
+        "emailField": "E-Mail",
+        "emailFieldRequiredError": "Eine E-Mail Adresse wird benötigt.",
+        "emailFieldValidError": "Es muss sich um eine valide E-Mail Adresse handeln.",
+
+        "birthdateField": "Geburtsdatum",
+        "birthdateFieldRequiredError": "Ein Geburtsdatum wird benötigt.",
+
+        "passwordField": "Passwort",
+        "passwordFieldRequiredError": "Ein Passwort wird benötigt.",
+        "passwordFieldRegexError": "Das Password muss über mindestens einen Groß- und Kleinbuchstaben sowie ein Sonderzeichen und eine Zahl verfügen.",
+        "passwordFieldMinLengthError": "Das Password muss mindestens {n} Zeichen lang sein.",
+        "passwordFieldMaxLengthError": "Das Password darf maximal {n} Zeichen lang sein.",
+
+        "passwordConfField": "Passwort Bestätigung",
+        "passwordConfFieldRequiredError": "Eine Passwort Bestätigung wird benötigt.",
+        "passwordConfFieldRegexError": "Das Password muss über mindestens einen Groß- und Kleinbuchstaben sowie ein Sonderzeichen und eine Zahl verfügen.",
+        "passwordConfFieldMinLengthError": "Das Password muss mindestens {n} Zeichen lang sein.",
+        "passwordConfFieldMaxLengthError": "Das Password darf maximal {n} Zeichen lang sein.",
+        "passwordConfFieldIdenticalError": "Die Passwörter müssen identisch sein.",
+
+        "addressLine1Field": "Addresszeile",
+        "addressLine1FieldRequiredError": "Eine Addresszeile wird benötigt.",
+        "addressLine1FieldLengthError": "Die Addresszeile darf maximal 40 Zeichen lang sein.",
+
+        "postcodeField": "Postleitzahl",
+        "postcodeFieldRequiredError": "Eine Postleitzahl wird benötigt.",
+
+        "cityField": "Stadt",
+        "cityFieldRequiredError": "Eine Stadt wird benötigt.",
+        "cityFieldLengthError": "Die Stadt darf maximal 20 Zeichen lang sein.",
+
+        "checkboxTermsConditions": "Akzeptieren Sie die Bedingungen und Konditionen?",
+        "checkboxTermsConditionsRequiredError": "Sie müssen die Bedingungen und Konditionen akzeptieren.",
+
+        "requiredFieldDescription": "kennzeichnet benötigte Felder",
+        "showPasswordTooltip": "Passwort anzeigen",
+        "closeButton": "Schließen",
+        "submitButton": "Anmelden"
+    },
+
+    "forgotPassword": {
+        "headline": "Passwort vergessen",
+        "infoAlert": "Wenn Sie Ihr Passwort vergessen haben oder Ihr Zugang gesperrt wurde, können Sie unten eine E-Mail zum Zurücksetzen des Passworts anfordern, indem Sie Ihre E-Mail-Adresse sowie Ihr Geburtsdatum angeben.",
+        "sendMailButtonLabel": "E-mail anfordern"
+    },
+
+    "passwordReset": {
+        "headline": "Passwort zurücksetzen",
+        "infoAlert": "Nun können Sie ein neues Passwort vergeben. Achten Sie darauf mindestens 8 Zeichen zu verwenden, wobei mindestens eine Zahl, ein Sonderzeichen und ein Klein- sowie ein Großbuchstaben enthalten sein muss, um gut geschützt zu sein.",
+        "resetPasswordButtonLabel": "Speichern"
+    },
+    
+    "footer": {
+        "label1": "label 1"
+    },
+    "translation1": "Übersetzung 1",
+    "translation2": "Übersetzung 2"
+}

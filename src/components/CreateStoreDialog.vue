@@ -9,7 +9,9 @@
       </v-card-title>
       <v-card-text>
         <v-stepper v-model="e6" vertical>
-          <v-stepper-step :complete="e6 > 1" step="1" :editable="true">General Information</v-stepper-step>
+          <v-stepper-step :complete="e6 > 1" step="1" :editable="true"
+            >General Information</v-stepper-step
+          >
           <v-stepper-content step="1">
             <v-text-field v-model="storeTitle" label="Store Title*" required />
             <v-textarea
@@ -30,7 +32,9 @@
             <v-btn text @click="printInputs">Print</v-btn>
           </v-stepper-content>
 
-          <v-stepper-step :complete="e6 > 2" step="2" :editable="true">Enter the Address</v-stepper-step>
+          <v-stepper-step :complete="e6 > 2" step="2" :editable="true"
+            >Enter the Address</v-stepper-step
+          >
           <v-stepper-content step="2">
             <v-container fluid class="ma-0 pa-0">
               <v-row>
@@ -72,7 +76,9 @@
             <v-btn text @click="printInputs">Print</v-btn>
           </v-stepper-content>
 
-          <v-stepper-step :complete="e6 > 3" step="3" :editable="true">Upload your Images</v-stepper-step>
+          <v-stepper-step :complete="e6 > 3" step="3" :editable="true"
+            >Upload your Images</v-stepper-step
+          >
           <v-stepper-content step="3">
             <v-file-input
               prepend-icon="mdi-camera"
@@ -84,19 +90,27 @@
               counter
               label="Upload your Images"
             />
-            <v-text-field v-model="imagesTextField" label="Images Text Field" required />
+            <v-text-field
+              v-model="imagesTextField"
+              label="Images Text Field"
+              required
+            />
             <v-btn color="primary" @click="e6 = 4">Continue</v-btn>
             <v-btn text @click="printInputs">Print</v-btn>
           </v-stepper-content>
 
-          <v-stepper-step :complete="e6 > 4" step="4" :editable="true">Payment Methods</v-stepper-step>
+          <v-stepper-step :complete="e6 > 4" step="4" :editable="true"
+            >Payment Methods</v-stepper-step
+          >
           <v-stepper-content step="4">
             <v-card color="grey lighten-1" class="mb-12" height="50px"></v-card>
             <v-btn color="primary" @click="e6 = 5">Continue</v-btn>
             <v-btn text @click="printInputs">Print</v-btn>
           </v-stepper-content>
 
-          <v-stepper-step :complete="e6 > 5" step="5" :editable="true">Products (optional)</v-stepper-step>
+          <v-stepper-step :complete="e6 > 5" step="5" :editable="true"
+            >Products (optional)</v-stepper-step
+          >
           <v-stepper-content step="5">
             <v-btn color="primary" @click="submitCreation">Create</v-btn>
             <v-btn text @click="printInputs">Print</v-btn>
@@ -156,6 +170,8 @@ export default {
   },
   methods: {
     ...mapActions("stores", ["createStore"]),
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
     printInputs() {
       console.log(this.storeTitle);
       console.log(this.storeDescription);
@@ -166,6 +182,7 @@ export default {
       console.log(this.lat);
       console.log(this.lng);
     },
+
     submitCreation: async function() {
       var payload = {
         userEmail: this.user.email,
@@ -175,10 +192,9 @@ export default {
         tags: this.tagsComboBoxModel,
         images: this.imagesTextField,
         address: {
-          postalcode: this.postcode,
+          postcode: this.postcode,
           city: this.city,
-          street: this.addressLine1,
-          houseNumber: "",
+          addressLine1: this.addressLine1,
           country: "Germany"
         },
         mapImg: "http://i.stack.imgur.com/g672i.png",
@@ -187,8 +203,10 @@ export default {
       };
       console.log(payload);
       this.createStore(payload);
+      this.addSuccessSnackbar("Store successfully created!");
       this.show = false;
     },
+
     closeDialog() {
       this.show = false;
     }

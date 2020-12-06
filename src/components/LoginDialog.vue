@@ -2,7 +2,7 @@
   <v-dialog v-model="show" max-width="400px">
     <v-card>
       <v-card-title>
-        <span class="loginHeadline">Login</span>
+        <span class="loginHeadline">{{ $t("loginDialog.dialogTitle") }}</span>
       </v-card-title>
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
@@ -12,7 +12,7 @@
                 prepend-icon="mdi-email"
                 v-model="email"
                 :error-messages="emailErrors"
-                label="E-mail*"
+                :label="$t('loginDialog.emailField') + '*'"
                 required
                 @input="$v.email.$touch()"
                 @blur="$v.email.$touch()"
@@ -21,7 +21,7 @@
                 prepend-icon="mdi-lock-question"
                 v-model="password"
                 :error-messages="passwordErrors"
-                label="Password*"
+                :label="$t('loginDialog.passwordField') + '*'"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 required
@@ -32,18 +32,33 @@
               />
             </v-col>
           </v-row>
+          <div class="text-left ml-8 text-caption">
+            <router-link
+              :to="{
+                name: 'ForgotPassword',
+                params: { locale: $i18n.locale }
+              }"
+              v-on:click.native="cancel"
+            >
+              {{ $t("loginDialog.forgotPasswordLabel") }}
+            </router-link>
+          </div>
         </v-container>
-        <small>*indicates required field</small>
+        <div class="text-right text-caption">
+          * {{ $t("loginDialog.requiredFieldDescription") }}
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="cancel">Close</v-btn>
+        <v-btn color="blue darken-1" text @click="cancel">{{
+          $t("loginDialog.closeButton")
+        }}</v-btn>
         <v-btn
           color="blue darken-1"
           text
           @click="submitLogin"
           :disabled="buttonIsDisabled"
-          >Submit</v-btn
+          >{{ $t("loginDialog.submitButton") }}</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -76,6 +91,7 @@ export default {
   data() {
     return {
       dialog: false,
+
       email: "",
       password: "",
       showPassword: false
@@ -94,14 +110,17 @@ export default {
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("Must be valid e-mail.");
-      !this.$v.email.required && errors.push("E-mail is required.");
+      !this.$v.email.email &&
+        errors.push(this.$t("loginDialog.emailFieldValidError"));
+      !this.$v.email.required &&
+        errors.push(this.$t("loginDialog.emailFieldRequiredError"));
       return errors;
     },
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.required && errors.push("Password is required.");
+      !this.$v.password.required &&
+        errors.push(this.$t("loginDialog.passwordFieldRequiredError"));
       return errors;
     },
 
@@ -119,6 +138,8 @@ export default {
   },
 
   methods: {
+    ...mapActions("account", ["login", "logout"]),
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     submitLogin: async function() {
       // if (!this.$v.email.$invalid && !this.$v.password.$invalid) {
       //   //Register User with input data
@@ -144,6 +165,7 @@ export default {
       //var email = this.email;
       //var password = this.password;
       this.login(credentials);
+      this.addSuccessSnackbar("Successfully logged in!");
       //console.log(this.info);
       this.show = false;
     },
@@ -155,8 +177,6 @@ export default {
       this.password = "";
       this.showPassword = false;
     },
-
-    ...mapActions("account", ["login", "logout"]),
 
     handleSubmit() {
       this.submitted = true;

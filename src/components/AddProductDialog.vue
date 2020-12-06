@@ -1,6 +1,19 @@
 <template>
-  <v-dialog v-model="show" max-width="400px" @keydown.esc="cancel">
+  <v-dialog
+    v-model="show"
+    max-width="400px"
+    @keydown.esc="cancel"
+    @click:outside="cancel"
+  >
+    <!--  <div style="background:transparent;color:transparent">
+      <v-btn color="pink" fab dark small>
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </div> -->
     <v-card>
+      <!--  <v-btn color="pink" fab dark small absolute top right>
+        <v-icon>mdi-close</v-icon>
+      </v-btn> -->
       <v-card-title>
         <span class="addProductHeadline">Add Product</span>
       </v-card-title>
@@ -88,22 +101,24 @@
       <v-card-actions>
         <v-btn color="indigo" text @click="cancel">Close</v-btn>
         <v-btn color="indigo" text @click="printData">Print</v-btn>
+        <v-spacer />
         <v-btn
-          v-if="productToEdit == null"
           color="indigo"
+          right
           dark
           @click="submitProduct"
           :disabled="buttonIsDisabled"
-          >Add</v-btn
+          >Save</v-btn
         >
-        <v-btn
+        <!--  <v-btn
           v-else
           color="indigo"
+          right
           dark
           @click="submitProduct"
           :disabled="buttonIsDisabled"
           >Edit</v-btn
-        >
+        > -->
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -113,6 +128,8 @@
 //v-model="price"
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
+
+import { mapActions } from "vuex";
 
 import { storeService } from "../services";
 
@@ -244,6 +261,7 @@ export default {
   },
 
   methods: {
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     submitProduct: async function() {
       var payload = {
         storeId: this.$route.params.id,
@@ -253,23 +271,26 @@ export default {
         price: this.price,
         currency: "EUR",
         currencySymbol: "€",
-        datetime: new Date(),
+        //datetime: new Date(),
         quantityType: this.quantityType,
         quantityValue: this.quantityValue
       };
       if (this.productToEdit == null) {
+        //Add new product
         this.$emit("overlay-start");
-        console.log("= null");
         var newProduct = await storeService.addProduct(payload);
         this.$emit("add-new-product", newProduct.product);
         this.$emit("overlay-end");
+        this.addSuccessSnackbar("Product was successfully added!");
       } else if (this.productToEdit != null) {
+        //Edit existing product
         this.$emit("overlay-start");
-        console.log("!= null");
+        console.log(this.productToEdit.productId);
         payload["productId"] = this.productToEdit.productId;
         var updatedProduct = await storeService.editProduct(payload);
         this.$emit("update-product", updatedProduct.product);
         this.$emit("overlay-end");
+        this.addSuccessSnackbar("Product was successfully edited!");
       }
       this.cancel();
     },

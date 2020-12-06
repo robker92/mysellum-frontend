@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { storeService } from "../services";
 
 export default {
@@ -157,6 +157,7 @@ export default {
   // },
 
   methods: {
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     submitReview: async function() {
       console.log(this.reviewText);
       //console.log(this.$route.params.id);
@@ -176,12 +177,14 @@ export default {
         var newReview = await storeService.addReview(data);
         this.$emit("add-new-review", newReview);
         this.$emit("overlay-end");
+        this.addSuccessSnackbar("Review was successfully added!");
       } else if (this.reviewToEdit != null) {
         this.$emit("overlay-start");
         data["reviewId"] = this.reviewToEdit.reviewId;
         var updatedReview = await storeService.editReview(data);
         this.$emit("update-review", updatedReview);
         this.$emit("overlay-end");
+        this.addSuccessSnackbar("Review was successfully edited!");
       }
       //console.log(data);
       this.cancel();

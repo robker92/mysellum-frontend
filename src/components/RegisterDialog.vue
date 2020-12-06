@@ -2,7 +2,9 @@
   <v-dialog v-model="show" max-width="800px">
     <v-card>
       <v-card-title>
-        <span class="registrationHeadline">Registration</span>
+        <span class="registrationHeadline">{{
+          $t("registerDialog.dialogTitle")
+        }}</span>
       </v-card-title>
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
@@ -12,7 +14,7 @@
                 v-model="firstName"
                 :error-messages="firstNameErrors"
                 :counter="20"
-                label="First Name*"
+                :label="$t('registerDialog.firstNameField') + '*'"
                 required
                 @input="$v.firstName.$touch()"
                 @blur="$v.firstName.$touch()"
@@ -23,7 +25,7 @@
                 v-model="lastName"
                 :error-messages="lastNameErrors"
                 :counter="20"
-                label="Last Name*"
+                :label="$t('registerDialog.lastNameField') + '*'"
                 required
                 @input="$v.lastName.$touch()"
                 @blur="$v.lastName.$touch()"
@@ -36,7 +38,7 @@
                 prepend-icon="mdi-email"
                 v-model="email"
                 :error-messages="emailErrors"
-                label="E-mail*"
+                :label="$t('registerDialog.emailField') + '*'"
                 required
                 @input="$v.email.$touch()"
                 @blur="$v.email.$touch()"
@@ -55,7 +57,7 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    label="Birthdate"
+                    :label="$t('registerDialog.birthdateField') + '*'"
                     prepend-icon="mdi-calendar"
                     readonly
                     :value="birthDateFormat"
@@ -82,7 +84,7 @@
                 prepend-icon="mdi-lock-question"
                 v-model="password"
                 :error-messages="passwordErrors"
-                label="Password*"
+                :label="$t('registerDialog.passwordField') + '*'"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 required
@@ -96,7 +98,7 @@
                 prepend-icon="mdi-lock-question"
                 v-model="passwordConfirmation"
                 :error-messages="passwordConfirmationErrors"
-                label="Password Confirmation*"
+                :label="$t('registerDialog.passwordConfField') + '*'"
                 :append-icon="
                   showPasswordConfirmation ? 'mdi-eye' : 'mdi-eye-off'
                 "
@@ -115,8 +117,8 @@
               <v-text-field
                 v-model="addressLine1"
                 :error-messages="addressLine1Errors"
-                :counter="30"
-                label="Address Line 1*"
+                :counter="40"
+                :label="$t('registerDialog.addressLine1Field') + '*'"
                 required
                 @input="$v.addressLine1.$touch()"
                 @blur="$v.addressLine1.$touch()"
@@ -128,7 +130,7 @@
               <v-text-field
                 v-model="postcode"
                 :error-messages="postcodeErrors"
-                label="Postcode*"
+                :label="$t('registerDialog.postcodeField') + '*'"
                 class="inputPostcode"
                 required
                 type="number"
@@ -142,26 +144,38 @@
               <v-text-field
                 v-model="city"
                 :error-messages="cityErrors"
-                label="City*"
+                :counter="20"
+                :label="$t('registerDialog.cityField') + '*'"
                 required
                 @input="$v.city.$touch()"
                 @blur="$v.city.$touch()"
               />
             </v-col>
           </v-row>
+          <v-checkbox
+            v-model="checkboxTermsConditions"
+            :error-messages="checkboxTermsConditionsErrors"
+            :label="$t('registerDialog.checkboxTermsConditions') + '*'"
+            required
+            @change="$v.checkboxTermsConditions.$touch()"
+            @blur="$v.checkboxTermsConditions.$touch()"
+          ></v-checkbox>
         </v-container>
-        <small>*indicates required field</small>
+        <small>* {{ $t("registerDialog.requiredFieldDescription") }}</small>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" text @click="fill">Fill</v-btn>
-        <v-btn color="blue darken-1" text @click="cancel">Close</v-btn>
+        <v-btn color="blue darken-1" text @click="cancel">{{
+          $t("registerDialog.closeButton")
+        }}</v-btn>
         <v-btn
           color="blue darken-1"
           text
           @click="submitRegistration"
           :disabled="buttonIsDisabled"
-        >Submit</v-btn>
+          >{{ $t("registerDialog.submitButton") }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -204,23 +218,33 @@ export default {
     lastName: { required, maxLength: maxLength(20) },
     email: { required, email },
     birthDate: { required },
-    password: { required, passwordRegexValidation, minLength: minLength(8) },
+    password: {
+      required,
+      passwordRegexValidation,
+      minLength: minLength(8),
+      maxLength: maxLength(40)
+    },
     passwordConfirmation: {
       required,
       passwordRegexValidation,
       minLength: minLength(8),
+      maxLength: maxLength(40),
       sameAsPassword: sameAs("password")
     },
-    city: { required },
+    city: { required, maxLength: maxLength(20) },
     postcode: { required },
-    addressLine1: { required },
-
-    select: { required },
-    checkbox: {
+    addressLine1: { required, maxLength: maxLength(40) },
+    checkboxTermsConditions: {
       checked(val) {
         return val;
       }
-    }
+    },
+    select: { required }
+    // checkbox: {
+    //   checked(val) {
+    //     return val;
+    //   }
+    // }
   },
 
   props: {
@@ -239,6 +263,7 @@ export default {
       showPasswordConfirmation: false,
       birthDate: null,
       birthDateMenu: false,
+      checkboxTermsConditions: false,
       //Address
       addressLine1: "",
       addressLine2: "",
@@ -268,84 +293,115 @@ export default {
       !this.$v.checkbox.checked && errors.push('You must agree to continue!')
       return errors
     },*/,
-    selectErrors() {
-      const errors = [];
-      if (!this.$v.select.$dirty) return errors;
-      !this.$v.select.required && errors.push("Item is required.");
-      return errors;
-    },
+    // selectErrors() {
+    //   const errors = [];
+    //   if (!this.$v.select.$dirty) return errors;
+    //   !this.$v.select.required && errors.push("Item is required.");
+    //   return errors;
+    // },
     firstNameErrors() {
       const errors = [];
       if (!this.$v.firstName.$dirty) return errors;
       !this.$v.firstName.maxLength &&
-        errors.push("First name must be at most 20 characters long.");
-      !this.$v.firstName.required && errors.push("First name is required.");
+        errors.push(this.$t("registerDialog.firstNameFieldLengthError"));
+      !this.$v.firstName.required &&
+        errors.push(this.$t("registerDialog.firstNameFieldRequiredError"));
       return errors;
     },
     lastNameErrors() {
       const errors = [];
       if (!this.$v.lastName.$dirty) return errors;
       !this.$v.lastName.maxLength &&
-        errors.push("Last name must be at most 20 characters long.");
-      !this.$v.lastName.required && errors.push("Last name is required.");
+        errors.push(this.$t("registerDialog.lastNameFieldLengthError"));
+      !this.$v.lastName.required &&
+        errors.push(this.$t("registerDialog.lastNameFieldRequiredError"));
       return errors;
     },
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("Must be valid e-mail.");
-      !this.$v.email.required && errors.push("E-mail is required.");
+      !this.$v.email.email &&
+        errors.push(this.$t("registerDialog.emailFieldValidError"));
+      !this.$v.email.required &&
+        errors.push(this.$t("registerDialog.emailFieldRequiredError"));
       return errors;
     },
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.required && errors.push("Password is required.");
+      !this.$v.password.required &&
+        errors.push(this.$t("registerDialog.passwordFieldRequiredError"));
       !this.$v.password.passwordRegexValidation &&
-        errors.push(
-          "Password must contain at least 1 upper-case, lower-case, special character and number."
-        );
+        errors.push(this.$t("registerDialog.passwordFieldRegexError"));
       !this.$v.password.minLength &&
-        errors.push("Password must be at least 8 characters long.");
+        errors.push(
+          this.$t("registerDialog.passwordFieldMinLengthError", { n: 8 })
+        );
+      !this.$v.password.maxLength &&
+        errors.push(
+          this.$t("registerDialog.passwordFieldMaxLengthError", { n: 40 })
+        );
       return errors;
     },
     passwordConfirmationErrors() {
       const errors = [];
       if (!this.$v.passwordConfirmation.$dirty) return errors;
       !this.$v.passwordConfirmation.required &&
-        errors.push("Password is required.");
+        errors.push(this.$t("registerDialog.passwordConfFieldRequiredError"));
       !this.$v.passwordConfirmation.passwordRegexValidation &&
-        errors.push(
-          "Password must contain at least 1 upper-case, lower-case, special character and number."
-        );
+        errors.push(this.$t("registerDialog.passwordConfFieldRegexError"));
       !this.$v.passwordConfirmation.minLength &&
-        errors.push("Password must be at least 8 characters long.");
+        errors.push(this.$t("registerDialog.passwordConfFieldMinLengthError"), {
+          n: 8
+        });
+      !this.$v.password.maxLength &&
+        errors.push(
+          this.$t("registerDialog.passwordConfFieldMaxLengthError", { n: 40 })
+        );
       !this.$v.passwordConfirmation.sameAsPassword &&
-        errors.push("Password must be identical.");
+        errors.push(this.$t("registerDialog.passwordConfFieldIdenticalError"));
       return errors;
     },
     birthDateErrors() {
       const errors = [];
       if (!this.$v.birthDate.$dirty) return errors;
-      !this.$v.birthDate.required && errors.push("Birthdate is required.");
+      !this.$v.birthDate.required &&
+        errors.push(this.$t("registerDialog.birthdateFieldRequiredError"));
       return errors;
     },
     cityErrors() {
       const errors = [];
       if (!this.$v.city.$dirty) return errors;
-      !this.$v.city.required && errors.push("City is required.");
+      !this.$v.city.required &&
+        errors.push(this.$t("registerDialog.cityFieldRequiredError"));
+      !this.$v.city.maxLength &&
+        errors.push(this.$t("registerDialog.cityFieldLengthError"));
       return errors;
     },
     postcodeErrors() {
       const errors = [];
       if (!this.$v.postcode.$dirty) return errors;
-      !this.$v.postcode.required && errors.push("Postcode is required.");
+      !this.$v.postcode.required &&
+        errors.push(this.$t("registerDialog.postcodeFieldRequiredError"));
       return errors;
     },
     addressLine1Errors() {
       const errors = [];
       if (!this.$v.addressLine1.$dirty) return errors;
-      !this.$v.addressLine1.required && errors.push("Addressline is required.");
+      !this.$v.addressLine1.required &&
+        errors.push(this.$t("registerDialog.addressLine1FieldRequiredError"));
+      !this.$v.addressLine1.maxLength &&
+        errors.push(this.$t("registerDialog.addressLine1FieldLengthError"));
+      return errors;
+    },
+
+    checkboxTermsConditionsErrors() {
+      const errors = [];
+      if (!this.$v.checkboxTermsConditions.$dirty) return errors;
+      !this.$v.checkboxTermsConditions.checked &&
+        errors.push(
+          this.$t("registerDialog.checkboxTermsConditionsRequiredError")
+        );
       return errors;
     },
     birthDateFormat() {
@@ -371,7 +427,8 @@ export default {
         !this.$v.passwordConfirmation.$invalid &&
         !this.$v.addressLine1.$invalid &&
         !this.$v.postcode.$invalid &&
-        !this.$v.city.$invalid
+        !this.$v.city.$invalid &&
+        !this.$v.checkboxTermsConditions.$invalid
       ) {
         //Register User with input data
         return false;
@@ -382,6 +439,8 @@ export default {
   },
 
   methods: {
+    ...mapActions("account", ["register"]),
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     //handleAvailabilityRequest: async function (event) {
     submitRegistration: async function() {
       /*
@@ -406,7 +465,7 @@ export default {
         firstName: this.firstName,
         lastName: this.lastName,
         email: this.email,
-        birthdate: this.birthdate,
+        birthdate: this.birthDateFormat(),
         password: this.password,
         city: this.city,
         postcode: this.postcode,
@@ -415,10 +474,9 @@ export default {
       console.log(user);
       //await userServices.registerUser(requestBody);
       this.register(user);
+      this.addSuccessSnackbar("Successfully registered!");
       this.show = false;
     },
-
-    ...mapActions("account", ["register"]),
 
     cancel() {
       this.show = false;

@@ -1,34 +1,35 @@
 <template>
-  <v-card width="250px" height="350px">
-    <v-speed-dial
-      v-if="modifiable"
-      absolute
-      top
-      right
-      v-model="fab"
-      direction="left"
-      :open-on-hover="false"
-      transition="scale-transition"
-    >
-      <template v-slot:activator>
-        <v-btn v-model="fab" color="pink" dark fab small>
-          <v-icon v-if="fab">
-            mdi-close
-          </v-icon>
-          <v-icon v-else>
-            mdi-dots-horizontal
-          </v-icon>
+  <div>
+    <v-card :disabled="cardDisabled">
+      <v-speed-dial
+        v-if="modifiable"
+        absolute
+        top
+        right
+        v-model="fab"
+        direction="left"
+        :open-on-hover="true"
+        transition="scale-transition"
+      >
+        <template v-slot:activator>
+          <v-btn v-model="fab" color="pink" dark fab small>
+            <v-icon v-if="fab">
+              mdi-close
+            </v-icon>
+            <v-icon v-else>
+              mdi-dots-horizontal
+            </v-icon>
+          </v-btn>
+        </template>
+        <v-btn fab dark small color="orange" @click.stop="editProduct()">
+          <v-icon>mdi-pencil</v-icon>
         </v-btn>
-      </template>
-      <v-btn fab dark small color="orange" @click.stop="editProduct()">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-speed-dial>
+        <v-btn fab dark small color="red" @click.stop="deleteProduct()">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </v-speed-dial>
 
-    <!-- <v-navigation-drawer stateless permanent floating right>
+      <!-- <v-navigation-drawer stateless permanent floating right>
       <v-btn fab dark small color="red" @click.stop="deleteProduct()">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
@@ -36,7 +37,7 @@
         <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-navigation-drawer> -->
-    <!-- <template>
+      <!-- <template>
       <v-layout column top left absolute>
         <v-btn fab dark small color="red" @click.stop="deleteProduct()">
           <v-icon>mdi-pencil</v-icon>
@@ -47,32 +48,61 @@
       </v-layout>
     </template> -->
 
-    <!-- <v-container absolute top right> class="fab-container"
+      <!-- <v-container absolute top right> class="fab-container"
       <v-btn fab dark small color="red" @click.stop="deleteProduct()">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
       <v-btn fab dark small color="red" @click.stop="deleteProduct()">
         <v-icon>mdi-delete</v-icon>
       </v-btn>
-    </v-container> -->
+    </v-container>width="250px" -->
 
-    <v-img height="150px" width="250px" :src="product.imgSrc"></v-img>
+      <v-img height="150px" :src="product.imgSrc" class="rounded-t"></v-img>
 
-    <v-card-title>{{ product.title }}</v-card-title>
-    <v-card-text>
-      <div>
-        {{ descriptionComputed }}
-      </div>
-      <!-- <v-divider class="mx-2"></v-divider> -->
-      <!-- <v-card-title class="text-right"
+      <v-card-title>
+        <div>
+          {{ product.title }}
+        </div>
+        <!--       <div class="text-right">
+        <v-rating
+          background-color="orange lighten-3"
+          :value="4"
+          color="orange"
+          dense
+          size="14"
+          half-increments
+          readonly
+        />
+      </div> -->
+      </v-card-title>
+
+      <!-- v-model="avgRatingComputed"-->
+      <v-card-text>
+        <div>
+          {{ descriptionComputed }}
+        </div>
+        <!-- <v-divider class="mx-2"></v-divider> -->
+        <!-- <v-card-title class="text-right"
       >{{ product.price }} {{ product.currencySymbol }}</v-card-title
     > -->
-    </v-card-text>
-    <p class="text-right mx-2">
-      {{ product.price }}{{ product.currencySymbol }}
-    </p>
-
-    <!-- <v-row>
+        <div class="text-right black--text text-body-1 font-weight-bold">
+          {{ product.price }}{{ product.currencySymbol }}
+        </div>
+        <div class="text-right grey--text text-caption">
+          plus shipping costs
+        </div>
+        <div class="text-right text-body-2">
+          <div :class="stockStatusColor + '--text'">
+            {{ stockStatusLabel }}
+          </div>
+        </div>
+        <!--       <div class="text-right warning--text text-body-2">
+        only few left
+      </div>
+      <div class="text-right error--text text-body-2">
+        out of stock
+      </div> -->
+        <!-- <v-row>
         <v-col cols="12" lg="2">
           <v-btn
             class="mx-2"
@@ -103,7 +133,7 @@
         </v-col>
       </v-row> class="mx-2"-->
 
-    <!--     <v-row>
+        <!--     <v-row>
       <v-col cols="12" lg="2">
         <v-btn
           fab
@@ -133,34 +163,219 @@
         <v-btn small @click.stop="putInCart(product)">To bag</v-btn>
       </v-col>
     </v-row> -->
-
-    <v-row>
-      <v-btn
-        class="ml-7 mr-2 mb-2"
-        fab
-        dark
-        x-small
-        color="indigo"
-        @click.stop="decreaseAmountByOne()"
-      >
-        <v-icon dark>mdi-minus</v-icon>
-      </v-btn>
-      <div class="ml-2 mb-2">
-        {{ this.amountTextField }}
-      </div>
-      <v-btn
-        class="ml-3 mr-2 mb-2"
-        fab
-        dark
-        x-small
-        color="indigo"
-        @click.stop="increaseAmountByOne()"
-      >
-        <v-icon dark>mdi-plus</v-icon>
-      </v-btn>
-      <v-btn class="mx-2" small @click.stop="putInCart(product)">To bag</v-btn>
-    </v-row>
-  </v-card>
+        <!-- <v-card v-if="modifiable == false" flat>
+        <v-row align="center" class="mt-3" justify="center">
+          <v-btn
+            class="ml-3 mr-2"
+            width="45"
+            dark
+            small
+            color="indigo"
+            @click.stop="decreaseAmountByOne()"
+          >
+            <v-icon dark>mdi-minus</v-icon>
+          </v-btn>
+          <div class="mx-2 text-body-1 font-weight-bold" width="40px">
+            {{ this.amountTextField }}
+          </div>
+          <v-btn
+            class="ml-3 mr-2"
+            width="45"
+            dark
+            small
+            color="indigo"
+            @click.stop="increaseAmountByOne()"
+          >
+            <v-icon dark>mdi-plus</v-icon>
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            class="mr-3"
+            width="45"
+            small
+            @click.stop="putInCart(product)"
+            color="pink"
+            dark
+          >
+            <v-icon>mdi-cart-plus</v-icon>
+          </v-btn>
+        </v-row>
+      </v-card> -->
+        <!--       <v-card v-if="modifiable == false" flat class="mt-5">
+        <v-select :items="quantityItems" label="Quantity" dense>
+          <template v-slot:append-outer>
+            <v-btn
+              class="mr-3"
+              small
+              fab
+              @click.stop="putInCart(product)"
+              color="pink"
+              dark
+            >
+              <v-icon>mdi-cart-plus</v-icon>
+            </v-btn>
+          </template>
+        </v-select>
+      </v-card> -->
+        <v-card v-if="modifiable === false" flat class="mt-5">
+          <v-row class="mt-3" no-gutters>
+            <v-col cols="12" xs="5" sm="9" md="9" lg="9" xl="9">
+              <v-select
+                :items="quantityItems"
+                v-model="productQuantity"
+                label="Quantity"
+                dense
+              ></v-select>
+            </v-col>
+            <v-col cols="12" xs="3" sm="1" md="1" lg="1" xl="1">
+              <v-btn
+                class="mx-3"
+                small
+                fab
+                @click.stop="putInCart(product)"
+                color="pink"
+                dark
+              >
+                <v-icon>mdi-cart-plus</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+        <div v-else>
+          <v-divider />
+          <div class="text-left black--text text-body-1 mt-3">
+            In Stock: <b>{{ product.stockAmount || 0 }}</b> units
+          </div>
+          <!-- <v-row>
+          <v-btn
+            class=""
+            width="40"
+            x-small
+            dark
+            color="blue-grey darken-1"
+            @click.stop="increaseStock(1)"
+          >
+            +1
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            width="40"
+            dark
+            x-small
+            color="grey darken-3"
+            @click.stop="increaseStock(5)"
+          >
+            +5
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            width="40"
+            dark
+            x-small
+            color="green lighten-1"
+            @click.stop="increaseStock(10)"
+          >
+            +10
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            width="40"
+            dark
+            x-small
+            color="green lighten-1"
+            @click.stop="increaseStock(50)"
+          >
+            +50
+          </v-btn>
+          <v-btn
+            class="ml-1"
+            width="40"
+            dark
+            x-small
+            color="green lighten-1"
+            @click.stop="increaseStock(100)"
+          >
+            +100
+          </v-btn>
+        </v-row>
+        <v-row>
+          <v-btn
+            class="mt-1"
+            width="40"
+            dark
+            x-small
+            color="blue-grey lighten-2"
+            @click.stop="decreaseStock(1)"
+          >
+            -1
+          </v-btn>
+          <v-btn
+            class="ml-1 mt-1"
+            width="40"
+            dark
+            x-small
+            color="grey darken-1"
+            @click.stop="decreaseStock(5)"
+          >
+            -5
+          </v-btn>
+          <v-btn
+            class="ml-1 mt-1"
+            width="40"
+            dark
+            x-small
+            color="red lighten-1"
+            @click.stop="decreaseStock(10)"
+          >
+            -10
+          </v-btn>
+          <v-btn
+            class="ml-1 mt-1"
+            width="40"
+            dark
+            x-small
+            color="red lighten-1"
+            @click.stop="decreaseStock(50)"
+          >
+            -50
+          </v-btn>
+          <v-btn
+            class="ml-1 mt-1"
+            width="40"
+            dark
+            x-small
+            color="red lighten-1"
+            @click.stop="decreaseStock(100)"
+          >
+            -100
+          </v-btn>
+        </v-row> -->
+          <div>
+            <v-text-field
+              v-model="stockAmount"
+              label="Update Stock"
+              type="number"
+              ><template v-slot:append-outer>
+                <v-btn icon @click="updateStock()">
+                  <v-icon color="primary">mdi-content-save</v-icon>
+                </v-btn>
+              </template>
+            </v-text-field>
+          </div>
+        </div>
+      </v-card-text>
+    </v-card>
+    <div v-if="cardDisabled" id="notificationButtonDiv">
+      <v-tooltip bottom nudge-top="5px">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn dark small color="primary" class="" v-bind="attrs" v-on="on">
+            <v-icon>mdi-email</v-icon>
+          </v-btn>
+        </template>
+        <span>Get a notification when the product is available again</span>
+      </v-tooltip>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -179,7 +394,10 @@ export default {
   data() {
     return {
       amountTextField: 1,
-      fab: false
+      fab: false,
+      stockAmount: "",
+      productQuantity: 0,
+      quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
     };
   },
   computed: {
@@ -212,6 +430,44 @@ export default {
         ).toFixed(2);
         return pricePerGram;
       }
+    },
+    stockStatusLabel: {
+      get() {
+        if (parseInt(this.product.stockAmount) >= 10) {
+          return "available";
+        } else if (parseInt(this.product.stockAmount) > 0) {
+          return "only few left";
+        } else {
+          console.log(this.product.stockAmount);
+          console.log(parseInt(this.product.stockAmount));
+          return "out of stock";
+        }
+      }
+    },
+    stockStatusColor: {
+      get() {
+        if (parseInt(this.product.stockAmount) >= 10) {
+          return "success";
+        } else if (parseInt(this.product.stockAmount) > 0) {
+          return "warning";
+        } else {
+          return "error";
+        }
+      }
+    },
+    cardDisabled: {
+      //disables the complete card when product is out of stock (only for non store owner)
+      get() {
+        if (this.modifiable === false) {
+          if (parseInt(this.product.stockAmount) <= 0) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
     }
   },
   methods: {
@@ -230,7 +486,7 @@ export default {
         //User is not logged in
         //Check if shoppingCart in local storage already
         var products = [];
-        var payload = [product, this.amountTextField];
+        var payload = [product, parseInt(this.productQuantity)];
         //Check if cart already created in local storage and create new one if not
         if (localStorage.getItem("cart") == null) {
           products[0] = payload;
@@ -241,11 +497,11 @@ export default {
           //check if product already in cart
           var found = false;
           for (var i = 0; i < currentCart.length; i++) {
-            if (product.id == currentCart[i][0].id) {
+            if (product.id === currentCart[i][0].id) {
               //Product already in cart
               found = true;
               currentCart[i][1] =
-                currentCart[i][1] + parseInt(this.amountTextField);
+                currentCart[i][1] + parseInt(this.productQuantity);
               localStorage.setItem("cart", JSON.stringify(currentCart));
               break;
             }
@@ -261,7 +517,7 @@ export default {
         this.addProduct({
           email: this.user.email,
           product: product,
-          amount: this.amountTextField
+          amount: this.productQuantity
         });
       }
     },
@@ -280,6 +536,28 @@ export default {
 
     editProduct() {
       this.$emit("edit-product", this.product);
+    },
+
+    increaseStock(amount) {
+      console.log(amount);
+    },
+
+    decreaseStock(amount) {
+      console.log(amount);
+    },
+
+    updateStock: async function() {
+      var data = {
+        storeId: this.$route.params.id,
+        productId: this.product.productId,
+        stockAmount: this.stockAmount
+      };
+      this.$emit("overlay-start");
+      var response = await storeService.updateStockAmount(data);
+      console.log(response);
+      this.$emit("update-stock", this.product.productId, this.stockAmount);
+      this.$emit("overlay-end");
+      this.stockAmount = "";
     }
   }
 };

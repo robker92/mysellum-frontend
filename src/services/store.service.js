@@ -53,6 +53,15 @@ async function getFilteredStores2(filterObject) {
     return response.data;
 };
 
+async function getStoresByLocation(mapBoundaries) {
+    let response = await storesClient.get(
+        `/getStoresByLocation/${mapBoundaries.min_lat}/${mapBoundaries.max_lat}/${mapBoundaries.min_lng}/${mapBoundaries.max_lng}`
+    );
+    console.log(response.data)
+
+    return response.data;
+};
+
 async function addReview(data) {
 
     let response = await storesClient.post(
@@ -127,7 +136,6 @@ async function deleteStoreImage(data) {
 };
 
 async function addProduct(data) {
-    console.log("@ service")
     let response = await storesClient.post(
         '/addProduct',
         data
@@ -138,7 +146,6 @@ async function addProduct(data) {
 };
 
 async function editProduct(data) {
-    console.log("@ service")
     let response = await storesClient.post(
         `/editProduct/${data.storeId}/${data.productId}`,
         data
@@ -149,9 +156,18 @@ async function editProduct(data) {
 };
 
 async function deleteProduct(data) {
-    console.log("@ service")
     let response = await storesClient.delete(
         `/deleteProduct/${data.storeId}/${data.productId}`,
+        data
+    );
+    console.log(response.data)
+
+    return response.data;
+};
+
+async function updateStockAmount(data) {
+    let response = await storesClient.patch(
+        `/updateStockAmount/${data.storeId}/${data.productId}`,
         data
     );
     console.log(response.data)
@@ -164,6 +180,7 @@ export const storeService = {
     getAllStores,
     getFilteredStores,
     getFilteredStores2,
+    getStoresByLocation,
     addReview,
     createStore,
     editStore,
@@ -173,5 +190,6 @@ export const storeService = {
     deleteReview,
     addStoreImage,
     deleteStoreImage,
-    deleteProduct
+    deleteProduct,
+    updateStockAmount
 };

@@ -1,6 +1,7 @@
 <template>
   <div class="mainDiv">
-    <v-speed-dial
+    <!-- <p>{{ $t("translation1") }}</p> -->
+    <!-- <v-speed-dial
       v-if="checkForStoreOwner"
       absolute
       top
@@ -30,21 +31,15 @@
         <v-icon color="pink">mdi-pencil</v-icon>
         Edit Store
       </v-btn>
-    </v-speed-dial>
+    </v-speed-dial> -->
 
     <!-- <div v-if="checkForStoreOwner"> -->
-    <v-btn
-      v-if="checkForStoreOwner"
-      absolut
-      top
-      right
-      color="pink"
-      outlined
-      @click="showEditStoreDialog = true"
-    >
-      <v-icon color="pink">mdi-pencil</v-icon>
-      Edit Store
-    </v-btn>
+    <div v-if="checkForStoreOwner" class="text-right">
+      <v-btn color="pink" outlined @click="showEditStoreDialog = true">
+        <v-icon color="pink">mdi-pencil</v-icon>
+        Edit Store
+      </v-btn>
+    </div>
     <!--       <v-btn
         v-if="editMode == false"
         color="pink"
@@ -121,16 +116,42 @@
       </v-row>
     </div>
     <div v-else> -->
-    <!--style="width:500px;" -->
-    <v-row>
-      <v-col cols="12" lg="5">
+    <!--style="width:500px;" 
+    style="border-style: solid; border: 2px solid black; border-radius: 6px;"-->
+    <v-row align="start">
+      <v-col cols="12" xs="1" sm="1" md="1" lg="1" xl="1">
+        <div
+          v-for="(img, i) in profileData.images"
+          :id="'imageDiv' + i"
+          :key="i"
+          class="mb-2"
+          :style="
+            i === 0
+              ? 'border: 2px solid black; border-radius: 6px; opacity: 1;'
+              : 'opacity: 0.5;'
+          "
+        >
+          <v-card flat @click="changeImages(i)" :id="'imageCard' + i">
+            <v-img
+              :src="img.src"
+              :aspect-ratio="4 / 3"
+              max-width="80px"
+              max-height="80px"
+              class="rounded"
+            />
+          </v-card>
+        </div>
+      </v-col>
+      <v-col cols="12" xs="5" sm="5" md="5" lg="5" xl="5">
         <v-card flat>
           <v-carousel
             v-if="profileData"
-            cycle
+            v-model="currentImgIndex"
             show-arrows-on-hover
             height="400px"
+            hide-delimiters
           >
+            <!--cycle @change="carouselImageChanged" -->
             <v-carousel-item
               v-for="(img, i) in profileData.images"
               :key="i"
@@ -167,8 +188,10 @@
           </v-card-title> -->
         </v-card>
       </v-col>
-      <v-col cols="12" lg="7">
-        <div class="text-h4" v-if="profileData">{{ profileData.title }}</div>
+      <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+        <div class="text-h4 mb-3" v-if="profileData">
+          {{ profileData.title }}
+        </div>
         <v-chip
           outlined
           class="ma-1"
@@ -178,7 +201,7 @@
           >{{ tag }}</v-chip
         >
         <div
-          class="text-body-1"
+          class="text-body-1 mt-4"
           v-if="profileData"
           v-html="profileData.description"
         />
@@ -191,6 +214,7 @@
     <EditStoreDialog
       v-model="showEditStoreDialog"
       :profileData="profileData"
+      :mapData="mapData"
       v-on:edit-store="submitEditStore"
       v-on:overlay-start="startLoadingOverlay"
       v-on:overlay-end="endLoadingOverlay"
@@ -354,7 +378,7 @@
       </v-tab>
 
       <v-tab-item>
-        <v-container v-if="productList">
+        <div v-if="productList">
           <v-row>
             <v-btn
               v-if="checkForStoreOwner"
@@ -368,12 +392,12 @@
           </v-row>
           <v-row>
             <v-col
-              cols="12"
-              xs="12"
+              cols="10"
+              xs="10"
               sm="6"
-              md="4"
-              lg="3"
-              xl="2"
+              md="2"
+              lg="2"
+              xl="3"
               v-for="prod in productList"
               v-bind:key="prod.productId"
             >
@@ -384,10 +408,11 @@
                 v-on:edit-product="showProductDialogEdit"
                 v-on:overlay-start="startLoadingOverlay"
                 v-on:overlay-end="endLoadingOverlay"
+                v-on:update-stock="updateStockAmount"
               />
             </v-col>
           </v-row>
-        </v-container>
+        </div>
       </v-tab-item>
       <!--       <v-tab-item>
 
@@ -402,10 +427,12 @@
       </v-tab-item> -->
       <v-tab-item>
         <v-row>
-          <div class="text-left">
+          <div class="text-left text-body-1 font-weight-bold ml-5">
             Average Rating:
             {{ this.avgRatingComputed }}
             ({{ profileData.reviews ? profileData.reviews.length : 0 }})
+            {{ profileData.reviews ? profileData.reviews.length : 0 }} Reviews
+            ({{ this.avgRatingComputed }})
             <v-rating
               v-model="avgRatingComputed"
               background-color="orange lighten-3"
@@ -421,12 +448,16 @@
             dark
             color="pink"
             class="ml-5"
+            :disabled="reviewButtonDisabled"
           >
             <v-icon>mdi-plus</v-icon>
             Add Review
           </v-btn>
         </v-row>
         <!--            absolute
+        reviewButtonDisabled
+        checkAddReviewButtonDisabled
+        reviewButtonDisabled
             top
             right -->
         <ReviewDialog
@@ -461,6 +492,14 @@
         </div>
       </v-tab-item>
     </v-tabs>
+    <v-divider class="my-3" />
+    <!--  <div class="text-left text-">
+      Payment Methods:
+    </div> -->
+    <v-card class="mx-auto mb-5" v-if="dataset" flat>
+      <v-card-title>Payment Methods</v-card-title>
+      <v-img src="../assets/payment-methods-logo.jpg" width="500px" />
+    </v-card>
     <v-divider />
     <v-row>
       <v-col cols="12" lg="6">
@@ -471,12 +510,12 @@
               Store GmbH
             </div>
             <div>
-              {{ dataset.mapData.address.street }}
-              {{ dataset.mapData.address.houseNumber }}
+              {{ dataset.mapData.address.addressLine1 }}
             </div>
+            <!-- {{ dataset.mapData.address.houseNumber }} -->
             <div>
               {{ dataset.mapData.address.city }}
-              {{ dataset.mapData.address.postalCode }}
+              {{ dataset.mapData.address.postcode }}
             </div>
             <div>
               Lat: {{ dataset.mapData.location.lat }} Lng:
@@ -564,6 +603,8 @@ export default {
         "Wine",
         "Beer"
       ],
+      currentImgIndex: 0,
+      //reviewButtonDisabled: false,
       //Pagination
       currentPage: 1,
       reviewsPerPage: 5
@@ -576,6 +617,21 @@ export default {
         setTimeout(() => {
           this.overlay = false;
         }, 3000);
+    },
+    currentImgIndex(val) {
+      console.log(val);
+      for (let i = 0; i < this.profileData.images.length; i++) {
+        if (val !== i) {
+          //styles for other images
+          document.getElementById(`imageDiv${i}`).style = "none";
+          document.getElementById(`imageDiv${i}`).style.opacity = "0.5";
+        }
+      }
+      //styles for chosen image
+      document.getElementById(`imageDiv${val}`).style.border =
+        "2px solid black";
+      document.getElementById(`imageDiv${val}`).style.borderRadius = "6px";
+      document.getElementById(`imageDiv${val}`).style.opacity = "1";
     }
   },
 
@@ -598,6 +654,7 @@ export default {
       return this.sliceStart + this.reviewsPerPage;
     },
     checkForStoreOwner() {
+      //check if the store owner is viewing his own store
       if (this.dataset != null) {
         if (this.user.email == this.dataset.userEmail) {
           return true;
@@ -624,6 +681,35 @@ export default {
       get() {
         return Math.round(this.avgRating * 10) / 10;
       }
+    },
+    reviewButtonDisabled: {
+      //Add Review Button disabled if a review was already submitted by this user
+      get() {
+        if (this.loggedIn === false) {
+          //if no user logged in -> disabled = true
+          return true;
+        } else if (this.checkForStoreOwner === true) {
+          //if store owner -> disabled = true
+          return true;
+        } else if (this.reviewAlreadySubmitted === true) {
+          //if review already submitted -> disabled = true
+          return true;
+        }
+        return false;
+      }
+    },
+    reviewAlreadySubmitted: {
+      //check if logged in user already submitted a review for this store
+      get() {
+        if (this.dataset != null) {
+          for (var i = 0; i < this.profileData.reviews.length; i++) {
+            if (this.profileData.reviews[i].userEmail === this.user.email) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
     }
 
     //...mapState("shoppingCart", ["shoppingCart", "counter"])
@@ -639,6 +725,12 @@ export default {
     this.productList = response.profileData.products;
     this.tagsString = this.profileData.tags.join(", ");
     this.avgRating = parseFloat(this.profileData.avgRating);
+    //Check if a user already submitted a review
+    // for (var i = 0; i < response.profileData.reviews.length; i++) {
+    //   if (response.profileData.reviews[i].userEmail === this.user.email) {
+    //     this.reviewButtonDisabled = true;
+    //   }
+    // }
   },
   methods: {
     //...mapActions("shoppingCart", ["addProduct", "removeProduct"]),
@@ -656,6 +748,30 @@ export default {
       this.drawer = true;
       //this.overlay = true;
     },
+
+    // carouselImageChanged(index) {
+    //   for (let i = 0; i < this.profileData.images.length; i++) {
+    //     if (index !== i) {
+    //       //styles for other images
+    //       document.getElementById(`imageDiv${i}`).style = "none";
+    //       document.getElementById(`imageDiv${i}`).style.opacity = "0.6";
+    //     }
+    //   }
+    //   //styles for chosen image
+    //   document.getElementById(`imageDiv${index}`).style.border =
+    //     "2px solid black";
+    //   document.getElementById(`imageDiv${index}`).style.borderRadius = "6px";
+    //   document.getElementById(`imageDiv${index}`).style.opacity = "1";
+    // },
+
+    changeImages(index) {
+      // console.log(evt.target.id.slice(-1));
+      // console.log(this.currentImgIndex);
+      //this.currentImgIndex = parseInt(evt.target.id.slice(-1));
+      this.currentImgIndex = index;
+      //console.log(this.currentImgIndex);
+    },
+
     /*     saveStoreChanges: async function() {
       this.editMode = false;
       var payload = {
@@ -682,6 +798,12 @@ export default {
       this.profileData.description = data.description;
       this.profileData.tags = data.tags;
       this.profileData.images = data.images;
+
+      this.mapData.address.addressLine1 = data.address.addressLine1;
+      this.mapData.address.postcode = data.address.postcode;
+      this.mapData.address.city = data.address.city;
+      this.mapData.location.lat = data.location.lat;
+      this.mapData.location.lng = data.location.lng;
       this.overlay = false;
     },
     // deleteImage: async function(index) {
@@ -761,6 +883,7 @@ export default {
       this.productToEdit.title = value;
     },
     editExistingProduct(updatedProduct) {
+      console.log(updatedProduct);
       var index = this.profileData.products.findIndex(
         prd => prd.productId === updatedProduct.productId
       );
@@ -768,6 +891,12 @@ export default {
       this.profileData.products.splice(index, 1, updatedProduct);
     },
 
+    updateStockAmount(productId, stockAmount) {
+      var indexOfProduct = this.profileData.products.findIndex(
+        r => r.productId === productId
+      );
+      this.profileData.products[indexOfProduct].stockAmount = stockAmount;
+    },
     //Overlay
     startLoadingOverlay() {
       this.overlay = true;

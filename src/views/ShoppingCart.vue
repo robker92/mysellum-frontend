@@ -64,79 +64,101 @@
 
         <v-stepper-items>
           <v-stepper-content step="1">
-            <v-container v-if="this.user.shoppingCart">
-              <div class="text-h5 text-left font-weight-medium mb-5">
-                Your Shopping Cart
-              </div>
-              <!-- text-h4 text-sm-h4 text-md-h4 text-lg-h3 text-xl-h3 -->
-              <ShoppingCartListItem
-                v-for="(prod, index) in this.user.shoppingCart"
-                v-bind:key="index"
-                v-bind:product="prod[0]"
-                v-bind:amount="prod[1]"
-                :modifiable="true"
-              />
-              <v-divider />
-              <v-row no-gutters height="60px">
-                <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
-                  <p>Shipping costs:</p>
-                </v-col>
-                <v-col cols="12" sm="1">
-                  <p>0.00€</p>
-                </v-col>
-              </v-row>
+            <v-card flat>
+              <v-container v-if="this.user.shoppingCart">
+                <div class="text-h5 text-left font-weight-medium mb-5">
+                  Your Shopping Cart
+                </div>
+                <!-- text-h4 text-sm-h4 text-md-h4 text-lg-h3 text-xl-h3 -->
+                <ShoppingCartListItem
+                  v-for="(prod, index) in this.user.shoppingCart"
+                  v-bind:key="index"
+                  v-bind:product="prod[0]"
+                  v-bind:amount="prod[1]"
+                  :modifiable="true"
+                />
+                <v-divider />
+                <v-row no-gutters height="60px">
+                  <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
+                    <div class="text-left text-body-1">Shipping costs:</div>
+                  </v-col>
+                  <v-col cols="12" sm="1">
+                    <div class="text-right text-body-1">0.00€</div>
+                  </v-col>
+                </v-row>
 
-              <v-row no-gutters height="60px">
-                <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
-                  <p>Total costs:</p>
-                </v-col>
-                <v-col cols="12" sm="1">
-                  <p>{{ computedTotalSum }}€</p>
-                </v-col>
-              </v-row>
-            </v-container>
+                <v-row no-gutters height="60px">
+                  <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
+                    <div class="text-left text-body-1">Total costs:</div>
+                  </v-col>
+                  <v-col cols="12" sm="1">
+                    <div class="text-right text-body-1">
+                      {{ computedTotalSum }}€
+                    </div>
+                  </v-col>
+                </v-row>
 
-            <v-btn
-              color="primary"
-              @click="goToStep2"
-              :disabled="this.user.shoppingCart.length > 0 ? false : true"
-            >
-              To Checkout
-            </v-btn>
+                <v-card-actions class="mt-3">
+                  <v-spacer />
+                  <v-btn
+                    color="primary"
+                    @click="goToStep2"
+                    :disabled="this.user.shoppingCart.length > 0 ? false : true"
+                  >
+                    To Checkout
+                  </v-btn>
+                </v-card-actions>
+              </v-container>
+            </v-card>
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <div class="text-h5 text-left font-weight-medium mb-4">
-              Checkout - Adresses and Payment
-            </div>
-            <ShoppingCartCheckout
-              v-on:step2-continue-button="continueButtonStep2"
-            />
-
-            <v-btn text @click="e1 = e1 - 1">
-              Back
-            </v-btn>
-            <v-btn
-              color="primary"
-              @click="goToStep3"
-              :disabled="step2ContinueDisabled"
-            >
-              To final Overview
-            </v-btn>
+            <v-card flat>
+              <v-container>
+                <div class="text-h5 text-left font-weight-medium mb-4">
+                  Checkout - Adresses and Payment
+                </div>
+                <ShoppingCartCheckout
+                  v-on:step2-continue-button="continueButtonStep2"
+                />
+                <v-card-actions class="mt-3">
+                  <v-spacer />
+                  <v-btn text @click="e1 = e1 - 1">
+                    Back
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="goToStep3"
+                    :disabled="step2ContinueDisabled"
+                  >
+                    To final Overview
+                  </v-btn>
+                </v-card-actions>
+              </v-container>
+            </v-card>
           </v-stepper-content>
 
           <v-stepper-content step="3">
-            <div class="text-h5 text-left font-weight-medium mb-4">
-              Final Overview
-            </div>
-            <ShoppingCartFinalOverview :computedTotalSum="computedTotalSum" />
+            <v-card flat>
+              <v-container>
+                <div class="text-h5 text-left font-weight-medium mb-4">
+                  Final Overview
+                </div>
+                <ShoppingCartFinalOverview
+                  :computedTotalSum="computedTotalSum"
+                />
 
-            <v-btn text @click="e1 = e1 - 1">
-              back
-            </v-btn>
-            <v-btn color="primary" @click="createOrder">
-              Complete Purchase
-            </v-btn>
+                <v-card-actions class="mt-3">
+                  <v-spacer />
+                  <v-btn text @click="e1 = e1 - 1">
+                    back
+                  </v-btn>
+                  <v-btn color="primary" @click="createOrder">
+                    Complete Purchase
+                  </v-btn>
+                </v-card-actions>
+              </v-container>
+            </v-card>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -228,11 +250,25 @@ export default {
           email: this.user.email
         },
         date: new Date(),
+        // type: "pickUp",
+        // status: { overall: "inProcess", orderReceived: 1, packageReady: 0, packagePickUp: 0 },
+        type: "delivery",
+        status: {
+          finished: false,
+          successfully: false,
+          steps: {
+            orderReceived: 1,
+            paymentReceived: 0,
+            inDelivery: 0
+          }
+        },
         shippingAddress: this.orderData.shippingAddress,
         billingAddress: this.orderData.billingAddress,
         products: this.user.shoppingCart,
         payment: this.orderData.payment,
-        totalSum: calculateTotalCartSum(this.user.shoppingCart)
+        totalSum: calculateTotalCartSum(this.user.shoppingCart),
+        currency: "EUR",
+        currencySymbol: "€"
       };
       var response = await orderService.createOrder(data);
       console.log(response);

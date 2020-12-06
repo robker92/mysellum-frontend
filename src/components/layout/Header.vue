@@ -2,7 +2,12 @@
   <!-- <v-app-bar app elevate-on-scroll scroll-target="#scrolling-techniques-7"> -->
   <!-- <v-app-bar-nav-icon class="hidden-md-and-up" /> -->
   <v-app-bar app color="grey lighten-3" elevate-on-scroll>
-    <router-link :to="{ name: 'Home' }">
+    <router-link
+      :to="{
+        name: 'Home',
+        params: { locale: $i18n.locale }
+      }"
+    >
       <v-img
         :src="require('@/assets/logo.png')"
         class="mr-5"
@@ -15,7 +20,7 @@
 
     <v-toolbar-title>Title</v-toolbar-title>
 
-    <v-spacer></v-spacer>
+    <v-spacer />
 
     <!--     <v-btn icon>
       <v-icon>mdi-magnify</v-icon>
@@ -69,17 +74,20 @@
     <LoginDialog v-model="showLoginDialog" />
     <CreateStoreDialog v-model="showCreateStoreDialog" />
 
+    <LanguageSwitcher />
+
     <v-menu
       v-model="menu"
       :close-on-content-click="false"
-      :nudge-bottom="15"
+      :nudge-bottom="13"
       offset-y
       left
       bottom
     >
       <template v-slot:activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on" text tile>
-          <v-icon>mdi-account-details</v-icon>
+          <v-icon large v-if="loggedIn == true">mdi-account-details</v-icon>
+          <v-icon large v-else>mdi-format-list-bulleted</v-icon>
         </v-btn>
       </template>
 
@@ -95,13 +103,16 @@
                 >{{ this.user.address.firstName
                 }}{{ this.user.address.lastName }}</v-list-item-title
               >
-              <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+              <v-list-item-subtitle>{{
+                $t("header.userMenu.userSubtitle")
+              }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
 
         <v-divider v-if="loggedIn == true"></v-divider>
 
+        <!-- LOGIN -->
         <v-list nav>
           <v-list-item
             v-if="loggedIn == false"
@@ -114,9 +125,13 @@
               <v-icon>mdi-login</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="text-left">
-              <v-list-item-title>Login</v-list-item-title>
+              <v-list-item-title>{{
+                $t("header.userMenu.loginButton")
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <!-- REGISTER -->
           <v-list-item
             v-if="loggedIn == false"
             @click="
@@ -128,11 +143,15 @@
               <v-icon>mdi-account-plus</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="text-left">
-              <v-list-item-title>Register</v-list-item-title>
+              <v-list-item-title>{{
+                $t("header.userMenu.registerButton")
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
+          <!-- CREATE STORE -->
           <v-list-item
+            v-if="loggedIn == true && checkOwnedStoreId === false"
             @click="
               showCreateStoreDialog = true;
               menu = false;
@@ -142,19 +161,87 @@
               <v-icon>mdi-store</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="text-left">
-              <v-list-item-title>Open your own store</v-list-item-title>
+              <v-list-item-title>{{
+                $t("header.userMenu.openStoreButton")
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
+          <!-- YOUR STORE -->
+          <v-list-item
+            v-if="loggedIn == true && checkOwnedStoreId"
+            :to="{
+              name: `StoreProfile`,
+              params: { locale: $i18n.locale, id: user.ownedStoreId }
+            }"
+            @click="menu = false"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-store</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="text-left">
+              <v-list-item-title>{{
+                $t("header.userMenu.yourStoreButton")
+              }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <!--    <v-list-item
+            v-if="loggedIn == true && user.ownedStoreId == ''"
+            @click="printCart"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-text-box-search</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="text-left">
+              <v-list-item-title>{{
+                $t("header.userMenu.yourOrdersButton")
+              }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item> -->
+
+          <!-- STORE ORDER OVERVIEW-->
+          <v-list-item
+            v-if="loggedIn == true && checkOwnedStoreId"
+            :to="{
+              name: `StoreOrderOverview`,
+              params: { locale: $i18n.locale, id: user.ownedStoreId }
+            }"
+            @click="menu = false"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-file-document</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="text-left">
+              <v-list-item-title>Order Overview</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <!-- <v-list-item
+            v-if="loggedIn == true && user.ownedStoreId != ''"
+            @click="printCart"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-text-box-search</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content class="text-left">
+              <v-list-item-title>Your Received Orders</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item> -->
+
+          <!-- SETTINGS -->
           <v-list-item @click="printCart">
             <v-list-item-icon>
               <v-icon>mdi-cog</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="text-left">
-              <v-list-item-title>Settings</v-list-item-title>
+              <v-list-item-title>{{
+                $t("header.userMenu.settings")
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
+          <!-- LOGOUT -->
           <v-list-item
             v-if="loggedIn == true"
             @click="
@@ -166,26 +253,60 @@
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="text-left">
-              <v-list-item-title>Logout</v-list-item-title>
+              <v-list-item-title>{{
+                $t("header.userMenu.logoutButton")
+              }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card>
     </v-menu>
 
-    <router-link :to="{ name: 'ShoppingCart' }">
+    <!-- CART BUTTON -->
+    <div
+      v-if="
+        loggedIn === false || (loggedIn === true && checkOwnedStoreId === false)
+      "
+    >
       <v-badge
         overlap
         color="green"
         :content="checkProductCounter()"
         :value="checkProductCounter()"
       >
-        <v-btn dark tile color="primary" @click.stop="printCart()">
+        <v-btn
+          dark
+          tile
+          color="primary"
+          :to="{ name: 'ShoppingCart' }"
+          @click.stop="printCart()"
+        >
           <v-icon dark>mdi-cart</v-icon>
-          Cart
+          {{ $t("header.cartButton") }}
         </v-btn>
       </v-badge>
-    </router-link>
+    </div>
+
+    <!-- RECEIVED ORDERS BUTTON -->
+    <div v-if="loggedIn === true && checkOwnedStoreId" class="mr-9">
+      <v-badge
+        overlap
+        color="green"
+        :content="checkProductCounter()"
+        :value="checkProductCounter()"
+      >
+        <v-btn
+          dark
+          tile
+          color="primary"
+          :to="{ name: 'ShoppingCart' }"
+          @click.stop="printCart()"
+        >
+          <v-icon dark>mdi-text-box-search-outline</v-icon>
+          {{ $t("header.receivedOrdersButton") }}
+        </v-btn>
+      </v-badge>
+    </div>
   </v-app-bar>
 </template>
 
@@ -196,6 +317,8 @@ import { mapState, mapActions } from "vuex";
 import RegisterDialog from "../RegisterDialog";
 import LoginDialog from "../LoginDialog";
 import CreateStoreDialog from "../CreateStoreDialog";
+
+import LanguageSwitcher from "../LanguageSwitcher";
 
 export default {
   name: "Header",
@@ -218,7 +341,8 @@ export default {
   components: {
     RegisterDialog,
     LoginDialog,
-    CreateStoreDialog
+    CreateStoreDialog,
+    LanguageSwitcher: LanguageSwitcher
   },
   computed: {
     // getJwtToken() {
@@ -228,7 +352,18 @@ export default {
     //   }
     //   return true
     // }, v-if="status.loggedIn == false"
-    ...mapState("account", ["user", "loggedIn"])
+    ...mapState("account", ["user", "loggedIn"]),
+    checkOwnedStoreId: {
+      get() {
+        if (
+          this.user.ownedStoreId === "" ||
+          typeof this.user.ownedStoreId === "undefined"
+        ) {
+          return false;
+        } else return true;
+      }
+    }
+
     //...mapState("shoppingCart", ["shoppingCart", "productCounter"])
     // ...mapGetters("account", {
     //   info: "loginInfo"
@@ -244,7 +379,9 @@ export default {
     // console.log(status.loggedIn);
   },
   methods: {
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     ...mapActions("account", ["logout"]),
+
     logoutUser() {
       //console.log(status);
       //console.log(this.$store.state.account.status);
@@ -254,6 +391,7 @@ export default {
       // console.log(this.loggedIn);
       // console.log("now logout");
       this.logout();
+      this.addSuccessSnackbar("Successfully logged out!");
       // console.log(this.loggedIn);
     },
     printCart() {

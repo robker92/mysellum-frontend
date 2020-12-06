@@ -5,6 +5,7 @@
 <script>
 //import loadGoogleMapsApi from 'load-google-maps-api'
 import { getGoogleMapLoader } from "../helpers";
+import { mapOptions } from "../helpers";
 // eslint-disable-next-line no-unused-vars
 import { Loader } from "google-maps";
 
@@ -40,7 +41,8 @@ export default {
           streetViewControl: false,
           mapTypeControl: false,
           fullscreenControl: false,
-          rotateControl: false
+          rotateControl: false,
+          options: { styles: mapOptions }
           //zoomControl: false,
           //gestureHandling: "none"
         }
@@ -49,6 +51,7 @@ export default {
       new googleMapLoaderProfile.maps.Marker({
         position: this.mapData.location,
         map: mapProfile,
+        animation: googleMapLoaderProfile.maps.Animation.DROP,
         title: "storeMarker",
         clickable: false
       });

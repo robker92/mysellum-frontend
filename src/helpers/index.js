@@ -3,4 +3,5 @@
 export * from "./auth-header";
 export * from "./md-colors";
 export * from "./map-loader";
+export * from "./map-options";
 export * from "./others";

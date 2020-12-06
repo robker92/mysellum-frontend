@@ -20,6 +20,14 @@ async function createOrder(data) {
     return response;
 }
 
+async function getAllOrders() {
+    // console.log(credentials)
+    let response = await ordersClient.get("/");
+    console.log(response);
+    return response.data;
+}
+
 export const orderService = {
+    getAllOrders,
     createOrder
 };

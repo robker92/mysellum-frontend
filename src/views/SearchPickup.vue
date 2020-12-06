@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <!-- SEARCH -->
+    <!-- <v-icon color="yellow darken-1">mdi-glass-mug-variant</v-icon>-->
+    <!-- <v-icon color="red" large>mdi-map-marker</v-icon>
+    <v-icon color="grey" large>mdi-fish</v-icon> -->
+    <div class="text-left text-h4">Stores in your area</div>
     <v-text-field
       v-model="searchTerm"
       :append-outer-icon="'mdi-send'"
@@ -27,18 +32,23 @@
         {{ tag[1] }}
       </v-chip>
     </v-row>
-    <div v-if="storeData && storeData.length == 0">
-      <p>
-        We are sorry, we could not find a suitable store for your search
-        criteria.
-      </p>
-    </div>
+
+    <!-- MAP v-if="computedStores"-->
     <div v-if="storeData">
-      <!-- <div
-        v-for="(store, index) in storeData"
-        v-bind:key="index"
-        v-bind:store="store"
-      > -->
+      <GoogleMap
+        v-bind:markers="computedStores"
+        v-bind:stores="computedStores"
+        v-on:map-boundaries-changed="fetchStoresByLocation"
+        style="height: 500px; width: 100%; display: block; margin-left: auto; margin-right: auto"
+      />
+    </div>
+
+    <div v-if="storeData && storeData.length == 0" class="text-body-1 my-5">
+      We are sorry, we could not find a suitable store for your search criteria.
+    </div>
+
+    <!-- LIST -->
+    <div v-if="storeData">
       <v-row>
         <v-col
           cols="12"
@@ -51,9 +61,6 @@
           v-bind:key="index"
           v-bind:store="store"
         >
-          <!-- <router-link :to="{ path: `/storeprofile/${store._id}` }"> -->
-          <!--height="200px"
-              style="width:300px;" -->
           <v-hover v-slot:default="{ hover }">
             <v-card
               height="550px"
@@ -162,36 +169,20 @@
         />
       </v-row>
     </div>
-    <div v-else>
-      <v-row>
-        <v-col
-          cols="12"
-          xs="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="2"
-          v-for="n in numSkeletonLoaders"
-          :key="n"
-        >
-          <v-skeleton-loader
-            elevation="2"
-            class="ma-3"
-            type="card-avatar, article"
-          />
-        </v-col>
-      </v-row>
-    </div>
+
     <!-- </div> -->
   </v-container>
 </template>
 
 <script>
 import { storeService } from "../services";
+import GoogleMap from "../components/GoogleMap.vue";
 
 export default {
-  name: "SearchDeliveryView",
-  components: {},
+  name: "SearchPickupView",
+  components: {
+    GoogleMap: GoogleMap
+  },
   data() {
     return {
       storeData: null,
@@ -244,6 +235,12 @@ export default {
   },
 
   methods: {
+    async fetchStoresByLocation(mapBoundaries) {
+      console.log(mapBoundaries);
+      var fetchResult = await storeService.getStoresByLocation(mapBoundaries);
+      console.log(fetchResult.stores);
+      this.storeData = fetchResult.stores;
+    },
     getAvgRating(store) {
       return parseFloat(store.profileData.avgRating);
     },

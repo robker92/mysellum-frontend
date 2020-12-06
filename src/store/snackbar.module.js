@@ -10,17 +10,17 @@ const state = {
 }
 
 const actions = {
-    successSnackbar({
+    addSuccessSnackbar({
         commit
     }, message) {
         commit('successSnackbar', message)
     },
-    errorSnackbar({
+    addErrorSnackbar({
         commit
     }, message) {
         commit('errorSnackbar', message)
     },
-    closeSnackbar({
+    addCloseSnackbar({
         commit
     }) {
         commit('closeSnackbar')

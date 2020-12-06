@@ -20,7 +20,13 @@
         <v-hover v-slot:default="{ hover }">
           <v-card :class="{ 'on-hover': hover }" :elevation="hover ? 16 : 2">
             <v-carousel cycle show-arrows-on-hover :height="imgHeight">
-              <v-carousel-item :to="{ name: 'SearchDelivery' }" eager>
+              <v-carousel-item
+                :to="{
+                  name: 'SearchDelivery',
+                  params: { locale: $i18n.locale }
+                }"
+                eager
+              >
                 <v-img
                   src="../assets/home_searchDelivery1.jpg"
                   :height="imgHeight"
@@ -28,7 +34,13 @@
                 >
                 </v-img>
               </v-carousel-item>
-              <v-carousel-item :to="{ name: 'SearchDelivery' }" eager>
+              <v-carousel-item
+                :to="{
+                  name: 'SearchDelivery',
+                  params: { locale: $i18n.locale }
+                }"
+                eager
+              >
                 <v-img
                   src="../assets/home_searchDelivery2.jpg"
                   :height="imgHeight"
@@ -36,7 +48,13 @@
                 >
                 </v-img>
               </v-carousel-item>
-              <v-carousel-item :to="{ name: 'SearchDelivery' }" eager>
+              <v-carousel-item
+                :to="{
+                  name: 'SearchDelivery',
+                  params: { locale: $i18n.locale }
+                }"
+                eager
+              >
                 <v-img
                   src="../assets/home_searchDelivery3.jpg"
                   :height="imgHeight"
@@ -47,7 +65,10 @@
             </v-carousel>
 
             <router-link
-              :to="{ name: 'SearchDelivery' }"
+              :to="{
+                name: 'SearchDelivery',
+                params: { locale: $i18n.locale }
+              }"
               style="text-decoration: none; color: inherit;"
             >
               <v-card-title>Delivery</v-card-title>
@@ -55,6 +76,14 @@
           </v-card>
         </v-hover>
       </v-col>
+      <!-- <v-btn @click="print()">Print</v-btn>
+      <v-btn
+        :to="{
+          name: 'SearchDelivery',
+          params: { locale: $i18n.locale }
+        }"
+        >Link Test</v-btn
+      > -->
       <!-- 
         <v-col cols="3">
           <router-link :to="{ name: 'Search' }">
@@ -129,6 +158,11 @@ export default {
     return {
       imgHeight: "500px"
     };
+  },
+  methods: {
+    print() {
+      console.log(this.$i18n.locale);
+    }
   }
 };
 </script>

@@ -1,9 +1,11 @@
 <template>
   <v-container>
     <v-card>
-      <div class="text-h6 text-left font-weight-medium ma-4">
-        Products
-      </div>
+      <v-card-title>
+        <div class="text-h6 text-left font-weight-medium">
+          Products
+        </div>
+      </v-card-title>
       <ShoppingCartListItem
         v-for="(prod, index) in this.user.shoppingCart"
         v-bind:key="index"

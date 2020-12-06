@@ -1,0 +1,12 @@
+[
+    {
+      "name": "English",
+      "flag": "gb",
+      "locale": "en"
+    },
+    {
+      "name": "German",
+      "flag": "de",
+      "locale": "de"
+    }
+  ]

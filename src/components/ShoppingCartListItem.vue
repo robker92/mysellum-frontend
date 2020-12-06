@@ -19,19 +19,20 @@
         </v-img>
       </v-col>
       <v-col sm="1">
-        <h3>{{ product.title }}</h3>
+        <div class="text-left text-body-1 font-weight-bold">
+          {{ product.title }}
+        </div>
       </v-col>
       <v-col sm="4">
-        <p>{{ product.description }}</p>
+        <div class="text-left text-body-1">{{ product.description }}</div>
       </v-col>
 
       <v-col v-if="modifiable == true" sm="1">
         <v-btn
           class="mx-2"
-          fab
           :dark="minusButtonDark"
           x-small
-          color="indigo"
+          color="primary"
           @click.stop="decreaseProductAmount(1)"
           :disabled="minusButtonDisabled"
         >
@@ -39,15 +40,14 @@
         </v-btn>
       </v-col>
       <v-col sm="1">
-        {{ this.amount }}
+        <div class="text-body-1">{{ this.amount }}</div>
       </v-col>
       <v-col v-if="modifiable == true" sm="1">
         <v-btn
           class="mx-2"
-          fab
           dark
           x-small
-          color="indigo"
+          color="primary"
           @click.stop="putInCart()"
         >
           <v-icon dark>mdi-plus</v-icon>
@@ -57,8 +57,8 @@
         <v-btn
           icon
           class="mx-2"
-          fab
           x-small
+          fab
           @click.stop="decreaseProductAmount(amount)"
         >
           <v-icon dark>mdi-delete</v-icon>
@@ -67,11 +67,13 @@
       <!-- <v-col v-else cols="12" sm="4"> </v-col> -->
 
       <v-col sm="1">
-        <p>{{ product.price }}{{ product.currencySymbol }}</p>
+        <div class="text-right text-body-1">
+          {{ product.price }}{{ product.currencySymbol }}
+        </div>
       </v-col>
 
       <v-col sm="1">
-        <p>{{ computedRowSum }}</p>
+        <div class="text-right text-body-1">{{ computedRowSum }}</div>
       </v-col>
     </v-row>
   </div>
@@ -102,6 +104,7 @@ export default {
     computedRowSum: {
       get() {
         var rowSum = (this.product.price * this.amount).toFixed(2);
+        console.log(rowSum);
         return `${rowSum}${this.product.currencySymbol}`;
       }
     },

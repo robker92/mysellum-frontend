@@ -1,0 +1,102 @@
+{
+    "header": {
+        "userMenu": {
+            "loginButton": "Login",
+            "userSubtitle": "Logged in",
+            "registerButton": "Register",
+            "logoutButton": "Logout",
+            "yourStoreButton": "Your Store",
+            "openStoreButton": "Open your own Store",
+            "yourOrdersButton": "Your Placed Orders",
+            "settings": "Settings"
+        },
+        "cartButton": "Cart",
+        "receivedOrdersButton": "Your received Orders"
+    },
+
+    "loginDialog": {
+        "dialogTitle": "Login",
+
+        "emailField": "E-mail",
+        "emailFieldRequiredError": "An e-mail is required.",
+        "emailFieldValidError": "Must be valid e-mail address.",
+
+        "passwordField": "Password",
+        "passwordFieldRequiredError": "A password is required.",
+
+        "forgotPasswordLabel": "Forgot your password?",
+        "requiredFieldDescription": "indicates required field",
+        "showPasswordTooltip": "show password",
+        "closeButton": "Close",
+        "submitButton": "Submit"
+    },
+
+    "registerDialog": {
+        "dialogTitle": "Registration",
+
+        "firstNameField": "First Name",
+        "firstNameFieldRequiredError": "The first name is required.",
+        "firstNameFieldLengthError": "The password must be at most 20 characters long.",
+
+        "lastNameField": "Last Name",
+        "lastNameFieldRequiredError": "The last name is required.",
+        "lastNameFieldLengthError": "The password must be at most 20 characters long.",
+
+        "emailField": "E-mail",
+        "emailFieldRequiredError": "The e-mail address is required.",
+        "emailFieldValidError": "Must be a valid e-mail address.",
+
+        "birthdateField": "Birthdate",
+        "birthdateFieldRequiredError": "The birthdate is required.",
+
+        "passwordField": "Password",
+        "passwordFieldRequiredError": "A password is required.",
+        "passwordFieldRegexError": "The password must contain at least 1 upper-case, lower-case, special character and number.",
+        "passwordFieldMinLengthError": "The password must be at least {n} characters long.",
+        "passwordFieldMaxLengthError": "The password must be at most {n} characters long.",
+
+        "passwordConfField": "Password Confirmation",
+        "passwordConfFieldRequiredError": "A password confirmation is required.",
+        "passwordConfFieldRegexError": "The password must contain at least 1 upper-case, lower-case, special character and number.",
+        "passwordConfFieldMinLengthError": "The password must be at least {n} characters long.",
+        "passwordConfFieldMaxLengthError": "The password must be at most {n} characters long.",
+        "passwordConfFieldIdenticalError": "The passwords must be identical.",
+
+        "addressLine1Field": "Address Line 1",
+        "addressLine1FieldRequiredError": "A address Line is required.",
+        "addressLine1FieldLengthError": "The address line must be at most 40 characters long.",
+
+        "postcodeField": "Postcode",
+        "postcodeFieldRequiredError": "The postcode is required.",
+
+        "cityField": "City",
+        "cityFieldRequiredError": "A city is required.",
+        "cityFieldLengthError": "The city must be at most 40 characters long.",
+        
+        "checkboxTermsConditions": "Do you accept the terms and conditions?",
+        "checkboxTermsConditionsRequiredError": "You have to accept the terms and conditions.",
+
+        "requiredFieldDescription": "indicates required field",
+        "showPasswordTooltip": "show password",
+        "closeButton": "Close",
+        "submitButton": "Submit"
+    },
+
+    "forgotPassword": {
+        "headline": "Forgot password",
+        "infoAlert": "If you have forgotten your password or your access has been blocked, you can request a password reset email below by providing your mail address as well as your birthdate.",
+        "sendMailButtonLabel": "Send mail"
+    },
+
+    "passwordReset": {
+        "headline": "Password reset",
+        "infoAlert": "Now you can assign a new password. Make sure to use at least 8 characters, including at least one number, one special character, one lowercase and one uppercase letter to be well protected.",
+        "resetPasswordButtonLabel": "Save password"
+    },
+
+    "footer": {
+        "label1": "label 1"
+    },
+    "translation1": "Translation 1",
+    "translation2": "Translation 2"
+}
