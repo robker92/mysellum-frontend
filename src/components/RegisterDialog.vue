@@ -473,9 +473,15 @@ export default {
       };
       console.log(user);
       //await userServices.registerUser(requestBody);
-      this.register(user);
-      this.addSuccessSnackbar("Successfully registered!");
-      this.show = false;
+      let response = await this.register(user);
+      if (response.success === true) {
+        //this.addSuccessSnackbar("Successfully registered!");
+        this.show = false;
+        this.$router.push({ name: "RegistrationConfirmation" });
+      } else {
+        //use response message
+        this.addErrorSnackbar("Registration was unsuccessful!");
+      }
     },
 
     cancel() {

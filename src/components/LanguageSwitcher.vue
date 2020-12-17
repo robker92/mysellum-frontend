@@ -4,13 +4,21 @@
 
     <v-menu bottom left :nudge-bottom="13" offset-y max-width="250px">
       <template v-slot:activator="{ on, attrs }">
-        <div v-bind="attrs" v-on="on">
-          <!-- <country-flag :country="getCurrentLocale().flag" size="normal" /> style="width: 60px;"-->
-          <v-btn rounded color="transparent" elevation="0">
-            <v-icon color="primary">mdi-earth</v-icon>
-            <v-icon color="primary">mdi-chevron-down</v-icon>
-          </v-btn>
-        </div>
+        <!-- <country-flag :country="getCurrentLocale().flag" size="normal" /> style="width: 60px;"-->
+        <v-btn
+          v-bind="attrs"
+          v-on="on"
+          width="60px"
+          color="primary"
+          dark
+          text
+          tile
+          elevation="0"
+          class="rounded-xl"
+        >
+          <v-icon color="primary">mdi-earth</v-icon>
+          <v-icon color="primary">mdi-chevron-down</v-icon>
+        </v-btn>
       </template>
       <v-card>
         <v-list dense nav>

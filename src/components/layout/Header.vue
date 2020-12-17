@@ -73,8 +73,8 @@
     <RegisterDialog v-model="showRegisterDialog" />
     <LoginDialog v-model="showLoginDialog" />
     <CreateStoreDialog v-model="showCreateStoreDialog" />
-
-    <LanguageSwitcher />
+    <SettingsDialog v-model="showSettingsDialog" />
+    <LanguageSwitcher class="ml-2" />
 
     <v-menu
       v-model="menu"
@@ -85,7 +85,16 @@
       bottom
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" dark v-bind="attrs" v-on="on" text tile>
+        <v-btn
+          width="60px"
+          color="primary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+          text
+          tile
+          class="rounded-xl ml-2"
+        >
           <v-icon large v-if="loggedIn == true">mdi-account-details</v-icon>
           <v-icon large v-else>mdi-format-list-bulleted</v-icon>
         </v-btn>
@@ -99,10 +108,11 @@
             </v-list-item-avatar>
 
             <v-list-item-content class="text-left">
-              <v-list-item-title
+              <!--   <v-list-item-title
                 >{{ this.user.address.firstName
-                }}{{ this.user.address.lastName }}</v-list-item-title
-              >
+                }}{{ this.user.address.lastName }}
+              </v-list-item-title> -->
+
               <v-list-item-subtitle>{{
                 $t("header.userMenu.userSubtitle")
               }}</v-list-item-subtitle>
@@ -180,9 +190,9 @@
               <v-icon>mdi-store</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="text-left">
-              <v-list-item-title>{{
-                $t("header.userMenu.yourStoreButton")
-              }}</v-list-item-title>
+              <v-list-item-title>
+                {{ $t("header.userMenu.yourStoreButton") }}
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
@@ -230,7 +240,7 @@
           </v-list-item> -->
 
           <!-- SETTINGS -->
-          <v-list-item @click="printCart">
+          <v-list-item @click="showSettingsDialog = true">
             <v-list-item-icon>
               <v-icon>mdi-cog</v-icon>
             </v-list-item-icon>
@@ -267,6 +277,7 @@
       v-if="
         loggedIn === false || (loggedIn === true && checkOwnedStoreId === false)
       "
+      class="ml-2"
     >
       <v-badge
         overlap
@@ -277,6 +288,7 @@
         <v-btn
           dark
           tile
+          class="rounded-xl"
           color="primary"
           :to="{ name: 'ShoppingCart' }"
           @click.stop="printCart()"
@@ -288,7 +300,7 @@
     </div>
 
     <!-- RECEIVED ORDERS BUTTON -->
-    <div v-if="loggedIn === true && checkOwnedStoreId" class="mr-9">
+    <div v-if="loggedIn === true && checkOwnedStoreId" class="ml-2">
       <v-badge
         overlap
         color="green"
@@ -298,6 +310,7 @@
         <v-btn
           dark
           tile
+          class="rounded-xl"
           color="primary"
           :to="{ name: 'ShoppingCart' }"
           @click.stop="printCart()"
@@ -317,6 +330,7 @@ import { mapState, mapActions } from "vuex";
 import RegisterDialog from "../RegisterDialog";
 import LoginDialog from "../LoginDialog";
 import CreateStoreDialog from "../CreateStoreDialog";
+import SettingsDialog from "../SettingsDialog";
 
 import LanguageSwitcher from "../LanguageSwitcher";
 
@@ -333,6 +347,7 @@ export default {
       showRegisterDialog: false,
       showLoginDialog: false,
       showCreateStoreDialog: false,
+      showSettingsDialog: false,
       userLoggedIn: false,
       menu: false,
       group: ""
@@ -342,6 +357,7 @@ export default {
     RegisterDialog,
     LoginDialog,
     CreateStoreDialog,
+    SettingsDialog,
     LanguageSwitcher: LanguageSwitcher
   },
   computed: {

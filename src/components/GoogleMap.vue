@@ -11,11 +11,13 @@
 <script>
 //import loadGoogleMapsApi from 'load-google-maps-api'
 import { getGoogleMapLoader } from "../helpers";
-import { mapOptions } from "../helpers";
+import { mapOptions, getMarkerIconURL } from "../helpers";
 //import beerIcon from "../assets/icons8-bier-30.png";
 //import wineIcon from "../assets/icons8-wein-64.png";
 //import wineIcon from "../assets/icons8-weinglas-48.png";
-import markerFishIcon from "../assets/marker-fish5.png";
+import markerFishIcon from "../assets/markers/fish.png";
+//import markerFishIcon from "../assets/fish.png";
+
 // eslint-disable-next-line no-unused-vars
 import { Loader } from "google-maps";
 
@@ -77,13 +79,42 @@ export default {
   watch: {
     // eslint-disable-next-line no-unused-vars
     stores: function(newVal, oldVal) {
-      let markersToRemove = this.identifyMarkersToRemove(newVal);
       //this.deleteIdentifiedMarkers(markersToRemove);
-      this.addMarkers(this.stores);
-      //this.deleteMarkers();
-      //this.initMarkerArray(newVal);
-      //delete markers in another thread
-      this.$worker.run(this.deleteIdentifiedMarkers(markersToRemove));
+      if (newVal.length > 0) {
+        //console.log(newVal);
+
+        //this.deleteMarkers();
+        //this.initMarkerArray(newVal);
+        //delete markers in another thread
+        // var markersToRemove = this.identifyMarkersToRemove(newVal);
+        // this.$worker.run(markersToRemove => {
+        //   this.deleteIdentifiedMarkers(markersToRemove);
+        // });
+        // console.log(this.$methods);
+        // var that = this;
+
+        // this.$worker
+        //   .run(
+        //     (newVal, that) => {
+        //       that.identifyMarkersToRemove(newVal);
+        //     },
+        //     [newVal, that]
+        //   )
+        //   .then(markers => this.deleteIdentifiedMarkers(markers));
+
+        // this.$worker
+        //   .run(stores => {
+        //     console.log(that);
+        //     that.identifyMarkersToRemove(stores);
+        //   }, newVal)
+        //   .then(markers => {
+        //     console.log(that);
+        //     that.deleteIdentifiedMarkers(markers);
+        //   });
+        this.addMarkers(newVal);
+        let markersToRemove = this.identifyMarkersToRemove(newVal);
+        this.deleteIdentifiedMarkers(markersToRemove);
+      }
       //    this.$worker.run((arg) => {
       //   return `Hello, ${arg}!`
       // }, ['World'])
@@ -129,12 +160,11 @@ export default {
           max_lng: ne.toJSON().lng
         };
         this.$emit("map-boundaries-changed", mapBoundaries);
-        console.log(mapBoundaries);
+        //console.log(mapBoundaries);
       });
     },
     initMarkerArray(storeArray) {
       //############ OLD
-      console.log(storeArray);
       // eslint-disable-next-line no-unused-vars
       storeArray.forEach((item, index) => {
         //var mapData = item.mapData;
@@ -229,17 +259,23 @@ export default {
     addMarker(store) {
       let clicked = false;
 
+      // let iconUrl = this.markerBaseUrl + store.mapData.mapIcon + ".png";
+      // console.log(store.mapData.mapIcon);
+      // console.log(this.markerBaseUrl + store.mapData.mapIcon + ".png");
+      // console.log(markerFishIcon);
+      let iconURL = getMarkerIconURL(store.mapData.mapIcon);
       let icon = {
-        url: markerFishIcon, // url
+        //url: markerFishIcon, // url
+        url: iconURL,
         scaledSize: new this.google2.maps.Size(50, 50) // scaled size
-        // origin: new this.google2.maps.Point(0, 0), // origin
+        //origin: new this.google2.maps.Point(0, 0), // origin
         //anchor: new this.google2.maps.Point(0, 0) // anchor
       };
 
       let marker = new this.google2.maps.Marker({
         position: store.mapData.location,
         //animation: this.google2.maps.Animation.DROP,
-        icon: icon,
+        icon: iconURL !== undefined ? icon : null,
         //map: null,
         map: this.map,
         title: store.profileData.title,
@@ -285,12 +321,13 @@ export default {
         }
       });
 
+      // eslint-disable-next-line no-unused-vars
       this.map.addListener("click", evt => {
         this.activeInfoWindows.forEach(function(window) {
           window.close();
         });
         clicked = false;
-        console.log(evt.latLng.toJSON());
+        //console.log(evt.latLng.toJSON());
       });
 
       this.markerArray.push(marker);
@@ -346,6 +383,15 @@ export default {
         }
       }
       return -1;
+    },
+
+    getMarkerIconURL(icon) {
+      switch (icon) {
+        case "fish":
+          return markerFishIcon;
+        case "cat":
+          return "cat";
+      }
     },
     //############################################################################################################################## OLD:
 

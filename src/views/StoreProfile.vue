@@ -35,8 +35,8 @@
 
     <!-- <div v-if="checkForStoreOwner"> -->
     <div v-if="checkForStoreOwner" class="text-right">
-      <v-btn color="pink" outlined @click="showEditStoreDialog = true">
-        <v-icon color="pink">mdi-pencil</v-icon>
+      <v-btn color="pink" outlined dark @click="showEditStoreDialog = true">
+        <v-icon left color="pink">mdi-pencil</v-icon>
         Edit Store
       </v-btn>
     </div>
@@ -385,6 +385,7 @@
               @click.stop="showProductDialogNew"
               color="pink"
               dark
+              outlined
               class="ml-3"
             >
               <v-icon left> mdi-plus </v-icon>Add Product</v-btn
@@ -392,11 +393,11 @@
           </v-row>
           <v-row>
             <v-col
-              cols="10"
-              xs="10"
+              cols="12"
+              xs="6"
               sm="6"
-              md="2"
-              lg="2"
+              md="3"
+              lg="3"
               xl="3"
               v-for="prod in productList"
               v-bind:key="prod.productId"

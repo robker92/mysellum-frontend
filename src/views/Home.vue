@@ -19,7 +19,13 @@
       <v-col cols="12" xs="12" sm="12" md="6" lg="5" xl="4">
         <v-hover v-slot:default="{ hover }">
           <v-card :class="{ 'on-hover': hover }" :elevation="hover ? 16 : 2">
-            <v-carousel cycle show-arrows-on-hover :height="imgHeight">
+            <v-carousel
+              cycle
+              show-arrows-on-hover
+              hide-delimiters
+              hide-delimiter-background
+              :height="imgHeight"
+            >
               <v-carousel-item
                 :to="{
                   name: 'SearchDelivery',
@@ -102,8 +108,13 @@
       <v-col cols="12" xs="12" sm="12" md="6" lg="5" xl="4">
         <v-hover v-slot:default="{ hover }">
           <v-card :class="{ 'on-hover': hover }" :elevation="hover ? 16 : 2">
-            <v-carousel cycle show-arrows-on-hover :height="imgHeight">
-              <v-carousel-item :to="{ name: 'Search' }" eager>
+            <v-carousel
+              cycle
+              show-arrows-on-hover
+              hide-delimiters
+              hide-delimiter-background:height="imgHeight"
+            >
+              <v-carousel-item :to="{ name: 'SearchPickup' }" eager>
                 <v-img
                   src="../assets/home_searchPickup1.jpg"
                   :height="imgHeight"
@@ -111,7 +122,7 @@
                 >
                 </v-img>
               </v-carousel-item>
-              <v-carousel-item :to="{ name: 'Search' }" eager>
+              <v-carousel-item :to="{ name: 'SearchPickup' }" eager>
                 <v-img
                   src="../assets/home_searchPickup2.jpg"
                   :height="imgHeight"
@@ -119,7 +130,7 @@
                 >
                 </v-img>
               </v-carousel-item>
-              <v-carousel-item :to="{ name: 'Search' }" eager>
+              <v-carousel-item :to="{ name: 'SearchPickup' }" eager>
                 <v-img
                   src="../assets/home_searchPickup3.jpg"
                   :height="imgHeight"
@@ -130,7 +141,7 @@
             </v-carousel>
 
             <router-link
-              :to="{ name: 'Search' }"
+              :to="{ name: 'SearchPickup' }"
               style="text-decoration: none; color: inherit;"
             >
               <v-card-title>Pick-up</v-card-title>

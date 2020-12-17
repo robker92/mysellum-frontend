@@ -376,6 +376,31 @@
                   <v-text-field v-model="lng" label="Longitude*" required />
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+                  <v-select
+                    :items="mapIconList"
+                    v-model="chosenIcon"
+                    :prepend-icon="'mdi-' + chosenIcon"
+                    append-outer-icon="mdi-information"
+                    @click:append-outer="
+                      showHelp(
+                        'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.'
+                      )
+                    "
+                    label="Choose your map icon"
+                    menu-props="auto"
+                  >
+                    <template v-slot:item="{ item }">
+                      <!-- <img :src="item.image" /> -->
+                      <v-icon>mdi-{{ item.value }}</v-icon>
+                      <div class="ml-3">
+                        {{ item.text }}
+                      </div>
+                    </template>
+                  </v-select>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card>
         </v-tab-item>
@@ -538,6 +563,10 @@ import { mapState, mapActions } from "vuex";
 
 import { storeService } from "../services";
 
+// eslint-disable-next-line no-unused-vars
+import { mapIconList } from "../helpers";
+console.log(mapIconList);
+
 export default {
   name: "EditStoreDialog",
 
@@ -633,6 +662,15 @@ export default {
         "Wine",
         "Beer"
       ],
+      chosenIcon: {},
+      mapIconList: mapIconList,
+      // iconList: [
+      //   "fish",
+      //   "barn",
+      //   "bottle-wine",
+      //   "glass-mug-variant",
+      //   "glass-mug"
+      // ],
 
       //Notifications
       notificationOrderReceive: false,
@@ -787,6 +825,12 @@ export default {
   methods: {
     ...mapActions("stores", ["createStore"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
+    showHelp(message) {
+      console.log(message);
+      //this.chosenIcon = "fish";
+      console.log(this.chosenIcon);
+    },
 
     printInputs() {
       console.log(this.storeTitle);

@@ -5,7 +5,7 @@
 <script>
 //import loadGoogleMapsApi from 'load-google-maps-api'
 import { getGoogleMapLoader } from "../helpers";
-import { mapOptions } from "../helpers";
+import { mapOptions, getMarkerIconURL } from "../helpers";
 // eslint-disable-next-line no-unused-vars
 import { Loader } from "google-maps";
 
@@ -48,10 +48,21 @@ export default {
         }
       );
 
+      let iconURL = getMarkerIconURL(this.mapData.mapIcon);
+      console.log(iconURL);
+      let icon = {
+        //url: markerFishIcon, // url
+        url: iconURL,
+        scaledSize: new googleMapLoaderProfile.maps.Size(50, 50) // scaled size
+        //origin: new this.google2.maps.Point(0, 0), // origin
+        //anchor: new this.google2.maps.Point(0, 0) // anchor
+      };
+
       new googleMapLoaderProfile.maps.Marker({
         position: this.mapData.location,
         map: mapProfile,
-        animation: googleMapLoaderProfile.maps.Animation.DROP,
+        icon: iconURL !== undefined ? icon : null,
+        //animation: googleMapLoaderProfile.maps.Animation.DROP,
         title: "storeMarker",
         clickable: false
       });

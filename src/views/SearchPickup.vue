@@ -236,9 +236,9 @@ export default {
 
   methods: {
     async fetchStoresByLocation(mapBoundaries) {
-      console.log(mapBoundaries);
+      //console.log(mapBoundaries);
       var fetchResult = await storeService.getStoresByLocation(mapBoundaries);
-      console.log(fetchResult.stores);
+      //console.log(fetchResult.stores);
       this.storeData = fetchResult.stores;
     },
     getAvgRating(store) {

@@ -1,97 +1,5 @@
 <template>
   <v-container>
-    <v-card>
-      <div class="text-h6 text-left font-weight-medium ma-4">
-        Shipping Address
-      </div>
-      <!-- <AddressInput
-      :propAddressLine1="shippingAddressLine1"
-      :propPostcode="shippingPostcode"
-      :propCity="shippingCity"
-      v-on:change-addressLine1="printTest"
-    /> -->
-      <v-container>
-        <v-row>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              v-model="shippingFirstName"
-              :error-messages="shippingFirstNameErrors"
-              :counter="20"
-              label="First Name*"
-              required
-              @input="
-                $v.shippingFirstName.$touch();
-                checkValidation();
-              "
-              @blur="$v.shippingFirstName.$touch()"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" md="6">
-            <v-text-field
-              v-model="shippingLastName"
-              :error-messages="shippingLastNameErrors"
-              :counter="20"
-              label="Last Name*"
-              required
-              @input="
-                $v.shippingLastName.$touch();
-                checkValidation();
-              "
-              @blur="$v.shippingLastName.$touch()"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="shippingAddressLine1"
-              :error-messages="shippingAddressLine1Errors"
-              :counter="40"
-              label="Address Line 1*"
-              required
-              @input="
-                $v.shippingAddressLine1.$touch();
-                checkValidation();
-              "
-              @blur="$v.shippingAddressLine1.$touch()"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="2" md="2">
-            <v-text-field
-              v-model="shippingPostcode"
-              :error-messages="shippingPostcodeErrors"
-              label="Postcode*"
-              class="inputPostcode"
-              required
-              type="number"
-              maxlength="5"
-              oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
-              @input="
-                $v.shippingPostcode.$touch();
-                checkValidation();
-              "
-              @blur="$v.shippingPostcode.$touch()"
-            />
-          </v-col>
-          <v-col cols="12" sm="10" md="10">
-            <v-text-field
-              v-model="shippingCity"
-              :error-messages="shippingCityErrors"
-              label="City*"
-              required
-              @input="
-                $v.shippingCity.$touch();
-                checkValidation();
-              "
-              @blur="$v.shippingCity.$touch()"
-            />
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-card>
-
     <v-radio-group v-model="radioGroupAddress" @change="checkValidation()">
       <v-radio :label="`Same address for billing`" value="sameBillingAddress" />
       <v-radio
@@ -99,64 +7,70 @@
         value="differentBillingAddress"
       />
     </v-radio-group>
-
-    <div v-if="radioGroupAddress == 'differentBillingAddress'">
-      <v-card>
-        <div class="text-h6 text-left font-weight-medium ma-4">
-          Billing Address
-        </div>
-        <v-container>
+    <v-row>
+      <v-col cols="12" lg="6">
+        <v-card flat>
+          <div class="text-h6 text-left font-weight-medium mb-4">
+            Shipping Address
+          </div>
+          <!-- <AddressInput
+      :propAddressLine1="shippingAddressLine1"
+      :propPostcode="shippingPostcode"
+      :propCity="shippingCity"
+      v-on:change-addressLine1="printTest"
+    /> 
+          <v-container>-->
           <v-row>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
-                v-model="billingFirstName"
-                :error-messages="billingFirstNameErrors"
+                v-model="shippingFirstName"
+                :error-messages="shippingFirstNameErrors"
                 :counter="20"
                 label="First Name*"
                 required
                 @input="
-                  $v.billingFirstName.$touch();
+                  $v.shippingFirstName.$touch();
                   checkValidation();
                 "
-                @blur="$v.billingFirstName.$touch()"
+                @blur="$v.shippingFirstName.$touch()"
               />
             </v-col>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
-                v-model="billingLastName"
-                :error-messages="billingLastNameErrors"
+                v-model="shippingLastName"
+                :error-messages="shippingLastNameErrors"
                 :counter="20"
                 label="Last Name*"
                 required
                 @input="
-                  $v.billingLastName.$touch();
+                  $v.shippingLastName.$touch();
                   checkValidation();
                 "
-                @blur="$v.billingLastName.$touch()"
+                @blur="$v.shippingLastName.$touch()"
               />
             </v-col>
           </v-row>
           <v-row>
             <v-col>
               <v-text-field
-                v-model="billingAddressLine1"
-                :error-messages="billingAddressLine1Errors"
+                v-model="shippingAddressLine1"
+                :error-messages="shippingAddressLine1Errors"
                 :counter="40"
                 label="Address Line 1*"
                 required
                 @input="
-                  $v.billingAddressLine1.$touch();
+                  $v.shippingAddressLine1.$touch();
                   checkValidation();
                 "
-                @blur="$v.billingAddressLine1.$touch()"
+                @blur="$v.shippingAddressLine1.$touch()"
               />
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" sm="2" md="2">
+            <v-col cols="12" sm="4" md="4">
               <v-text-field
-                v-model="billingPostcode"
-                :error-messages="billingPostcodeErrors"
+                v-model="shippingPostcode"
+                :error-messages="shippingPostcodeErrors"
                 label="Postcode*"
                 class="inputPostcode"
                 required
@@ -164,29 +78,129 @@
                 maxlength="5"
                 oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
                 @input="
-                  $v.billingPostcode.$touch();
+                  $v.shippingPostcode.$touch();
                   checkValidation();
                 "
-                @blur="$v.billingPostcode.$touch()"
+                @blur="$v.shippingPostcode.$touch()"
               />
             </v-col>
-            <v-col cols="12" sm="10" md="10">
+            <v-col cols="12" sm="8" md="8">
               <v-text-field
-                v-model="billingCity"
-                :error-messages="billingCityErrors"
+                v-model="shippingCity"
+                :error-messages="shippingCityErrors"
                 label="City*"
                 required
                 @input="
-                  $v.billingCity.$touch();
+                  $v.shippingCity.$touch();
                   checkValidation();
                 "
-                @blur="$v.billingCity.$touch()"
+                @blur="$v.shippingCity.$touch()"
               />
             </v-col>
           </v-row>
-        </v-container>
-      </v-card>
-    </div>
+          <!-- </v-container> -->
+        </v-card>
+      </v-col>
+      <!--       <v-radio-group v-model="radioGroupAddress" @change="checkValidation()">
+        <v-radio
+          :label="`Same address for billing`"
+          value="sameBillingAddress"
+        />
+        <v-radio
+          :label="`Different billing address`"
+          value="differentBillingAddress"
+        />
+      </v-radio-group> -->
+      <v-col cols="12" lg="6">
+        <div v-if="radioGroupAddress == 'differentBillingAddress'">
+          <v-card flat>
+            <div class="text-h6 text-left font-weight-medium mb-4">
+              Billing Address
+            </div>
+            <!-- <v-container> -->
+            <v-row>
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field
+                  v-model="billingFirstName"
+                  :error-messages="billingFirstNameErrors"
+                  :counter="20"
+                  label="First Name*"
+                  required
+                  @input="
+                    $v.billingFirstName.$touch();
+                    checkValidation();
+                  "
+                  @blur="$v.billingFirstName.$touch()"
+                />
+              </v-col>
+              <v-col cols="12" sm="6" md="6">
+                <v-text-field
+                  v-model="billingLastName"
+                  :error-messages="billingLastNameErrors"
+                  :counter="20"
+                  label="Last Name*"
+                  required
+                  @input="
+                    $v.billingLastName.$touch();
+                    checkValidation();
+                  "
+                  @blur="$v.billingLastName.$touch()"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="billingAddressLine1"
+                  :error-messages="billingAddressLine1Errors"
+                  :counter="40"
+                  label="Address Line 1*"
+                  required
+                  @input="
+                    $v.billingAddressLine1.$touch();
+                    checkValidation();
+                  "
+                  @blur="$v.billingAddressLine1.$touch()"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="4" md="4">
+                <v-text-field
+                  v-model="billingPostcode"
+                  :error-messages="billingPostcodeErrors"
+                  label="Postcode*"
+                  class="inputPostcode"
+                  required
+                  type="number"
+                  maxlength="5"
+                  oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
+                  @input="
+                    $v.billingPostcode.$touch();
+                    checkValidation();
+                  "
+                  @blur="$v.billingPostcode.$touch()"
+                />
+              </v-col>
+              <v-col cols="12" sm="8" md="8">
+                <v-text-field
+                  v-model="billingCity"
+                  :error-messages="billingCityErrors"
+                  label="City*"
+                  required
+                  @input="
+                    $v.billingCity.$touch();
+                    checkValidation();
+                  "
+                  @blur="$v.billingCity.$touch()"
+                />
+              </v-col>
+            </v-row>
+            <!-- </v-container> -->
+          </v-card>
+        </div>
+      </v-col>
+    </v-row>
 
     <div class="text-h6 text-left font-weight-medium ma-4">
       Payment Method
@@ -289,6 +303,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import { userService } from "../services";
 
 import {
   required,
@@ -350,13 +365,15 @@ export default {
     };
   },
 
-  mounted() {
+  async mounted() {
     if (this.loggedIn == true) {
-      this.shippingFirstName = this.user.address.firstName;
-      this.shippingLastName = this.user.address.lastName;
-      this.shippingAddressLine1 = this.user.address.addressLine1;
-      this.shippingPostcode = this.user.address.postcode;
-      this.shippingCity = this.user.address.city;
+      let response = await userService.getSingleUser(this.user.email);
+      console.log(response);
+      this.shippingFirstName = response.firstName;
+      this.shippingLastName = response.lastName;
+      this.shippingAddressLine1 = response.addressLine1;
+      this.shippingPostcode = response.postcode;
+      this.shippingCity = response.city;
     }
   },
 

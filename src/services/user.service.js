@@ -28,29 +28,39 @@ const usersClient = axios.create({
 //     baseURL: usersBaseURL
 // });
 
+async function getSingleUser(email) {
+    let response = await usersClient.get(
+        `/${email}`
+    );
+    console.log(response.data)
+
+    return response.data;
+}
+
 
 async function login(credentials) {
 
     if (!credentials.email || !credentials.password) {
         //Abbruch
-    }
+    };
     // console.log("@login function")
     // console.log(credentials)
     let response = await usersClient.post(
         '/loginUser',
         credentials
-    )
-    var user = response.data.user
-    console.log(user)
+    );
+    console.log(response)
+    //var user = response.data.user
+    //console.log(user)
     //var user = await handleResponse(response)
-    if (user.token) {
+    if (response.data.user.token) {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
         localStorage.setItem('user', JSON.stringify({
-            token: user.token
+            token: response.data.user.token
         }));
-    }
+    };
 
-    return user
+    return response.data.user;
 };
 
 
@@ -64,17 +74,20 @@ async function register(data) {
     let response = await usersClient.post(
         '/registerUser',
         data,
-    )
+    );
     //console.log("@register function")
-    var user = response.data.user
+    //var user = response.data.user
     //console.log(user)
     //var user = handleResponse(response.data.user)
     //console.log(user)
-    if (user.token) {
+    if (response.data.user.token) {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(user));
-    }
-    return user
+        localStorage.setItem('user', JSON.stringify({
+            token: response.data.user.token
+        }));
+    };
+
+    return response;
 };
 
 async function addToShoppingCart(data) {
@@ -151,6 +164,14 @@ async function resetPassword(data) {
     return response.data;
 };
 
+async function confirmRegistration(data) {
+    let response = await usersClient.post(
+        `/confirmRegistration/${data.token}`, {}
+    );
+    //console.log(response)
+    return response.data;
+};
+
 //REFACTOR
 // eslint-disable-next-line no-unused-vars
 async function handleResponse(response) {
@@ -181,6 +202,7 @@ async function handleResponse(response) {
 };
 
 export const userService = {
+    getSingleUser,
     login,
     logout,
     register,
@@ -189,7 +211,8 @@ export const userService = {
     //Reset Password:
     sendResetPasswordMail,
     checkResetToken,
-    resetPassword
+    resetPassword,
+    confirmRegistration
     // getAll,
     // getById,
     // update,

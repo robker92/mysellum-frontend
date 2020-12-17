@@ -78,7 +78,7 @@
 
       <!-- v-model="avgRatingComputed"-->
       <v-card-text>
-        <div>
+        <div class="text-left text-body-1">
           {{ descriptionComputed }}
         </div>
         <!-- <v-divider class="mx-2"></v-divider> -->
@@ -220,21 +220,26 @@
         <v-card v-if="modifiable === false" flat class="mt-5">
           <v-row class="mt-3" no-gutters>
             <v-col cols="12" xs="5" sm="9" md="9" lg="9" xl="9">
-              <v-select
-                :items="quantityItems"
+              <v-combobox
+                :items="quantityItemsComputed"
                 v-model="productQuantity"
                 label="Quantity"
+                required
+                :error-messages="quantityErrors"
+                @input="$v.quantity.$touch()"
+                @blur="$v.quantity.$touch()"
                 dense
-              ></v-select>
+              ></v-combobox>
             </v-col>
             <v-col cols="12" xs="3" sm="1" md="1" lg="1" xl="1">
               <v-btn
                 class="mx-3"
-                small
+                x-small
                 fab
                 @click.stop="putInCart(product)"
+                :disabled="putInCartButtonDisabled"
                 color="pink"
-                dark
+                :dark="putInCartButtonDark"
               >
                 <v-icon>mdi-cart-plus</v-icon>
               </v-btn>
@@ -355,6 +360,7 @@
               v-model="stockAmount"
               label="Update Stock"
               type="number"
+              @keyup.enter="updateStock()"
               ><template v-slot:append-outer>
                 <v-btn icon @click="updateStock()">
                   <v-icon color="primary">mdi-content-save</v-icon>
@@ -385,21 +391,41 @@
 import { mapState, mapActions } from "vuex";
 import { storeService } from "../services";
 
+//import { required, maxLength } from "vuelidate/lib/validators";
+import { validationMixin } from "vuelidate";
+
+//Custom validation
+function quantityNotInStock(value) {
+  if (this.product.stockAmount < this.productQuantity) {
+    return this.other.nested.field.contains(value);
+  }
+}
+
 export default {
   name: "StoreProfileListItem",
+
+  mixins: [validationMixin],
+
+  validations: {
+    quantity: { quantityNotInStock }
+  },
+
   props: {
     product: Object,
     modifiable: Boolean
   },
+
   data() {
     return {
       amountTextField: 1,
       fab: false,
       stockAmount: "",
-      productQuantity: 0,
-      quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+      productQuantity: 0
+      // quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+      // quantityItems2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     };
   },
+
   computed: {
     //...mapState("shoppingCart", ["productsInCart", "counter"]),
     ...mapState("account", ["user", "loggedIn"]),
@@ -467,6 +493,55 @@ export default {
         } else {
           return false;
         }
+      }
+    },
+    putInCartButtonDisabled: {
+      get() {
+        if (this.product.stockAmount < this.productQuantity) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    putInCartButtonDark: {
+      get() {
+        if (this.product.stockAmount < this.productQuantity) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
+    quantityItemsComputed: {
+      get() {
+        let arr = [];
+        for (let index = 0; index <= this.product.stockAmount; index++) {
+          if (index <= 10) {
+            arr.push(index);
+          }
+          if ((index > 20) & (index < 50)) {
+            arr.push(20);
+          }
+          if ((index > 50) & (index < 100)) {
+            arr.push(50);
+          }
+          if (index > 100) {
+            arr.push(100);
+            break;
+          }
+        }
+        return arr;
+      }
+    },
+    quantityErrors: {
+      get() {
+        const errors = [];
+        if (this.product.stockAmount < this.productQuantity) {
+          errors.push("Quantity not in stock!");
+          return errors;
+        }
+        return errors;
       }
     }
   },
@@ -550,7 +625,7 @@ export default {
       var data = {
         storeId: this.$route.params.id,
         productId: this.product.productId,
-        stockAmount: this.stockAmount
+        stockAmount: parseInt(this.stockAmount)
       };
       this.$emit("overlay-start");
       var response = await storeService.updateStockAmount(data);

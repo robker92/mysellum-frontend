@@ -14,7 +14,7 @@
 
       <!-- <v-container fluid> -->
       <v-row dense justify="center">
-        <v-col cols="12" lg="3" xl="3">
+        <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
           <v-list dense color="indigo lighten-1">
             <v-list-item>
               <v-list-item-content class="text-left">
@@ -33,7 +33,7 @@
           </v-list>
         </v-col>
 
-        <v-col cols="12" lg="3" xl="3">
+        <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
           <v-list dense color="indigo lighten-1">
             <v-list-item>
               <v-list-item-content class="text-left">
@@ -54,7 +54,7 @@
           </v-list>
         </v-col>
 
-        <v-col cols="12" lg="3" xl="3">
+        <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
           <v-list dense color="indigo lighten-1">
             <v-list-item>
               <v-list-item-content class="text-left">
@@ -75,7 +75,7 @@
           </v-list>
         </v-col>
 
-        <v-col cols="12" lg="3" xl="3">
+        <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
           <v-list dense color="indigo lighten-1">
             <v-list-item>
               <v-list-item-content class="text-left">

@@ -67,7 +67,7 @@
 
 <script>
 //import { mapActions, mapGetters } from "vuex";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 // import { userService } from "../services";
 // import userServices from "../services/userServices";
@@ -98,7 +98,22 @@ export default {
     };
   },
 
+  // watch: {
+  //   loginStatus(val) {
+  //     if (val === true) {
+  //       this.addSuccessSnackbar("Successfully logged in!");
+  //       this.cancel();
+  //     } else {
+  //       this.addErrorSnackbar("Unsuccessfully logged in!");
+  //     }
+  //   }
+  // },
+
   computed: {
+    ...mapState("account", ["user", "loggedIn"]),
+    // loginStatus() {
+    //   return this.loggedIn;
+    // },
     show: {
       get() {
         return this.value;
@@ -132,6 +147,20 @@ export default {
         return true;
       }
     }
+
+    // checkLoginStatus: {
+    //   get() {
+    //     if (this.loggedIn === true) {
+    //       this.addSuccessSnackbar("Successfully logged in!");
+    //       this.cancel();
+    //       return "";
+    //     } else {
+    //       //use response message
+    //       this.addErrorSnackbar("Unsuccessfully logged in!");
+    //       return "";
+    //     }
+    //   }
+    // }
     // ...mapGetters("account", {
     //   info: "loginInfo"
     // })
@@ -164,10 +193,18 @@ export default {
       //this.login(credentials);
       //var email = this.email;
       //var password = this.password;
-      this.login(credentials);
-      this.addSuccessSnackbar("Successfully logged in!");
+      let response = await this.login(credentials);
+      console.log(response);
+      // console.log(this.user);
+      if (this.loggedIn === true) {
+        this.addSuccessSnackbar("Successfully logged in!");
+        this.cancel();
+        //this.show = false;
+      } else {
+        //use response message
+        this.addErrorSnackbar("Unsuccessfully logged in!");
+      }
       //console.log(this.info);
-      this.show = false;
     },
 
     cancel() {
