@@ -28,7 +28,12 @@
         "requiredFieldDescription": "kennzeichnet benötigte Felder",
         "showPasswordTooltip": "Passwort anzeigen",
         "closeButton": "Schließen",
-        "submitButton": "Anmelden"
+        "submitButton": "Anmelden",
+
+        "submitLoginSuccess": "Successfully logged in!",
+        "submitLoginIncorrectError": "Combination of username and password was incorrect.",
+        "submitLoginVerificationError": "E-mail address was not verified.",
+        "submitLoginOtherError": "An error occurred, we are sorry."
     },
 
     "registerDialog": {
@@ -79,19 +84,45 @@
         "requiredFieldDescription": "kennzeichnet benötigte Felder",
         "showPasswordTooltip": "Passwort anzeigen",
         "closeButton": "Schließen",
-        "submitButton": "Anmelden"
+        "submitButton": "Anmelden",
+
+        "submitRegAlreadyUsedError": "E-Mail already used.",
+        "submitRegWhileSendingError": "Error while sending!",
+        "submitRegOtherError": "An error occurred, we are sorry."
+    },
+
+    "registrationVerification": {
+        "header": "Thank you for your registration!",
+        "body1": "We would like to welcome you on board of xx.",
+        "body2": "Please verify your e-mail address. We have sent you an e-mail containing a verification code.",
+
+        "verifyRegSuccess": "Your registration was successful!",
+        "verifyRegVerificationError": "E-Mail verification failed.",
+        "verifyRegOtherError": "An error occurred, we are sorry."
     },
 
     "forgotPassword": {
         "headline": "Passwort vergessen",
         "infoAlert": "Wenn Sie Ihr Passwort vergessen haben oder Ihr Zugang gesperrt wurde, können Sie unten eine E-Mail zum Zurücksetzen des Passworts anfordern, indem Sie Ihre E-Mail-Adresse sowie Ihr Geburtsdatum angeben.",
-        "sendMailButtonLabel": "E-mail anfordern"
+        "sendMailButtonLabel": "E-mail anfordern",
+        "successfullySentBody": "E-Mail was successfully sent! Please check your mailbox and follow the contained link to reset your password.",
+
+        "sendMailWhileSendingError": "Error while sending!",
+        "sendMailNotFoundError": "User was not found!",
+        "sendMailOtherError": "An error occurred, we are sorry.",
+        "sendMailSuccess": "E-Mail was successfully sent to your address."
     },
 
     "passwordReset": {
         "headline": "Passwort zurücksetzen",
         "infoAlert": "Nun können Sie ein neues Passwort vergeben. Achten Sie darauf mindestens 8 Zeichen zu verwenden, wobei mindestens eine Zahl, ein Sonderzeichen und ein Klein- sowie ein Großbuchstaben enthalten sein muss, um gut geschützt zu sein.",
-        "resetPasswordButtonLabel": "Speichern"
+        "resetPasswordButtonLabel": "Speichern",
+
+        "successfullyChangedBody": "Your password was successfully changed! You can now login with your new password. Have fun on our platform!",
+        "checkInvalidError": "Password reset link is invalid or has expired.",
+
+        "resetFailureError": "Password reset failed.",
+        "resetOtherError": "An error occurred, we are sorry."
     },
     
     "footer": {

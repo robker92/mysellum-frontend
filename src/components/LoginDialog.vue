@@ -193,18 +193,23 @@ export default {
       //this.login(credentials);
       //var email = this.email;
       //var password = this.password;
-      let response = await this.login(credentials);
-      console.log(response);
-      // console.log(this.user);
-      if (this.loggedIn === true) {
-        this.addSuccessSnackbar("Successfully logged in!");
-        this.cancel();
-        //this.show = false;
-      } else {
-        //use response message
-        this.addErrorSnackbar("Unsuccessfully logged in!");
+      try {
+        await this.login(credentials);
+      } catch (error) {
+        console.log(error.response.data);
+        let msg;
+        if (error.response.data.type === "incorrect") {
+          msg = this.$t("loginDialog.submitLoginIncorrectError");
+        } else if (error.response.data.type === "verification") {
+          msg = this.$t("loginDialog.submitLoginVerificationError");
+        } else {
+          msg = this.$t("loginDialog.submitLoginOtherError");
+        }
+        this.addErrorSnackbar(msg);
+        return;
       }
-      //console.log(this.info);
+      this.addSuccessSnackbar(this.$t("loginDialog.submitLoginSuccess"));
+      this.cancel();
     },
 
     cancel() {

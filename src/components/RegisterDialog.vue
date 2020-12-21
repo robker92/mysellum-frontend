@@ -60,7 +60,7 @@
                     :label="$t('registerDialog.birthdateField') + '*'"
                     prepend-icon="mdi-calendar"
                     readonly
-                    :value="birthDateFormat"
+                    :value="birthdateFormatted"
                     :error-messages="birthDateErrors"
                     @input="$v.birthDate.$touch()"
                     @blur="$v.birthDate.$touch()"
@@ -191,6 +191,7 @@
 //import userServices from "../services/userServices";
 
 import { mapActions } from "vuex";
+import { userService } from "../services";
 
 import {
   required,
@@ -404,15 +405,15 @@ export default {
         );
       return errors;
     },
-    birthDateFormat() {
+    birthdateFormatted() {
       if (this.birthDate == null) {
         return this.birthDate;
       } else {
         return (
           this.birthDate.substring(8, 10) +
-          "-" +
+          "." +
           this.birthDate.substring(5, 7) +
-          "-" +
+          "." +
           this.birthDate.substring(0, 4)
         );
       }
@@ -439,7 +440,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("account", ["register"]),
+    //...mapActions("account", ["register"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     //handleAvailabilityRequest: async function (event) {
     submitRegistration: async function() {
@@ -461,27 +462,36 @@ export default {
         this.$v.$touch()
       }
       */
-      var user = {
+      console.log(this.birthdateFormatted);
+      let user = {
         firstName: this.firstName,
         lastName: this.lastName,
         email: this.email,
-        birthdate: this.birthDateFormat(),
+        birthdate: this.birthdateFormatted,
         password: this.password,
         city: this.city,
-        postcode: this.postcode,
+        postcode: this.postcode.toString(),
         addressLine1: this.addressLine1
       };
       console.log(user);
       //await userServices.registerUser(requestBody);
-      let response = await this.register(user);
-      if (response.success === true) {
-        //this.addSuccessSnackbar("Successfully registered!");
-        this.show = false;
-        this.$router.push({ name: "RegistrationConfirmation" });
-      } else {
-        //use response message
-        this.addErrorSnackbar("Registration was unsuccessful!");
+      //let response;
+      try {
+        await userService.register(user);
+      } catch (error) {
+        let msg;
+        if (error.response.data.type === "alreadyUsed") {
+          msg = this.$t("registerDialog.submitRegAlreadyUsedError");
+        } else if (error.response.data.type === "whileMailSending") {
+          msg = this.$t("registerDialog.submitRegWhileSendingError");
+        } else {
+          msg = this.$t("registerDialog.submitRegOtherError");
+        }
+        this.addErrorSnackbar(msg);
+        return;
       }
+      this.cancel();
+      this.$router.push({ name: "RegistrationVerification" });
     },
 
     cancel() {
@@ -497,6 +507,7 @@ export default {
       this.showPasswordConfirmation = false;
       this.birthDate = null;
       this.birthDateMenu = false;
+      this.checkboxTermsConditions = false;
       //Address
       this.addressLine1 = "";
       this.city = "";

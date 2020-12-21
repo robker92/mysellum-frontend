@@ -76,14 +76,13 @@
           class="mt-5"
           dense
         >
-          Password reset invalid!
+          {{ this.$t("passwordReset.checkInvalidError") }}
         </v-alert>
       </v-row>
     </v-container>
     <v-container v-else>
       <div text-body-1>
-        Your password was successfully changed! You can now login with your new
-        password. Have fun on our platform!
+        {{ this.$t("passwordReset.successfullyChangedBody") }}
       </div>
     </v-container>
     <v-overlay v-model="overlay">
@@ -195,9 +194,11 @@ export default {
 
   async mounted() {
     this.resetToken = this.$route.params.resetToken;
-    let response = await userService.checkResetToken(this.resetToken);
-    if (response.success === true) {
+    try {
+      await userService.checkResetToken(this.resetToken);
       this.passwordResetTokenValid = true;
+    } catch (error) {
+      //this.resetFailMessage = error.response.data.message;
     }
     this.alreadyReset = false;
   },
@@ -211,16 +212,19 @@ export default {
         token: this.resetToken,
         password: this.password
       };
-      let response = await userService.resetPassword(data);
-      console.log(response);
-      if (response.success === true) {
-        this.addSuccessSnackbar(
-          "Password was successfully changed. You can now login with your new password."
-        );
-      } else {
-        this.addErrorSnackbar("Error while resetting your password!");
+      try {
+        await userService.resetPassword(data);
+        this.addSuccessSnackbar(this.$t("passwordReset.successfullyChanged"));
+        this.alreadyReset = true;
+      } catch (error) {
+        let msg;
+        if (error.response.data.type === "failure") {
+          msg = this.$t("passwordReset.resetFailureError");
+        } else {
+          msg = this.$t("passwordReset.resetOtherError");
+        }
+        this.addErrorSnackbar(msg);
       }
-      this.alreadyReset = true;
       this.overlay = false;
     }
   }

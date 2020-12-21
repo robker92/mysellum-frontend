@@ -28,7 +28,12 @@
         "requiredFieldDescription": "indicates required field",
         "showPasswordTooltip": "show password",
         "closeButton": "Close",
-        "submitButton": "Submit"
+        "submitButton": "Submit",
+
+        "submitLoginSuccess": "Successfully logged in!",
+        "submitLoginIncorrectError": "Combination of username and password was incorrect.",
+        "submitLoginVerificationError": "E-mail address was not verified.",
+        "submitLoginOtherError": "An error occurred, we are sorry."
     },
 
     "registerDialog": {
@@ -79,19 +84,46 @@
         "requiredFieldDescription": "indicates required field",
         "showPasswordTooltip": "show password",
         "closeButton": "Close",
-        "submitButton": "Submit"
+        "submitButton": "Submit",
+
+        "submitRegAlreadyUsedError": "E-Mail already used.",
+        "submitRegWhileSendingError": "Error while sending!",
+        "submitRegOtherError": "An error occurred, we are sorry."
+    },
+
+    "registrationVerification": {
+        "header": "Thank you for your registration!",
+        "body1": "We would like to welcome you on board of xx.",
+        "body2": "Please verify your e-mail address. We have sent you an e-mail containing a verification code.",
+
+        "verifyRegSuccess": "Your registration was successful!",
+        "verifyRegVerificationError": "E-Mail verification failed.",
+        "verifyRegOtherError": "An error occurred, we are sorry."
     },
 
     "forgotPassword": {
         "headline": "Forgot password",
         "infoAlert": "If you have forgotten your password or your access has been blocked, you can request a password reset email below by providing your mail address as well as your birthdate.",
-        "sendMailButtonLabel": "Send mail"
+        "sendMailButtonLabel": "Send mail",
+        "successfullySentBody": "E-Mail was successfully sent! Please check your mailbox and follow the contained link to reset your password.",
+
+        "sendMailWhileSendingError": "Error while sending!",
+        "sendMailNotFoundError": "User was not found!",
+        "sendMailOtherError": "An error occurred, we are sorry.",
+        "sendMailSuccess": "E-Mail was successfully sent to your address."
     },
 
     "passwordReset": {
         "headline": "Password reset",
         "infoAlert": "Now you can assign a new password. Make sure to use at least 8 characters, including at least one number, one special character, one lowercase and one uppercase letter to be well protected.",
-        "resetPasswordButtonLabel": "Save password"
+        "resetPasswordButtonLabel": "Save password",
+
+        "successfullyChangedBody": "Your password was successfully changed! You can now login with your new password. Have fun on our platform!",
+        "successfullyChanged": "Password was successfully changed. You can now login with your new password.",
+        "checkInvalidError": "Password reset link is invalid or has expired.",
+
+        "resetFailureError": "Password reset failed.",
+        "resetOtherError": "An error occurred, we are sorry."
     },
 
     "footer": {

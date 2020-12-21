@@ -74,8 +74,7 @@
     </v-container>
     <v-container v-else>
       <div text-body-1>
-        E-Mail was successfully sent! Please check your mailbox and follow the
-        contained link to reset your password.
+        {{ this.$t("forgotPassword.successfullySentBody") }}
       </div>
     </v-container>
     <v-overlay v-model="overlay">
@@ -163,15 +162,21 @@ export default {
         birthdate: this.birthDateFormat
       };
       this.overlay = true;
-      let response = await userService.sendResetPasswordMail(payload);
-      console.log(response);
-      if (response.success === true) {
-        this.addSuccessSnackbar(
-          "E-Mail was successfully sent to your address."
-        );
+      try {
+        await userService.sendResetPasswordMail(payload);
+        this.addSuccessSnackbar(this.$t("forgotPassword.sendMailSuccess"));
         this.alreadySent = true;
-      } else {
-        this.addErrorSnackbar("Error while sending the password reset mail!");
+      } catch (error) {
+        let msg;
+        if (error.response.data.type === "whileSending") {
+          msg = this.$t("forgotPassword.sendMailWhileSendingError");
+        } else if (error.response.data.type === "notFound") {
+          msg = this.$t("forgotPassword.sendMailNotFoundError");
+        } else {
+          msg = this.$t("forgotPassword.sendMailOtherError");
+        }
+        this.addErrorSnackbar(msg);
+        //this.addErrorSnackbar("Error while sending the password reset mail!");
       }
       this.overlay = false;
     }

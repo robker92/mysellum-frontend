@@ -108,10 +108,9 @@
             </v-list-item-avatar>
 
             <v-list-item-content class="text-left">
-              <!--   <v-list-item-title
-                >{{ this.user.address.firstName
-                }}{{ this.user.address.lastName }}
-              </v-list-item-title> -->
+              <v-list-item-title>
+                {{ this.user.name.firstName }}{{ this.user.name.lastName }}
+              </v-list-item-title>
 
               <v-list-item-subtitle>{{
                 $t("header.userMenu.userSubtitle")

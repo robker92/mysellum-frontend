@@ -36,19 +36,24 @@ const actions = {
         //console.log(password)
         return new Promise((resolve, reject) => {
             userService.login(credentials).then(
-                user => {
-                    commit("loginSuccess", user);
-                    resolve(user)
+                data => {
+                    commit("loginSuccess", data.user);
+                    resolve(data.message)
                 },
-                error => {
-                    commit("loginFailure", error);
-                    reject(error)
-                    // dispatch("alert/error", error, {
-                    //     root: true
-                    // });
-                }
+                // error => {
+                //     console.log(error)
+                //     commit("loginFailure", error);
+                //     reject(error)
+                //     // dispatch("alert/error", error, {
+                //     //     root: true
+                //     // });
+                // }
                 //commit("loginSuccess", user)
-            );
+            ).catch((error) => {
+                //console.log(error)
+                commit("loginFailure", error);
+                reject(error)
+            });
         });
     },
 
@@ -59,18 +64,18 @@ const actions = {
         commit("logout");
     },
 
-    register({
+    verifyRegistration({
         dispatch,
         commit,
         state
-    }, user) {
+    }, token) {
         //commit("registerRequest", user);
         //console.log("@register");
         return new Promise((resolve, reject) => {
-            userService.register(user).then(
-                user => {
-                    commit("registerSuccess", user);
-                    resolve(user)
+            userService.verifyRegistration(token).then(
+                result => {
+                    commit("registerSuccess", result.user);
+                    resolve(result);
                     //router.push('/login')
                     // setTimeout(() => {
                     //     // display success message after route change completes
@@ -78,15 +83,12 @@ const actions = {
                     //         root: true
                     //     });
                     // });
-                },
-                error => {
-                    commit("registerFailure", error);
-                    reject(error)
-                    // dispatch("alert/error", error, {
-                    //     root: true
-                    // });
                 }
-            );
+            ).catch((error) => {
+                //console.log(error)
+                commit("registerFailure", error);
+                reject(error)
+            });;
         });
     },
 
@@ -178,7 +180,7 @@ const mutations = {
         // };
         // state.user = user;
         state.loggedIn = true;
-        console.log(user)
+        // console.log(user)
         state.user = user;
     },
     loginFailure(state) {

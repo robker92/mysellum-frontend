@@ -39,17 +39,21 @@ async function getSingleUser(email) {
 
 
 async function login(credentials) {
+    let response;
+    try {
+        response = await usersClient.post(
+            '/loginUser',
+            credentials
+        );
+    } catch (error) {
 
-    if (!credentials.email || !credentials.password) {
-        //Abbruch
+        // console.log(error)
+        // console.log(error.response.status)
+        // console.log(error.response.data)
+        // console.log(error.response.headers)
+        return Promise.reject(error);
+        //return error;
     };
-    // console.log("@login function")
-    // console.log(credentials)
-    let response = await usersClient.post(
-        '/loginUser',
-        credentials
-    );
-    console.log(response)
     //var user = response.data.user
     //console.log(user)
     //var user = await handleResponse(response)
@@ -60,7 +64,7 @@ async function login(credentials) {
         }));
     };
 
-    return response.data.user;
+    return response.data;
 };
 
 
@@ -70,16 +74,40 @@ function logout() {
 };
 
 async function register(data) {
-
-    let response = await usersClient.post(
-        '/registerUser',
-        data,
-    );
+    let response;
+    try {
+        response = await usersClient.post(
+            '/registerUser',
+            data,
+        );
+    } catch (error) {
+        return Promise.reject(error);
+    };
     //console.log("@register function")
     //var user = response.data.user
     //console.log(user)
     //var user = handleResponse(response.data.user)
     //console.log(user)
+    // if (response.data.user.token) {
+    //     // store user details and jwt token in local storage to keep user logged in between page refreshes
+    //     localStorage.setItem('user', JSON.stringify({
+    //         token: response.data.user.token
+    //     }));
+    // };
+
+    return response.data;
+};
+
+async function verifyRegistration(token) {
+    let response;
+    try {
+        response = await usersClient.post(
+            `/verifyRegistration/${token}`
+        );
+    } catch (error) {
+        return Promise.reject(error);
+    };
+
     if (response.data.user.token) {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
         localStorage.setItem('user', JSON.stringify({
@@ -87,7 +115,7 @@ async function register(data) {
         }));
     };
 
-    return response;
+    return response.data;
 };
 
 async function addToShoppingCart(data) {
@@ -122,7 +150,7 @@ async function removeFromShoppingCart(data) {
                 'x-access-token': token
             }
         }
-    )
+    );
 
     var shoppingCart = response.data.shoppingCart
     return shoppingCart
@@ -136,8 +164,8 @@ async function sendResetPasswordMail(data) {
             data
         );
     } catch (error) {
-        console.log(error.message)
-        return error
+        //console.log(error.message)
+        return Promise.reject(error);
     };
 
     // let checkResponse = await handleResponse(response)
@@ -147,30 +175,34 @@ async function sendResetPasswordMail(data) {
 };
 
 async function checkResetToken(token) {
-    let response = await usersClient.get(
-        `/checkResetToken/${token}`
-    );
+    let response;
+    try {
+        response = await usersClient.get(
+            `/checkResetToken/${token}`
+        );
+    } catch (error) {
+        return Promise.reject(error);
+    };
     //console.log(response)
     return response.data;
 };
 
 async function resetPassword(data) {
-    let response = await usersClient.post(
-        `/resetPassword/${data.token}`, {
-            password: data.password
-        }
-    );
+    let response;
+    try {
+        response = await usersClient.post(
+            `/resetPassword/${data.token}`, {
+                password: data.password
+            }
+        );
+    } catch (error) {
+        return Promise.reject(error);
+    };
     //console.log(response)
     return response.data;
 };
 
-async function confirmRegistration(data) {
-    let response = await usersClient.post(
-        `/confirmRegistration/${data.token}`, {}
-    );
-    //console.log(response)
-    return response.data;
-};
+
 
 //REFACTOR
 // eslint-disable-next-line no-unused-vars
@@ -212,7 +244,7 @@ export const userService = {
     sendResetPasswordMail,
     checkResetToken,
     resetPassword,
-    confirmRegistration
+    verifyRegistration
     // getAll,
     // getById,
     // update,

@@ -14,7 +14,7 @@ import SuccessfulOrder from "../views/SuccessfulOrder.vue";
 import StoreOrderOverview from "../views/StoreOrderOverview.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import PasswordReset from "../views/PasswordReset.vue";
-import RegistrationConfirmation from "../views/RegistrationConfirmation.vue";
+import RegistrationVerification from "../views/RegistrationVerification.vue";
 
 import {
   i18n
@@ -114,9 +114,9 @@ const routes = [{
         component: PasswordReset
       },
       {
-        path: "registration-confirmation/:confirmationToken?",
-        name: "RegistrationConfirmation",
-        component: RegistrationConfirmation
+        path: "registration-verification/:verificationToken?",
+        name: "RegistrationVerification",
+        component: RegistrationVerification
       }
       // otherwise redirect to homeRegistrationConfirmation
       // {
@@ -147,12 +147,12 @@ router.beforeEach((to, from, next) => {
     "ForgotPassword",
     "PasswordReset",
     "StoreProfile",
-    "RegistrationConfirmation"
+    "RegistrationVerification"
   ];
   //const authRequired = !publicPages.includes(to.path);
   const authRequired = !publicPages.includes(to.name);
   const loggedIn = localStorage.getItem("user"); // -> Check content as well -> Security
-  console.log(JSON.parse(loggedIn).token);
+  //console.log(JSON.parse(loggedIn).token);
   if (authRequired && !JSON.parse(loggedIn).token) {
     return next(`/${locale}`);
   }
