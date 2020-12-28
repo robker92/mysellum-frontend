@@ -390,6 +390,7 @@
 */
 import { mapState, mapActions } from "vuex";
 import { storeService } from "../services";
+//import { addProductLoggedOut } from "../helpers";
 
 //import { required, maxLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
@@ -420,7 +421,7 @@ export default {
       amountTextField: 1,
       fab: false,
       stockAmount: "",
-      productQuantity: 0
+      productQuantity: parseInt(this.product.stockAmount) <= 0 ? 0 : 1
       // quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
       // quantityItems2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     };
@@ -428,7 +429,12 @@ export default {
 
   computed: {
     //...mapState("shoppingCart", ["productsInCart", "counter"]),
-    ...mapState("account", ["user", "loggedIn"]),
+    ...mapState("account", [
+      "user",
+      "loggedIn",
+      "shoppingCart",
+      "productCounter"
+    ]),
     descriptionComputed: {
       get() {
         if (this.product.quantityType == "Kilograms") {
@@ -516,7 +522,7 @@ export default {
     quantityItemsComputed: {
       get() {
         let arr = [];
-        for (let index = 0; index <= this.product.stockAmount; index++) {
+        for (let index = 1; index <= this.product.stockAmount; index++) {
           if (index <= 10) {
             arr.push(index);
           }
@@ -546,7 +552,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions("account", ["addProduct"]),
+    ...mapActions("account", ["addProduct", "addProductLoggedOut"]),
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     increaseAmountByOne() {
       this.amountTextField = this.amountTextField + 1;
     },
@@ -555,45 +562,56 @@ export default {
         this.amountTextField = this.amountTextField - 1;
       }
     },
-    putInCart(product) {
+    async putInCart(product) {
       //if user loggedin -> Database; if not -> Local storage
       if (this.loggedIn == false) {
+        console.log(this.productQuantity);
+        this.addProductLoggedOut({
+          product: product,
+          quantity: parseInt(this.productQuantity),
+          currentCart: this.shoppingCart
+        });
         //User is not logged in
         //Check if shoppingCart in local storage already
-        var products = [];
-        var payload = [product, parseInt(this.productQuantity)];
-        //Check if cart already created in local storage and create new one if not
-        if (localStorage.getItem("cart") == null) {
-          products[0] = payload;
-          localStorage.setItem("cart", JSON.stringify(products));
-        } else {
-          // Add to already existing cart
-          var currentCart = JSON.parse(localStorage.getItem("cart"));
-          //check if product already in cart
-          var found = false;
-          for (var i = 0; i < currentCart.length; i++) {
-            if (product.id === currentCart[i][0].id) {
-              //Product already in cart
-              found = true;
-              currentCart[i][1] =
-                currentCart[i][1] + parseInt(this.productQuantity);
-              localStorage.setItem("cart", JSON.stringify(currentCart));
-              break;
-            }
-          }
-          //Product not in cart
-          if (found == false) {
-            currentCart.push(payload);
-            localStorage.setItem("cart", JSON.stringify(currentCart));
-          }
-        }
+        // let payload = [product, parseInt(this.productQuantity)];
+        // //Check if cart already created in local storage and create new one if not
+        // if (localStorage.getItem("cart") == null) {
+        //   let products = [];
+        //   products[0] = payload;
+        //   localStorage.setItem("cart", JSON.stringify(products));
+        // } else {
+        //   // Add to already existing cart
+        //   let currentCart = JSON.parse(localStorage.getItem("cart"));
+        //   //let currentCart2 = vuexObjct.account.shoppingCart;
+        //   //check if product already in cart
+        //   let found = false;
+        //   for (let i = 0; i < currentCart.length; i++) {
+        //     if (product.id === currentCart[i][0].id) {
+        //       //Product already in cart
+        //       found = true;
+        //       currentCart[i][1] =
+        //         currentCart[i][1] + parseInt(this.productQuantity);
+        //       localStorage.setItem("cart", JSON.stringify(currentCart));
+        //       break;
+        //     }
+        //   }
+        //   //Product not in cart
+        //   if (found == false) {
+        //     currentCart.push(payload);
+        //     localStorage.setItem("cart", JSON.stringify(currentCart));
+        //   }
+        // }
       } else {
         //Logged In routine
+        //try {
         this.addProduct({
           email: this.user.email,
           product: product,
           amount: this.productQuantity
         });
+        // } catch (error) {
+        //   this.addErrorSnackbar("Error while adding product.");
+        // }
       }
     },
 

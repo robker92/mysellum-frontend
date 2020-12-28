@@ -162,9 +162,9 @@ export default {
       console.log(this.reviewText);
       //console.log(this.$route.params.id);
       var data = {
-        id: this.$route.params.id,
-        userEmail: this.user.email,
-        datetime: new Date(),
+        storeId: this.$route.params.id,
+        //userEmail: this.user.email,
+        //datetime: new Date(),
         rating: this.rating,
         text: this.reviewText
       };

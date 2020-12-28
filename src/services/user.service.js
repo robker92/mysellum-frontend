@@ -2,9 +2,10 @@
 //import config from './config'
 import axios from 'axios'
 
-// import {
-//     authHeader
-// } from '../_helpers'
+import {
+    authHeader,
+    //checkAuthentication
+} from '../helpers'
 
 const usersBaseURL = 'http://127.0.0.1:3000/users'
 
@@ -57,12 +58,12 @@ async function login(credentials) {
     //var user = response.data.user
     //console.log(user)
     //var user = await handleResponse(response)
-    if (response.data.user.token) {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify({
-            token: response.data.user.token
-        }));
-    };
+    // if (response.data.user.token) {
+    //     // store user details and jwt token in local storage to keep user logged in between page refreshes
+    //     localStorage.setItem('user', JSON.stringify({
+    //         token: response.data.user.token
+    //     }));
+    // };
 
     return response.data;
 };
@@ -70,7 +71,8 @@ async function login(credentials) {
 
 function logout() {
     // remove user from local storage to log user out
-    localStorage.removeItem('user');
+    //localStorage.removeItem('user');
+    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 };
 
 async function register(data) {
@@ -119,41 +121,59 @@ async function verifyRegistration(token) {
 };
 
 async function addToShoppingCart(data) {
-    var token = (JSON.parse(localStorage.getItem('user')))["token"]
+    //var token = (JSON.parse(localStorage.getItem('user')))["token"]
 
     // var data = {
     //     email: email,
     //     product: product,
     //     amount: amount
     // }
-    let response = await usersClient.patch(
+    let response;
+    //try {
+    response = await usersClient.patch(
         `/cart/${data["email"]}`,
         data, {
-            headers: {
-                'x-access-token': token
-            }
+            headers:
+                //'x-access-token': token,
+                authHeader()
         }
-    )
+    );
+    // handleResponse(response)
+    // } catch (error) {
+    //     return Promise.reject(error);
+    // };
     console.log(response.data)
-    var shoppingCart = response.data.shoppingCart
+    let shoppingCart = response.data.shoppingCart;
 
-    return shoppingCart
+    return shoppingCart;
 };
 
 async function removeFromShoppingCart(data) {
-    var token = (JSON.parse(localStorage.getItem('user')))["token"]
-
-    let response = await usersClient.patch(
-        `/cartRemove/${data["email"]}`,
-        data, {
-            headers: {
-                'x-access-token': token
+    let response
+    try {
+        response = await usersClient.patch(
+            `/cartRemove/${data["email"]}`,
+            data, {
+                headers: authHeader()
             }
+        );
+    } catch (error) {
+        return Promise.reject(error);
+    };
+    let shoppingCart = response.data.shoppingCart
+    return shoppingCart
+};
+
+async function updateShoppingCart(data) {
+    console.log(data.cart)
+    await usersClient.patch(
+        `/updateCart/${data.email}`, {
+            shoppingCart: data.cart
+        }, {
+            headers: authHeader()
         }
     );
-
-    var shoppingCart = response.data.shoppingCart
-    return shoppingCart
+    return;
 };
 
 async function sendResetPasswordMail(data) {
@@ -206,7 +226,15 @@ async function resetPassword(data) {
 
 //REFACTOR
 // eslint-disable-next-line no-unused-vars
-async function handleResponse(response) {
+function handleResponse(fctn) {
+    console.log("@ handler")
+    const response = fctn;
+    if (response instanceof Error) {
+        console.log("@error at handler")
+        return Promise.reject(response);
+    }
+    return Promise.resolve(response);
+    //return response.then(text => {
     // return response.then(text => {
     //     const data = text && JSON.parse(text);
     //     if (!response.ok) {
@@ -222,14 +250,14 @@ async function handleResponse(response) {
 
     //     return data;
     // });
-    console.log("hi1")
-    if (response instanceof Error) {
-        let data = response && JSON.parse(response);
-        let error = (data && data.message) || response.statusText;
-        return Promise.reject(error);
-    } else {
-        Promise.resolve(response);
-    }
+    // console.log("hi1")
+    // if (response instanceof Error) {
+    //     let data = response && JSON.parse(response);
+    //     let error = (data && data.message) || response.statusText;
+    //     return Promise.reject(error);
+    // } else {
+    //     Promise.resolve(response);
+    // }
 
 };
 
@@ -240,6 +268,7 @@ export const userService = {
     register,
     addToShoppingCart,
     removeFromShoppingCart,
+    updateShoppingCart,
     //Reset Password:
     sendResetPasswordMail,
     checkResetToken,

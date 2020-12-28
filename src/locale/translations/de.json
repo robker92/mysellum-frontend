@@ -1,4 +1,7 @@
 {
+    "general": {
+        "invalidTokenError": "We are sorry, your session has run out. Please login again."
+    },
     "header": {
         "userMenu": {
             "loginButton": "Login",

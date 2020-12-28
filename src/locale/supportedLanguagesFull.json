@@ -1,57 +1,57 @@
 [
-    {
-      "name": "English",
-      "flag": "gb",
-      "locale": "en"
-    },
-    {
-      "name": "German",
-      "flag": "de",
-      "locale": "de"
-    },
-    {
-      "name": "Spanish",
-      "flag": "es",
-      "locale": "es"
-    },
-    {
-      "name": "French",
-      "flag": "fr",
-      "locale": "fr"
-    },
-    {
-      "name": "Italian",
-      "flag": "it",
-      "locale": "it"
-    },
-    {
-      "name": "Dutch",
-      "flag": "nl",
-      "locale": "nl"
-    },
-    {
-      "name": "Greek",
-      "flag": "gr",
-      "locale": "gr"
-    },
-    {
-      "name": "Norwegian",
-      "flag": "no",
-      "locale": "no"
-    },
-    {
-      "name": "Swedish",
-      "flag": "se",
-      "locale": "se"
-    },
-    {
-      "name": "Czech",
-      "flag": "cz",
-      "locale": "cz"
-    },
-    {
-      "name": "Polish",
-      "flag": "pl",
-      "locale": "pl"
-    }
-  ]
+  {
+    "name": "English",
+    "flag": "gb",
+    "locale": "en"
+  },
+  {
+    "name": "German",
+    "flag": "de",
+    "locale": "de"
+  },
+  {
+    "name": "Spanish",
+    "flag": "es",
+    "locale": "es"
+  },
+  {
+    "name": "French",
+    "flag": "fr",
+    "locale": "fr"
+  },
+  {
+    "name": "Italian",
+    "flag": "it",
+    "locale": "it"
+  },
+  {
+    "name": "Dutch",
+    "flag": "nl",
+    "locale": "nl"
+  },
+  {
+    "name": "Greek",
+    "flag": "gr",
+    "locale": "gr"
+  },
+  {
+    "name": "Norwegian",
+    "flag": "no",
+    "locale": "no"
+  },
+  {
+    "name": "Swedish",
+    "flag": "se",
+    "locale": "se"
+  },
+  {
+    "name": "Czech",
+    "flag": "cz",
+    "locale": "cz"
+  },
+  {
+    "name": "Polish",
+    "flag": "pl",
+    "locale": "pl"
+  }
+]

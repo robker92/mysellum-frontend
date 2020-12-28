@@ -3,16 +3,38 @@
 import {
     userService
 } from "../services";
+import {
+    getCookie,
+    addProductLoggedOutHelper,
+    removeProductLoggedOutHelper,
+    checkAuthentication,
+    errorHandler
+    // shoppingCartMerge,
+    // shoppingCartUndoMerge
+} from "../helpers";
+import {
+    i18n
+} from "../main";
 //import router from "../router";
 
-const user = localStorage.getItem("user");
+// const user = JSON.parse(localStorage.getItem("vuex"));
+// const shoppingCart = JSON.parse(localStorage.getItem("vuex"));
+// const productCounter = JSON.parse(localStorage.getItem("vuex"));
+const vuexObjct = JSON.parse(localStorage.getItem("vuex"));
+const loggedIn = getCookie("authToken");
 
-const state = user ? {
+const state = loggedIn ? {
     loggedIn: true,
-    user: user
+    user: vuexObjct.account.user,
+    shoppingCart: vuexObjct.account.shoppingCart,
+    loadedCart: vuexObjct.account.loadedCart,
+    productCounter: vuexObjct.account.productCounter
 } : {
     loggedIn: false,
-    user: {}
+    user: {},
+    shoppingCart: [],
+    loadedCart: [],
+    productCounter: 0
 };
 
 const getters = {
@@ -37,7 +59,10 @@ const actions = {
         return new Promise((resolve, reject) => {
             userService.login(credentials).then(
                 data => {
-                    commit("loginSuccess", data.user);
+                    commit("loginSuccess", {
+                        user: data.user,
+                        shoppingCart: data.shoppingCart
+                    });
                     resolve(data.message)
                 },
                 // error => {
@@ -74,7 +99,10 @@ const actions = {
         return new Promise((resolve, reject) => {
             userService.verifyRegistration(token).then(
                 result => {
-                    commit("registerSuccess", result.user);
+                    commit("registerSuccess", {
+                        user: result.user,
+                        shoppingCart: result.shoppingCart
+                    });
                     resolve(result);
                     //router.push('/login')
                     // setTimeout(() => {
@@ -88,82 +116,183 @@ const actions = {
                 //console.log(error)
                 commit("registerFailure", error);
                 reject(error)
-            });;
+            });
+
         });
     },
 
     addProduct({
-        commit
+        commit,
+        dispatch
     }, data) {
         //commit('increaseproductCounter', amount)
-
+        //return new Promise((resolve, reject) => {
         userService.addToShoppingCart(data).then(
             shoppingCart => {
                 //commit("loginSuccess", shoppingCart);
                 commit('addProductSuccess', shoppingCart);
-            },
-            error => {
-                commit("addProductFailure", error);
-                // dispatch("alert/error", error, {
-                //     root: true
-                // });
-            }
-            //commit("loginSuccess", user)
-        );
+                //resolve();
+            }).catch(error => {
+            errorHandler(error, "addProduct");
+            commit("addProductFailure", error);
+            // if (checkAuthentication(error)) {
+            //     dispatch("snackbar/addErrorSnackbar", "Error Message", {
+            //         root: true
+            //     })
+            //     commit("addProductFailure", error);
+            // }
+            //reject(error);
+        });
+        //});
     },
-    decreaseAmountByValue({
+
+    removeProduct({
         commit
     }, data) {
         //commit('increaseproductCounter', amount)
-
+        //return new Promise((resolve, reject) => {
         userService.removeFromShoppingCart(data).then(
             shoppingCart => {
                 //commit("loginSuccess", shoppingCart);
-                commit('decreaseAmountByValueSuccess', shoppingCart);
-            },
-            error => {
-                commit("decreaseAmountByValueFailure", error);
-                // dispatch("alert/error", error, {
-                //     root: true
-                // });
-            }
-            //commit("loginSuccess", user)
-        );
+                commit('removeProductSuccess', shoppingCart);
+                //resolve();
+            }).catch(error => {
+            errorHandler(error, "removeProduct");
+            commit("removeProductFailure", error);
+            //reject(error);
+        });
+        //});
     },
-    deleteProduct({
-        commit
-    }, data) {
-        //commit('increaseproductCounter', amount)
 
-        userService.deleteProductInShoppingCart(data).then(
-            shoppingCart => {
-                //commit("loginSuccess", shoppingCart);
-                commit('addProductSuccess', shoppingCart);
-            },
-            error => {
-                commit("addProductFailure", error);
-                // dispatch("alert/error", error, {
-                //     root: true
-                // });
-            }
-            //commit("loginSuccess", user)
-        );
-    }
+    // deleteProduct({
+    //     commit
+    // }, data) {
+    //     //commit('increaseproductCounter', amount)
+
+    //     userService.deleteProductInShoppingCart(data).then(
+    //         shoppingCart => {
+    //             //commit("loginSuccess", shoppingCart);
+    //             commit('addProductSuccess', shoppingCart);
+    //         },
+    //         error => {
+    //             commit("addProductFailure", error);
+    //             // dispatch("alert/error", error, {
+    //             //     root: true
+    //             // });
+    //         }
+    //         //commit("loginSuccess", user)
+    //     );
+    // },
+
+    addProductLoggedOut({
+        commit,
+        state
+    }, data) {
+        addProductLoggedOutHelper(data.product, data.quantity, state.shoppingCart).then(updatedCart => {
+            commit('addProductSuccess', updatedCart);
+        });
+    },
+    removeProductLoggedOut({
+        commit,
+        state
+    }, data) {
+        removeProductLoggedOutHelper(data.product, data.quantity, state.shoppingCart).then(updatedCart => {
+            commit('addProductSuccess', updatedCart);
+        });
+    },
+
+    // mergeCarts({
+    //     dispatch,
+    //     commit,
+    //     state
+    // }) {
+    //     return new Promise((resolve, reject) => {
+    //         shoppingCartMerge(state.shoppingCart, state.loadedCart).then(
+    //             cart => {
+    //                 commit("mergeSuccess", cart);
+    //                 resolve(cart);
+    //             }
+    //         ).catch((error) => {
+    //             commit("mergeFailure", error);
+    //             reject(error)
+    //         });
+    //     });
+    // },
+
+    // undoMerge({
+    //     dispatch,
+    //     commit,
+    //     state
+    // }) {
+    //     return new Promise((resolve, reject) => {
+    //         console.log(state)
+    //         console.log(state.shoppingCart)
+    //         console.log(state.loadedCart)
+    //         shoppingCartUndoMerge(state.shoppingCart, state.loadedCart).then(
+    //             cart => {
+    //                 commit("undoMergeSuccess", cart);
+    //                 resolve(cart);
+    //             }
+    //         ).catch((error) => {
+    //             commit("undoMergeFailure", error);
+    //             reject(error)
+    //         });
+    //     });
+    // },
+
+    updateCart({
+        dispatch,
+        commit,
+        state
+    }, data) {
+        return new Promise((resolve, reject) => {
+            userService.updateShoppingCart({
+                email: data.email,
+                cart: data.cart
+            }).then(
+                () => {
+                    commit("updateCartSuccess", data.cart);
+                    resolve(data.cart);
+                }
+            ).catch((error) => {
+                commit("updateCartFailure", error);
+                reject(error)
+            });
+        });
+    },
+
+    emptyLoadedCart({
+        dispatch,
+        commit,
+        state
+    }) {
+        commit("emptyLoadedCartSuccess");
+    },
 };
 
-function shoppingCartRoutine(state, shoppingCart) {
-    state.user.shoppingCart = shoppingCart
-    console.log("current cart:")
-    console.log(shoppingCart)
+// function shoppingCartRoutine(state, shoppingCart) {
+//     state.shoppingCart = shoppingCart;
+//     //Count the products which are in the cart
+//     let counter = 0;
+//     for (let i = 0; i < shoppingCart.length; i++) {
+//         counter = counter + shoppingCart[i][1];
+//     };
+//     //state.user.productCounter = counter
+//     state.productCounter = counter;
+// };
 
-    //Count the products which are in the cart
-    var counter = 0;
-    for (var i = 0; i < shoppingCart.length; i++) {
-        counter = counter + shoppingCart[i][1];
-    }
-    console.log(counter)
-    state.user.productCounter = counter
-}
+function calculateProductCounter(state) {
+    let counter = 0;
+    for (let i = 0; i < state.shoppingCart.length; i++) {
+        counter = counter + state.shoppingCart[i][1];
+    };
+    if (state.loadedCart.length !== 0) {
+        for (let i = 0; i < state.loadedCart.length; i++) {
+            counter = counter + state.loadedCart[i][1];
+        };
+    };
+    state.productCounter = counter;
+};
 
 const mutations = {
     // loginRequest(state, user) {
@@ -174,26 +303,42 @@ const mutations = {
     //     //state.loggedIn = true;
     //     state.loggingIn = true;
     // },
-    loginSuccess(state, user) {
+    loginSuccess(state, response) {
         // state.status = {
         //     loggedIn: true
         // };
         // state.user = user;
+        //console.log(response)
         state.loggedIn = true;
         // console.log(user)
-        state.user = user;
+        state.user = response.user;
+        //let cart = response.shoppingCart;
+        if (state.shoppingCart.length > 0) {
+            state.loadedCart = response.shoppingCart;
+        } else {
+            state.shoppingCart = response.shoppingCart;
+        };
+        //concatenate shopping carts
+        calculateProductCounter(state);
+        //shoppingCartRoutine(state, cart);
+        //state.shoppingCart = response.shoppingCart;
+        //state.productCounter = response.shoppingCart;
     },
     loginFailure(state) {
         // state.status = {};
         // state.user = null;
         state.loggedIn = false;
         state.user = {};
+        //state.shoppingCart = [];
     },
     logout(state) {
         // state.status = {};
         // state.user = null;
         state.loggedIn = false;
         state.user = {};
+        state.shoppingCart = [];
+        state.loadedCart = [];
+        state.productCounter = 0;
     },
     registerRequest(state, user) {
         // state.status = {
@@ -202,10 +347,11 @@ const mutations = {
         state.registering = true;
         state.user = {};
     },
-    registerSuccess(state, user) {
+    registerSuccess(state, response) {
         // state.status = {};
         state.loggedIn = true;
-        state.user = user;
+        state.user = response.user;
+        state.shoppingCart = response.shoppingCart;
     },
     registerFailure(state, error) {
         //state.status = {};
@@ -213,7 +359,9 @@ const mutations = {
         state.user = {};
     },
     addProductSuccess(state, shoppingCart) {
-        shoppingCartRoutine(state, shoppingCart)
+        state.shoppingCart = shoppingCart;
+        calculateProductCounter(state);
+        //shoppingCartRoutine(state, shoppingCart);
         //add shopping cart to state
         // state.shoppingCart = shoppingCart
         // console.log(state.shoppingCart)
@@ -226,8 +374,11 @@ const mutations = {
         // console.log(counter)
         // state.user.productCounter = counter
     },
+    addProductFailure(state) {},
     deleteProductSuccess(state, shoppingCart) {
-        shoppingCartRoutine(state, shoppingCart)
+        state.shoppingCart = shoppingCart;
+        calculateProductCounter(state);
+        //shoppingCartRoutine(state, shoppingCart);
         //add shopping cart to state
         // state.shoppingCart = shoppingCart
         // console.log(state.shoppingCart)
@@ -240,10 +391,34 @@ const mutations = {
         // console.log(counter)
         // state.user.productCounter = counter
     },
-    decreaseAmountByValueSuccess(state, shoppingCart) {
-        shoppingCartRoutine(state, shoppingCart)
+    removeProductSuccess(state, shoppingCart) {
+        state.shoppingCart = shoppingCart;
+        calculateProductCounter(state);
+        //shoppingCartRoutine(state, shoppingCart)
         // state.shoppingCart = shoppingCart
         // console.log(state.shoppingCart)
+    },
+    // mergeSuccess(state, shoppingCart) {
+    //     state.shoppingCart = shoppingCart;
+    //     //state.loadedCart = [];
+    //     calculateProductCounter(state);
+    // },
+    // mergeFailure(state) {},
+    updateCartSuccess(state, shoppingCart) {
+        state.shoppingCart = shoppingCart;
+        //state.loadedCart = [];
+        calculateProductCounter(state);
+    },
+    updateCartFailure(state) {},
+    // undoMergeSuccess(state, shoppingCart) {
+    //     console.log(shoppingCart)
+    //     state.shoppingCart = shoppingCart;
+    //     //state.loadedCart = [];
+    //     calculateProductCounter(state);
+    // },
+    // undoMergeFailure(state) {},
+    emptyLoadedCartSuccess(state) {
+        state.loadedCart = [];
     }
 };
 

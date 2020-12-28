@@ -20,6 +20,10 @@ import {
   i18n
 } from "../main.js";
 
+import {
+  getCookie
+} from "../helpers";
+
 Vue.use(VueRouter);
 
 const routes = [{
@@ -147,13 +151,17 @@ router.beforeEach((to, from, next) => {
     "ForgotPassword",
     "PasswordReset",
     "StoreProfile",
+    "ShoppingCart",
     "RegistrationVerification"
   ];
   //const authRequired = !publicPages.includes(to.path);
   const authRequired = !publicPages.includes(to.name);
-  const loggedIn = localStorage.getItem("user"); // -> Check content as well -> Security
+  const loggedIn = getCookie("authToken");
+  //const loggedIn = localStorage.getItem("user"); // -> Check content as well -> Security
   //console.log(JSON.parse(loggedIn).token);
-  if (authRequired && !JSON.parse(loggedIn).token) {
+
+  if (authRequired && !loggedIn) {
+    //(if (authRequired && !JSON.parse(loggedIn).token) {
     return next(`/${locale}`);
   }
 

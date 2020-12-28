@@ -119,7 +119,7 @@
     <!--style="width:500px;" 
     style="border-style: solid; border: 2px solid black; border-radius: 6px;"-->
     <v-row align="start">
-      <v-col cols="12" xs="1" sm="1" md="1" lg="1" xl="1">
+      <v-col cols="12" xs="2" sm="2" md="1" lg="1" xl="1">
         <div
           v-for="(img, i) in profileData.images"
           :id="'imageDiv' + i"
@@ -135,8 +135,8 @@
             <v-img
               :src="img.src"
               :aspect-ratio="4 / 3"
-              max-width="80px"
-              max-height="80px"
+              max-width="100px"
+              max-height="100px"
               class="rounded"
             />
           </v-card>
@@ -188,7 +188,7 @@
           </v-card-title> -->
         </v-card>
       </v-col>
-      <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+      <v-col cols="12" xs="5" sm="5" md="5" lg="6" xl="6">
         <div class="text-h4 mb-3" v-if="profileData">
           {{ profileData.title }}
         </div>

@@ -169,6 +169,7 @@ export default {
   methods: {
     ...mapActions("account", ["login", "logout"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
     submitLogin: async function() {
       // if (!this.$v.email.$invalid && !this.$v.password.$invalid) {
       //   //Register User with input data
@@ -196,6 +197,7 @@ export default {
       try {
         await this.login(credentials);
       } catch (error) {
+        console.log(error)
         console.log(error.response.data);
         let msg;
         if (error.response.data.type === "incorrect") {

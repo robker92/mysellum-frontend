@@ -27,7 +27,7 @@
             <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
               <div class="text-body-2 text-left">
                 By {{ review.userName }} on
-                {{ review.datetime.substring(0, review.datetime.indexOf("T")) }}
+                {{ reviewDateTimeComputed }}
               </div>
             </v-col>
           </v-row>
@@ -97,7 +97,25 @@ export default {
   },
   computed: {
     //...mapState("shoppingCart", ["productsInCart", "counter"]),
-    ...mapState("account", ["user", "loggedIn"])
+    ...mapState("account", ["user", "loggedIn"]),
+    reviewDateTimeComputed: {
+      get() {
+        let dateCreated;
+        if (this.review.datetime) {
+          dateCreated = this.review.datetime.substring(
+            0,
+            this.review.datetime.indexOf("T")
+          );
+        } else {
+          dateCreated = this.review.datetimeCreated.substring(
+            0,
+            this.review.datetimeCreated.indexOf("T")
+          );
+        }
+
+        return dateCreated;
+      }
+    }
     // checkEmails() {
     //   if (this.user.email === this.review.userEmail) {
     //     return true;

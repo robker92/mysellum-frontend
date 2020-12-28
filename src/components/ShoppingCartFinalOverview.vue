@@ -7,7 +7,7 @@
         </div>
       </v-card-title>
       <ShoppingCartListItem
-        v-for="(prod, index) in this.user.shoppingCart"
+        v-for="(prod, index) in this.shoppingCart"
         v-bind:key="index"
         v-bind:product="prod[0]"
         v-bind:amount="prod[1]"
@@ -96,7 +96,7 @@
 
     <v-row>
       <v-col cols="12" sm="6" lg="4" xl="4">
-        <v-card>
+        <v-card v-if="this.orderData.shippingAddress">
           <v-card-title>
             <div class="text-xl-h6">Shipping Address</div>
           </v-card-title>
@@ -121,7 +121,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" lg="4" xl="4">
-        <v-card>
+        <v-card v-if="this.orderData.billingAddress">
           <v-card-title>
             <div class="text-xl-h6">Billing Address</div>
           </v-card-title>
@@ -146,7 +146,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" lg="4" xl="4">
-        <v-card>
+        <v-card v-if="this.orderData.billingAddress">
           <v-card-title>
             <div class="text-xl-h6">Credit Card Payment</div>
           </v-card-title>
@@ -231,8 +231,9 @@ export default {
 
   computed: {
     ...mapState("order", ["orderData"]),
-    ...mapState("account", ["user", "loggedIn"])
+    ...mapState("account", ["user", "loggedIn", "shoppingCart"])
   },
+
   methods: {
     // createOrder: async function() {
     //   var data = {

@@ -1,6 +1,10 @@
 /* eslint-disable prettier/prettier */
 import axios from 'axios'
 
+import {
+    authHeader
+} from '../helpers'
+
 const storesBaseURL = 'http://127.0.0.1:3000/stores'
 
 const storesClient = axios.create({
@@ -65,8 +69,12 @@ async function getStoresByLocation(mapBoundaries) {
 async function addReview(data) {
 
     let response = await storesClient.post(
-        '/addReview',
-        data
+        `/addReview/${data.storeId}`, {
+            rating: data.rating,
+            text: data.text
+        }, {
+            headers: authHeader()
+        }
     );
     console.log(response.data)
 
@@ -76,8 +84,12 @@ async function addReview(data) {
 async function editReview(data) {
 
     let response = await storesClient.post(
-        '/editReview',
-        data
+        `/editReview/${data.storeId}/${data.reviewId}`, {
+            rating: data.rating,
+            text: data.text
+        }, {
+            headers: authHeader()
+        }
     );
     console.log(response.data)
 
@@ -87,8 +99,9 @@ async function editReview(data) {
 async function deleteReview(data) {
 
     let response = await storesClient.delete(
-        `/deleteReview/${data.storeId}/${data.reviewId}`,
-        data
+        `/deleteReview/${data.storeId}/${data.reviewId}`, {
+            headers: authHeader()
+        }
     );
     console.log(response.data)
 

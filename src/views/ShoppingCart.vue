@@ -1,6 +1,7 @@
 <template>
   <div id="cartViewDiv">
-    <v-container v-if="this.user.shoppingCart">
+    <LoginDialog v-model="showLoginDialog" />
+    <v-container v-if="this.shoppingCart">
       <!--  <ShoppingCartListItem
         v-for="(prod, index) in this.user.shoppingCart"
         v-bind:key="index"
@@ -65,20 +66,66 @@
         <v-stepper-items>
           <v-stepper-content step="1">
             <v-card flat>
-              <v-container v-if="this.user.shoppingCart">
+              <v-container v-if="this.shoppingCart">
                 <div class="text-h5 text-left font-weight-medium mb-5">
                   Your Shopping Cart
                 </div>
                 <!-- text-h4 text-sm-h4 text-md-h4 text-lg-h3 text-xl-h3 -->
+                <div
+                  v-if="this.shoppingCart.length == 0"
+                  class="text-left text-body-1 mb-5"
+                >
+                  <v-alert text dense type="warning" border="left">
+                    You did not add any products to your shopping cart.
+                  </v-alert>
+                </div>
+
                 <ShoppingCartListItem
-                  v-for="(prod, index) in this.user.shoppingCart"
+                  v-else
+                  v-for="(prod, index) in this.shoppingCart"
                   v-bind:key="index"
                   v-bind:product="prod[0]"
                   v-bind:amount="prod[1]"
                   :modifiable="true"
+                  class="my-3"
                 />
+                <div v-if="this.loadedCart.length > 0">
+                  <v-divider />
+                  <div class="text-left text-h5 my-3">
+                    Loaded Cart:
+                  </div>
+                  <v-alert text dense type="info" border="left">
+                    <v-row align="center">
+                      <v-col class="grow text-left">
+                        We loaded your shopping cart from your last session. Do
+                        you want to merge the cart from your last session with
+                        your current shopping cart?
+                      </v-col>
+                      <v-col class="shrink">
+                        <v-btn color="primary" @click="mergeProcedure()">
+                          <v-icon left>mdi-merge</v-icon>
+                          Merge
+                        </v-btn>
+                      </v-col>
+                      <v-col class="shrink">
+                        <v-btn color="orange" @click="abortMerge()">
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-alert>
+                  <ShoppingCartListItem
+                    v-for="(prod, index) in this.loadedCart"
+                    v-bind:key="index"
+                    v-bind:product="prod[0]"
+                    v-bind:amount="prod[1]"
+                    :modifiable="false"
+                    class="my-3"
+                  />
+                </div>
+
                 <v-divider />
-                <v-row no-gutters height="60px">
+                <v-row no-gutters height="60px" class="mt-2">
                   <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
                     <div class="text-left text-body-1">Shipping costs:</div>
                   </v-col>
@@ -103,7 +150,12 @@
                   <v-btn
                     color="primary"
                     @click="goToStep2"
-                    :disabled="this.user.shoppingCart.length > 0 ? false : true"
+                    :disabled="
+                      this.shoppingCart.length > 0 &&
+                      this.loadedCart.length === 0
+                        ? false
+                        : true
+                    "
                   >
                     To Checkout
                   </v-btn>
@@ -173,11 +225,12 @@
         style="background-color:#441468; height: 1px; width:20%; float: right; "
       ></div>
 */
-import { calculateTotalCartSum } from "../helpers";
-import { mapState } from "vuex";
+import { calculateTotalCartSum, shoppingCartMerge } from "../helpers";
+import { mapState, mapActions } from "vuex";
 import ShoppingCartListItem from "../components/ShoppingCartListItem";
 import ShoppingCartCheckout from "../components/ShoppingCartCheckout";
 import ShoppingCartFinalOverview from "../components/ShoppingCartFinalOverview";
+import LoginDialog from "../components/LoginDialog";
 
 import { orderService } from "../services";
 
@@ -187,7 +240,8 @@ export default {
   components: {
     ShoppingCartListItem,
     ShoppingCartCheckout,
-    ShoppingCartFinalOverview
+    ShoppingCartFinalOverview,
+    LoginDialog
   },
 
   data() {
@@ -196,15 +250,30 @@ export default {
       e1: 1,
       step2Editable: false,
       step3Editable: false,
-      step2ContinueDisabled: true
+      step2ContinueDisabled: true,
+
+      showLoginDialog: false
       //step3CompletePurchaseDisabled: true
     };
   },
-
+  mounted() {
+    console.log(this.shoppingCart);
+  },
   computed: {
     //console.log(this.user.shoppingCart);
     ...mapState("order", ["orderData"]),
-    ...mapState("account", ["user", "loggedIn"]),
+    ...mapState("account", [
+      "user",
+      "loggedIn",
+      "shoppingCart",
+      "loadedCart",
+      "productCounter"
+    ]),
+    // shoppingCartComputed: {
+    //   get() {
+    //     return this.shoppingCart;
+    //   }
+    // },
     computedTotalSum: {
       get() {
         // var sum = 0.0;
@@ -215,15 +284,25 @@ export default {
         //       this.user.shoppingCart[i][1];
         // }
         // return sum.toFixed(2);
-        return calculateTotalCartSum(this.user.shoppingCart);
+        return calculateTotalCartSum(this.shoppingCart);
       }
     }
   },
 
-  mounted() {},
-
   methods: {
+    ...mapActions("account", [
+      "mergeCarts",
+      "undoMerge",
+      "updateCart",
+      "emptyLoadedCart"
+    ]),
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
     goToStep2() {
+      if (this.loggedIn === false) {
+        this.showLoginDialog = true;
+        return;
+      }
       this.e1 = 2;
       this.step2Editable = true;
     },
@@ -277,6 +356,45 @@ export default {
         //Delete Order State Info
         this.$router.push({ name: "SuccessfulOrder" });
       }
+    },
+
+    async mergeProcedure() {
+      //merge function
+      let mergedCart;
+      try {
+        mergedCart = await shoppingCartMerge(
+          this.shoppingCart,
+          this.loadedCart
+        );
+      } catch (error) {
+        this.addErrorSnackbar("Error while merging.");
+        return;
+      }
+      //update cart in database
+      try {
+        await this.updateCart({ email: this.user.email, cart: mergedCart });
+      } catch (error) {
+        this.addErrorSnackbar("Error while merging.");
+        return;
+      }
+      //at success remove items from loaded cart
+      this.emptyLoadedCart();
+      calculateTotalCartSum(this.shoppingCart);
+      this.addSuccessSnackbar("Shopping carts successfully merged!");
+    },
+
+    async abortMerge() {
+      try {
+        await this.updateCart({
+          email: this.user.email,
+          cart: this.shoppingCart
+        });
+      } catch (error) {
+        this.addErrorSnackbar("Error while merge abort.");
+        return;
+      }
+      this.emptyLoadedCart();
+      this.addSuccessSnackbar("Merge was aborted!");
     }
     // enableCompletePurchaseStep3() {
     //   this.step3CompletePurchaseDisabled = false;

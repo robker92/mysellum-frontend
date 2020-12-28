@@ -281,8 +281,8 @@
       <v-badge
         overlap
         color="green"
-        :content="checkProductCounter()"
-        :value="checkProductCounter()"
+        :content="this.productCounter"
+        :value="this.productCounter"
       >
         <v-btn
           dark
@@ -303,8 +303,8 @@
       <v-badge
         overlap
         color="green"
-        :content="checkProductCounter()"
-        :value="checkProductCounter()"
+        :content="checkProductCounter"
+        :value="checkProductCounter"
       >
         <v-btn
           dark
@@ -352,6 +352,7 @@ export default {
       group: ""
     };
   },
+
   components: {
     RegisterDialog,
     LoginDialog,
@@ -359,6 +360,7 @@ export default {
     SettingsDialog,
     LanguageSwitcher: LanguageSwitcher
   },
+
   computed: {
     // getJwtToken() {
     //   var jwtToken = localStorage.getItem('access_token')
@@ -367,7 +369,12 @@ export default {
     //   }
     //   return true
     // }, v-if="status.loggedIn == false"
-    ...mapState("account", ["user", "loggedIn"]),
+    ...mapState("account", [
+      "user",
+      "loggedIn",
+      "shoppingCart",
+      "productCounter"
+    ]),
     checkOwnedStoreId: {
       get() {
         if (
@@ -376,6 +383,17 @@ export default {
         ) {
           return false;
         } else return true;
+      }
+    },
+    checkProductCounter: {
+      get() {
+        // if (this.loggedIn === false) {
+        //   return 0;
+        // } else {
+        //   console.log(this.productCounter);
+        //   return this.productCounter;
+        // }
+        return this.productCounter;
       }
     }
 
@@ -395,34 +413,45 @@ export default {
   },
   methods: {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
-    ...mapActions("account", ["logout"]),
+    ...mapActions("account", ["logout", "updateCart"]),
 
-    logoutUser() {
+    async logoutUser() {
       //console.log(status);
       //console.log(this.$store.state.account.status);
       // console.log("@test submit");
       // console.log(this.info);
-
       // console.log(this.loggedIn);
       // console.log("now logout");
+      if (this.shoppingCart.length > 0) {
+        try {
+          await this.updateCart({
+            email: this.user.email,
+            cart: this.shoppingCart
+          });
+        } catch (error) {
+          //console.log(error);
+        }
+      }
       this.logout();
-      this.addSuccessSnackbar("Successfully logged out!");
+      //this.addSuccessSnackbar("Successfully logged out!");
       // console.log(this.loggedIn);
     },
     printCart() {
       console.log(this.user.shoppingCart);
       console.log(this.user.productCounter);
-    },
-    checkProductCounter() {
-      if (this.loggedIn == false) {
-        return 0;
-      } else {
-        return this.user.productCounter;
-      }
-    },
-    openNavDrawer() {
-      this.$emit("open-nav-drawer");
+      console.log(this.productCounter);
     }
+    // checkProductCounter() {
+    //   if (this.loggedIn === false) {
+    //     return 0;
+    //   } else {
+    //     console.log(this.productCounter);
+    //     return this.productCounter;
+    //   }
+    // }
+    // openNavDrawer() {
+    //   this.$emit("open-nav-drawer");
+    // }
   }
 };
 </script>
