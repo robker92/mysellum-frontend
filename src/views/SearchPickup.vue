@@ -15,6 +15,7 @@
       @click:clear="clearMessage"
       @click:append-outer="addTermToTagArray('tags')"
       @keyup.enter="addTermToTagArray('tags')"
+      class="mb-4"
     ></v-text-field>
     <!--        @click:clear="clearMessage"
       @click:append-outer="searchForTerm"
@@ -34,7 +35,7 @@
     </v-row>
 
     <!-- MAP v-if="computedStores"-->
-    <div v-if="storeData">
+    <div v-if="storeData" class="mb-4">
       <GoogleMap
         v-bind:markers="computedStores"
         v-bind:stores="computedStores"
@@ -110,7 +111,7 @@
                 <v-card-title>{{ store.profileData.title }}</v-card-title>
 
                 <v-card-text>
-                  <v-row class="mx-2">{{ store.mapData.address.city }} </v-row>
+                  <v-row class="mx-2 mb-2">{{ store.mapData.address.city }} </v-row>
                   <v-row align="center" class="mx-1">
                     <v-rating
                       :value="Math.round(store.profileData.avgRating * 10) / 10"

@@ -2,7 +2,8 @@
 import axios from 'axios'
 
 import {
-    authHeader
+    authHeader,
+    errorHandler
 } from '../helpers'
 
 const storesBaseURL = 'http://127.0.0.1:3000/stores'
@@ -67,42 +68,57 @@ async function getStoresByLocation(mapBoundaries) {
 };
 
 async function addReview(data) {
-
-    let response = await storesClient.post(
-        `/addReview/${data.storeId}`, {
-            rating: data.rating,
-            text: data.text
-        }, {
-            headers: authHeader()
-        }
-    );
+    let response
+    try {
+        response = await storesClient.post(
+            `/addReview/${data.storeId}`, {
+                rating: data.rating,
+                text: data.text
+            }, {
+                headers: authHeader()
+            }
+        );
+    } catch (error) {
+        errorHandler(error, "addReview");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
 async function editReview(data) {
-
-    let response = await storesClient.post(
-        `/editReview/${data.storeId}/${data.reviewId}`, {
-            rating: data.rating,
-            text: data.text
-        }, {
-            headers: authHeader()
-        }
-    );
+    let response
+    try {
+        response = await storesClient.patch(
+            `/editReview/${data.storeId}/${data.reviewId}`, {
+                rating: data.rating,
+                text: data.text
+            }, {
+                headers: authHeader()
+            }
+        );
+    } catch (error) {
+        errorHandler(error, "editReview");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
 async function deleteReview(data) {
-
-    let response = await storesClient.delete(
-        `/deleteReview/${data.storeId}/${data.reviewId}`, {
-            headers: authHeader()
-        }
-    );
+    let response
+    try {
+        response = await storesClient.delete(
+            `/deleteReview/${data.storeId}/${data.reviewId}`, {
+                headers: authHeader()
+            }
+        );
+    } catch (error) {
+        errorHandler(error, "editReview");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
@@ -119,70 +135,118 @@ async function createStore(data) {
 };
 
 async function editStore(data) {
+    let response;
+    try {
+        response = await storesClient.patch(
+            '/editStore/' + data.storeId,
+            data, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "editStore");
+        return Promise.reject(error)
+    };
 
-    let response = await storesClient.post(
-        '/editStore/' + data.storeId,
-        data
-    );
     console.log(response.data)
     return response.data;
 };
 
 async function addStoreImage(data) {
-    let response = await storesClient.post(
-        '/addStoreImage/' + data.storeId,
-        data
-    );
+    let response;
+    try {
+        response = await storesClient.post(
+            '/addStoreImage/' + data.storeId,
+            data, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "addStoreImage");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
 async function deleteStoreImage(data) {
-    let response = await storesClient.post(
-        `/deleteStoreImage/${data.storeId}/${data.imageId}`,
-        data
-    );
+    let response;
+    try {
+        response = await storesClient.delete(
+            `/deleteStoreImage/${data.storeId}/${data.imageId}`, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "deleteStoreImage");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
-async function addProduct(data) {
-    let response = await storesClient.post(
-        '/addProduct',
-        data
-    );
+async function createProduct(data) {
+    console.log(authHeader())
+    let response;
+    try {
+        response = await storesClient.post(
+            `/createProduct/${data.storeId}`,
+            data, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "createProduct");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
 async function editProduct(data) {
-    let response = await storesClient.post(
-        `/editProduct/${data.storeId}/${data.productId}`,
-        data
-    );
+    let response;
+    try {
+        response = await storesClient.patch(
+            `/editProduct/${data.storeId}/${data.productId}`,
+            data, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "editProduct");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
 async function deleteProduct(data) {
-    let response = await storesClient.delete(
-        `/deleteProduct/${data.storeId}/${data.productId}`,
-        data
-    );
+    let response;
+    try {
+        response = await storesClient.delete(
+            `/deleteProduct/${data.storeId}/${data.productId}`, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "deleteProduct");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
 };
 
 async function updateStockAmount(data) {
-    let response = await storesClient.patch(
-        `/updateStockAmount/${data.storeId}/${data.productId}`,
-        data
-    );
+    let response;
+    try {
+        response = await storesClient.patch(
+            `/updateStockAmount/${data.storeId}/${data.productId}`,
+            data, {
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "updateStockAmount");
+        return Promise.reject(error)
+    };
     console.log(response.data)
 
     return response.data;
@@ -197,7 +261,7 @@ export const storeService = {
     addReview,
     createStore,
     editStore,
-    addProduct,
+    createProduct,
     editProduct,
     editReview,
     deleteReview,

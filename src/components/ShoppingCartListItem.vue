@@ -234,7 +234,7 @@ export default {
     },
 
     async decreaseProductAmount(value) {
-      var product = this.product;
+      let product = this.product;
       if (this.loggedIn === false) {
         this.removeProductLoggedOut({
           product: product,

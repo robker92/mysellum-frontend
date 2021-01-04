@@ -5,6 +5,7 @@ import {
 
 // eslint-disable-next-line no-unused-vars
 export function errorHandler(error, fctName) {
+    console.log("@ handler");
     console.log(error.response);
     if (
         error.response.status === 401 &&

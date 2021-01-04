@@ -47,13 +47,7 @@ async function login(credentials) {
             credentials
         );
     } catch (error) {
-
-        // console.log(error)
-        // console.log(error.response.status)
-        // console.log(error.response.data)
-        // console.log(error.response.headers)
         return Promise.reject(error);
-        //return error;
     };
     //var user = response.data.user
     //console.log(user)
@@ -149,17 +143,17 @@ async function addToShoppingCart(data) {
 };
 
 async function removeFromShoppingCart(data) {
-    let response
-    try {
-        response = await usersClient.patch(
-            `/cartRemove/${data["email"]}`,
-            data, {
-                headers: authHeader()
-            }
-        );
-    } catch (error) {
-        return Promise.reject(error);
-    };
+    // let response
+    // try {
+    let response = await usersClient.patch(
+        `/cartRemove/${data["email"]}`,
+        data, {
+            headers: authHeader()
+        }
+    );
+    // } catch (error) {
+    //     return Promise.reject(error);
+    // };
     let shoppingCart = response.data.shoppingCart
     return shoppingCart
 };

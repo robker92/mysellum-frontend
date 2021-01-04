@@ -134,14 +134,20 @@ export default {
       console.log(this.review.userEmail);
     },
     deleteReview: async function() {
-      var data = {
+      let data = {
         storeId: this.$route.params.id,
         reviewId: this.review.reviewId
       };
       this.$emit("overlay-start");
-      var response = await storeService.deleteReview(data);
+      let response;
+      try {
+        response = await storeService.deleteReview(data);
+      } catch (error) {
+        this.$emit("overlay-end");
+        return;
+      }
       console.log(response);
-      var eventData = {
+      let eventData = {
         reviewId: this.review.reviewId,
         avgRating: response.avgRating
       };

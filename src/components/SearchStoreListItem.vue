@@ -1,62 +1,101 @@
 <template>
   <div class="container">
-    <!-- <v-btn @click="print">Print</v-btn> -->
-    <!-- <router-link :to="{ name: 'StoreProfile', params: { id: store._id } }" tag="button"> -->
-    <!-- <router-link to="/storeprofile/" tag="button"> -->
-    <div class="div">
-      <v-carousel
-        cycle
-        show-arrows-on-hover
-        height="200px"
-        style="width:300px;"
+    <v-hover v-slot:default="{ hover }">
+      <v-card
+        height="550px"
+        :class="{ 'on-hover': hover }"
+        :elevation="hover ? 16 : 2"
       >
-        <v-carousel-item
-          v-for="(img, i) in store.profileData.images"
-          :key="i"
-          :to="{ name: 'StoreProfile', params: { id: store._id } }"
-          eager
+        <v-carousel
+          cycle
+          show-arrows-on-hover
+          height="200px"
+          style="width:400px;"
         >
-          <v-img :src="img.src" height="100%" eager>
-            <template v-slot:placeholder>
-              <v-row class="fill-height ma-0" align="center" justify="center">
-                <v-progress-circular
-                  indeterminate
-                  color="grey lighten-2"
-                ></v-progress-circular>
-              </v-row>
-            </template>
-          </v-img>
-        </v-carousel-item>
-      </v-carousel>
-    </div>
-    <div class="div">
-      <router-link
-        :to="{ name: 'StoreProfile', params: { id: store._id } }"
-        tag="button"
-        >{{ store.profileData.title }}</router-link
-      >
-      <v-btn v-if="favorite" icon color="pink" @click="favoriteButtonClick">
-        <v-icon dark>mdi-heart</v-icon>
-      </v-btn>
-      <v-btn v-else icon color="grey" @click="favoriteButtonClick">
-        <v-icon dark>mdi-heart</v-icon>
-      </v-btn>
-      <v-rating
-        v-model="avgRatingFloatValue"
-        background-color="orange lighten-3"
-        color="orange"
-        medium
-        :dense="true"
-        :readonly="true"
-      />
-      {{ Math.round(store.profileData.avgRating * 10) / 10 }} ({{
-        store.profileData.reviews ? store.profileData.reviews.length : ""
-      }})
-      {{ store.profileData.description }}
-    </div>
-    <div>
-      <v-divider inset />
-    </div>
+          <v-carousel-item
+            v-for="(img, i) in store.profileData.images"
+            :key="i"
+            :to="{
+              name: 'StoreProfile',
+              params: { id: store._id, locale: $i18n.locale }
+            }"
+            ,
+            eager
+          >
+            <v-img :src="img.src" height="100%" eager>
+              <template v-slot:placeholder>
+                <v-row
+                  class="fill-height ma-0"
+                  align="center"
+                  justify="center"
+                >
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-2"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </v-carousel-item>
+        </v-carousel>
+
+        <router-link
+          :to="{
+            name: 'StoreProfile',
+            params: { id: store._id, locale: $i18n.locale }
+          }"
+          style="text-decoration: none; color: inherit;"
+        >
+          <v-card-title>{{ store.profileData.title }}</v-card-title>
+
+          <v-card-text>
+            <v-row class="mx-2 mb-2">{{ store.mapData.address.city }} </v-row>
+            <v-row align="center" class="mx-1">
+              <v-rating
+                :value="Math.round(store.profileData.avgRating * 10) / 10"
+                background-color="amber lighten-3"
+                dense
+                color="amber"
+                small
+                :readonly="true"
+              />
+              <div class="grey--text ml-4">
+                {{ Math.round(store.profileData.avgRating * 10) / 10 }}
+                ({{
+                  store.profileData.reviews
+                    ? store.profileData.reviews.length
+                    : ""
+                }})
+              </div>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <div v-if="storeData">
+                  <v-chip-group column>
+                    <v-chip
+                      outlined
+                      class="ma-1"
+                      color="primary"
+                      v-for="(tag, index) in store.profileData.tags"
+                      :key="index"
+                      :to="{
+                        name: 'StoreProfile',
+                        params: { id: store._id, locale: $i18n.locale }
+                      }"
+                      >{{ tag }}</v-chip
+                    >
+                  </v-chip-group>
+                </div>
+              </v-col>
+            </v-row>
+            <v-divider class="mx-1 mb-3"></v-divider>
+            <v-row>{{
+              getCutDescription(store.profileData.description)
+            }}</v-row>
+          </v-card-text>
+        </router-link>
+      </v-card>
+    </v-hover>
   </div>
 </template>
 
@@ -102,7 +141,13 @@ export default {
       } else {
         this.favorite = true;
       }
-    }
+    },
+    getCutDescription(description) {
+      return description.substr(0, 100) + "\u2026";
+    },
+    getAvgRating(store) {
+      return parseFloat(store.profileData.avgRating);
+    },
     // getAvgRating() {
     //   if (this.store != null) {
     //     return this.store.profileData.avgRating;

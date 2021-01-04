@@ -78,7 +78,7 @@
 
       <!-- v-model="avgRatingComputed"-->
       <v-card-text>
-        <div class="text-left text-body-1">
+        <div class="text-left text-body-1 text-justify">
           {{ descriptionComputed }}
         </div>
         <!-- <v-divider class="mx-2"></v-divider> -->
@@ -565,7 +565,7 @@ export default {
     async putInCart(product) {
       //if user loggedin -> Database; if not -> Local storage
       if (this.loggedIn == false) {
-        console.log(this.productQuantity);
+        //console.log(product);
         this.addProductLoggedOut({
           product: product,
           quantity: parseInt(this.productQuantity),
@@ -646,8 +646,13 @@ export default {
         stockAmount: parseInt(this.stockAmount)
       };
       this.$emit("overlay-start");
-      var response = await storeService.updateStockAmount(data);
-      console.log(response);
+      try {
+        await storeService.updateStockAmount(data);
+      } catch (error) {
+        this.$emit("overlay-end");
+        return;
+      }
+      //console.log(response);
       this.$emit("update-stock", this.product.productId, this.stockAmount);
       this.$emit("overlay-end");
       this.stockAmount = "";

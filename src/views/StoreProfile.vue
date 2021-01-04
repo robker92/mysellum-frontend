@@ -209,8 +209,8 @@
         </div> -->
       </v-col>
     </v-row>
-    <!-- </div> -->
-    <v-btn @click="printData">Print</v-btn>
+    <!-- </div> 
+    <v-btn @click="printData">Print</v-btn>-->
     <EditStoreDialog
       v-model="showEditStoreDialog"
       :profileData="profileData"
@@ -342,7 +342,7 @@
       />
     </div> -->
 
-    <AddProductDialog
+    <ProductDialog
       v-model="showProductDialog"
       :productToEdit="productToEdit"
       v-on:add-new-product="addNewProductToArray"
@@ -378,8 +378,8 @@
       </v-tab>
 
       <v-tab-item>
-        <div v-if="productList">
-          <v-row>
+        <div v-if="productList" class="mt-5">
+          <v-row class="mb-3">
             <v-btn
               v-if="checkForStoreOwner"
               @click.stop="showProductDialogNew"
@@ -388,10 +388,10 @@
               outlined
               class="ml-3"
             >
-              <v-icon left> mdi-plus </v-icon>Add Product</v-btn
+              <v-icon left> mdi-plus </v-icon>Create Product</v-btn
             >
           </v-row>
-          <v-row>
+          <v-row class="mb-2 ml-1 mr-1">
             <v-col
               cols="12"
               xs="6"
@@ -427,21 +427,25 @@
         </v-card>
       </v-tab-item> -->
       <v-tab-item>
-        <v-row>
-          <div class="text-left text-body-1 font-weight-bold ml-5">
-            Average Rating:
+        <v-row class="my-5">
+          <div>
+            <div class="text-left text-body-1 font-weight-bold ml-5">
+              <!--  Average Rating:
             {{ this.avgRatingComputed }}
-            ({{ profileData.reviews ? profileData.reviews.length : 0 }})
-            {{ profileData.reviews ? profileData.reviews.length : 0 }} Reviews
-            ({{ this.avgRatingComputed }})
-            <v-rating
-              v-model="avgRatingComputed"
-              background-color="orange lighten-3"
-              color="orange"
-              dense
-              half-increments
-              readonly
-            />
+            ({{ profileData.reviews ? profileData.reviews.length : 0 }}) -->
+              {{ profileData.reviews ? profileData.reviews.length : 0 }} Reviews
+              ({{ this.avgRatingComputed }})
+            </div>
+            <div class="text-left text-body-1 font-weight-bold ml-3">
+              <v-rating
+                v-model="avgRatingComputed"
+                background-color="orange lighten-3"
+                color="orange"
+                dense
+                half-increments
+                readonly
+              />
+            </div>
           </div>
           <v-btn
             @click.stop="showReviewDialogNew"
@@ -553,7 +557,7 @@ import StoreProfileListItemNew from "../components/StoreProfileListItemNew";
 import StoreProfileReviewListItem from "../components/StoreProfileReviewListItem";
 import EditStoreDialog from "../components/EditStoreDialog";
 import ReviewDialog from "../components/ReviewDialog";
-import AddProductDialog from "../components/AddProductDialog";
+import ProductDialog from "../components/ProductDialog";
 //import AddStoreImageDialog from "../components/AddStoreImageDialog";
 import GoogleMapProfile from "../components/GoogleMapProfile";
 
@@ -569,7 +573,7 @@ export default {
     StoreProfileReviewListItem: StoreProfileReviewListItem,
     EditStoreDialog: EditStoreDialog,
     ReviewDialog: ReviewDialog,
-    AddProductDialog: AddProductDialog,
+    ProductDialog: ProductDialog,
     //AddStoreImageDialog: AddStoreImageDialog,
     GoogleMapProfile: GoogleMapProfile
   },
@@ -716,8 +720,8 @@ export default {
     //...mapState("shoppingCart", ["shoppingCart", "counter"])
   },
   async mounted() {
-    var id = this.$route.params.id;
-    var response = await storeService.getSingleStore(id);
+    let id = this.$route.params.id;
+    let response = await storeService.getSingleStore(id);
     console.log(response);
     this.dataset = response;
     this.mapData = response.mapData;
@@ -803,6 +807,9 @@ export default {
       this.mapData.address.addressLine1 = data.address.addressLine1;
       this.mapData.address.postcode = data.address.postcode;
       this.mapData.address.city = data.address.city;
+      this.mapData.address.country = data.address.country;
+      this.mapData.mapIcon = data.mapIcon;
+
       this.mapData.location.lat = data.location.lat;
       this.mapData.location.lng = data.location.lng;
       this.overlay = false;

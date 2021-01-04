@@ -71,6 +71,12 @@
                 v-on:add-store-image="addNewImageToArray"
               />
 
+              <ShowHelpDialog
+                v-model="showShowHelpDialog"
+                :title="helpDialogTitle"
+                :text="helpDialogMessage"
+              />
+
               <v-row>
                 <v-col
                   v-for="(img, index) in this.storeImages"
@@ -107,7 +113,28 @@
                         </v-row>
                       </template>
                     </v-img>
-                    <v-card-title>{{ img.title }}</v-card-title>
+                    <v-row align="center">
+                      <v-card-title>{{ img.title }}</v-card-title>
+                      <v-spacer />
+                      <v-btn
+                        icon
+                        :disabled="getImgSortArrLeftDisabled(index)"
+                        @click="sortArrowLeftClick(index)"
+                      >
+                        <v-icon color="primary">
+                          mdi-arrow-left-bold
+                        </v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        :disabled="getImgSortArrRightDisabled(index)"
+                        @click="sortArrowRightClick(index)"
+                      >
+                        <v-icon color="primary">
+                          mdi-arrow-right-bold
+                        </v-icon>
+                      </v-btn>
+                    </v-row>
                   </v-card>
                 </v-col>
                 <v-col cols="12" xs="6" sm="6" md="4" lg="3">
@@ -199,7 +226,7 @@
               >
                 Store Description*
               </div>
-              <v-row class="mx-0 mb-3">
+              <v-row class="mx-0 mt-1 mb-3">
                 <v-card flat class="mr-3 my-1">
                   <v-item-group>
                     <v-btn @click="setFormat('italic')">
@@ -380,8 +407,8 @@
                 <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
                   <v-select
                     :items="mapIconList"
-                    v-model="chosenIcon"
-                    :prepend-icon="'mdi-' + chosenIcon"
+                    v-model="mapIcon"
+                    :prepend-icon="'mdi-' + mapIcon"
                     append-outer-icon="mdi-information"
                     @click:append-outer="
                       showHelp(
@@ -559,19 +586,22 @@ import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
 import AddStoreImageDialog from "../components/AddStoreImageDialog";
+import ShowHelpDialog from "../components/ShowHelpDialog";
 import { mapState, mapActions } from "vuex";
 
 import { storeService } from "../services";
 
 // eslint-disable-next-line no-unused-vars
+
 import { mapIconList } from "../helpers";
-console.log(mapIconList);
+//console.log(mapIconList);
 
 export default {
   name: "EditStoreDialog",
 
   components: {
-    AddStoreImageDialog: AddStoreImageDialog
+    AddStoreImageDialog: AddStoreImageDialog,
+    ShowHelpDialog: ShowHelpDialog
   },
 
   props: {
@@ -626,6 +656,7 @@ export default {
         this.addressLine1 = newVal.address.addressLine1;
         this.postcode = newVal.address.postalCode;
         this.city = newVal.address.city;
+        this.mapIcon = newVal.mapIcon || "";
         this.lat = newVal.location.lat;
         this.lng = newVal.location.lng;
       }
@@ -662,7 +693,8 @@ export default {
         "Wine",
         "Beer"
       ],
-      chosenIcon: {},
+      //chosenIcon: "",
+      mapIcon: "",
       mapIconList: mapIconList,
       // iconList: [
       //   "fish",
@@ -684,7 +716,11 @@ export default {
       lat: "",
       lng: "",
       //htmlText: "Hello <strong>this</strong> is a test", //Variable for Input Store Description
-      editedHtmlText: "" //Variable for saved html text -> will be saved as store description in the end
+      editedHtmlText: "", //Variable for saved html text -> will be saved as store description in the end
+
+      showShowHelpDialog: false,
+      helpDialogTitle: "",
+      helpDialogMessage: ""
     };
   },
 
@@ -829,7 +865,10 @@ export default {
     showHelp(message) {
       console.log(message);
       //this.chosenIcon = "fish";
-      console.log(this.chosenIcon);
+      console.log(this.mapIcon);
+      this.helpDialogTitle = "Title";
+      this.helpDialogMessage = message;
+      this.showShowHelpDialog = true;
     },
 
     printInputs() {
@@ -846,6 +885,7 @@ export default {
       console.log(this.storeImagesErrors);
       console.log(this.$v.storeImages.$invalid);
       console.log(this.storeImagesErrors[0]);
+      console.log(this.mapIcon);
     },
 
     submitEditStore: async function() {
@@ -862,6 +902,7 @@ export default {
           addressLine1: this.addressLine1,
           country: "Germany"
         },
+        mapIcon: this.mapIcon,
         location: {
           lat: this.lat,
           lng: this.lng
@@ -869,7 +910,12 @@ export default {
       };
       //this.$emit("overlay-start");
       this.overlay = true;
-      await storeService.editStore(payload);
+      try {
+        await storeService.editStore(payload);
+      } catch (error) {
+        this.overlay = false;
+        return;
+      }
       this.$emit("edit-store", payload);
       // setTimeout(() => {
       //   this.overlay = false;
@@ -915,6 +961,41 @@ export default {
       this.$v.storeDescription.$touch();
     },
 
+    getImgSortArrLeftDisabled(index) {
+      if (index === 0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    getImgSortArrRightDisabled(index) {
+      if (index + 1 === this.storeImages.length) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    sortArrowLeftClick(index) {
+      if (index > 0) {
+        this.storeImages = this.array_move(this.storeImages, index, index - 1);
+      }
+    },
+    sortArrowRightClick(index) {
+      if (index + 1 < this.storeImages.length) {
+        this.storeImages = this.array_move(this.storeImages, index, index + 1);
+      }
+    },
+    //Moves elements position from old index to new index
+    array_move(arr, old_index, new_index) {
+      if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+          arr.push(undefined);
+        }
+      }
+      arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+      return arr; // for testing
+    },
     // testFunction2() {
     //   //console.log(document.getElementById("editor").text().length);
     //   console.log(this.$refs.editor.innerText.length);

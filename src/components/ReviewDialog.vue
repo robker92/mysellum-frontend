@@ -21,6 +21,9 @@
                 v-model="reviewText"
                 :counter="1000"
                 label="Review Text"
+                :error-messages="reviewTextErrors"
+                @input="$v.reviewText.$touch()"
+                @blur="$v.reviewText.$touch()"
                 required
               />
             </v-col>
@@ -46,8 +49,24 @@
 import { mapState, mapActions } from "vuex";
 import { storeService } from "../services";
 
+import { required, maxLength, minLength } from "vuelidate/lib/validators";
+//import passwordValidator from './customValidators/passwordValidator'
+//import { helpers } from "vuelidate/lib/validators";
+import { validationMixin } from "vuelidate";
+
 export default {
   name: "ReviewDialog",
+
+  mixins: [validationMixin],
+
+  validations: {
+    reviewText: {
+      required,
+      minLength: minLength(20),
+      maxLength: maxLength(1000)
+    }
+  },
+
   data() {
     return {
       dialog: false,
@@ -86,6 +105,18 @@ export default {
       set(value) {
         this.$emit("input", value);
       }
+    },
+
+    reviewTextErrors() {
+      const errors = [];
+      if (!this.$v.reviewText.$dirty) return errors;
+      !this.$v.reviewText.maxLength &&
+        errors.push("The review text must be at most 1000 characters long.");
+      !this.$v.reviewText.minLength &&
+        errors.push("The review text must be at least 20 characters long.");
+      !this.$v.reviewText.required &&
+        errors.push("A review text ist required.");
+      return errors;
     },
     /* ratingComputed: {
       get() {
@@ -161,7 +192,7 @@ export default {
     submitReview: async function() {
       console.log(this.reviewText);
       //console.log(this.$route.params.id);
-      var data = {
+      let data = {
         storeId: this.$route.params.id,
         //userEmail: this.user.email,
         //datetime: new Date(),
@@ -172,19 +203,33 @@ export default {
       // this.$db.find({}, (err, docs) => {
       //   this.database = docs
       // });
-      if (this.reviewToEdit == null) {
+      if (this.reviewToEdit === null) {
         this.$emit("overlay-start");
-        var newReview = await storeService.addReview(data);
+        let newReview;
+        try {
+          newReview = await storeService.addReview(data);
+        } catch (error) {
+          this.$emit("overlay-end");
+          return;
+        }
+        //data["reviewId"] = response.reviewId;
         this.$emit("add-new-review", newReview);
-        this.$emit("overlay-end");
         this.addSuccessSnackbar("Review was successfully added!");
-      } else if (this.reviewToEdit != null) {
+        this.$emit("overlay-end");
+        //
+      } else if (this.reviewToEdit !== null) {
         this.$emit("overlay-start");
         data["reviewId"] = this.reviewToEdit.reviewId;
-        var updatedReview = await storeService.editReview(data);
+        let updatedReview;
+        try {
+          updatedReview = await storeService.editReview(data);
+        } catch (error) {
+          this.$emit("overlay-end");
+          return;
+        }
         this.$emit("update-review", updatedReview);
-        this.$emit("overlay-end");
         this.addSuccessSnackbar("Review was successfully edited!");
+        this.$emit("overlay-end");
       }
       //console.log(data);
       this.cancel();

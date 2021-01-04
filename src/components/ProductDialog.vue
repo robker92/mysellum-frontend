@@ -15,7 +15,7 @@
         <v-icon>mdi-close</v-icon>
       </v-btn> -->
       <v-card-title>
-        <span class="addProductHeadline">Add Product</span>
+        <span class="addProductHeadline">Create Product</span>
       </v-card-title>
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
@@ -101,6 +101,7 @@
       <v-card-actions>
         <v-btn color="indigo" text @click="cancel">Close</v-btn>
         <v-btn color="indigo" text @click="printData">Print</v-btn>
+        <v-btn color="indigo" text @click="fill">Fill</v-btn>
         <v-spacer />
         <v-btn
           color="indigo"
@@ -263,7 +264,7 @@ export default {
   methods: {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     submitProduct: async function() {
-      var payload = {
+      let payload = {
         storeId: this.$route.params.id,
         title: this.title,
         description: this.description,
@@ -273,22 +274,39 @@ export default {
         currencySymbol: "€",
         //datetime: new Date(),
         quantityType: this.quantityType,
-        quantityValue: this.quantityValue
+        quantityValue: this.quantityValue,
+        stockAmount: 1
       };
-      if (this.productToEdit == null) {
+      if (this.productToEdit === null) {
         //Add new product
         this.$emit("overlay-start");
-        var newProduct = await storeService.addProduct(payload);
-        this.$emit("add-new-product", newProduct.product);
+        //let newProduct;
+        let response;
+        try {
+          response = await storeService.createProduct(payload);
+        } catch (error) {
+          this.$emit("overlay-end");
+          return;
+        }
+        payload["productId"] = response.productId;
+        this.$emit("add-new-product", payload);
         this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully added!");
-      } else if (this.productToEdit != null) {
+        //
+      } else if (this.productToEdit !== null) {
         //Edit existing product
         this.$emit("overlay-start");
-        console.log(this.productToEdit.productId);
+        //console.log(this.productToEdit.productId);
         payload["productId"] = this.productToEdit.productId;
-        var updatedProduct = await storeService.editProduct(payload);
-        this.$emit("update-product", updatedProduct.product);
+
+        try {
+          await storeService.editProduct(payload);
+        } catch (error) {
+          this.$emit("overlay-end");
+          return;
+        }
+
+        this.$emit("update-product", payload);
         this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully edited!");
       }
@@ -312,6 +330,16 @@ export default {
       this.quantityValue = "";
       this.$emit("productToEdit-to-null");
       this.show = false;
+    },
+    fill() {
+      this.title = "Product 1";
+      this.description = "Test Test Test Test Test ";
+      this.price = "1.50";
+      this.pricePrefix = "€ ";
+      this.image =
+        "https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg";
+      this.quantityType = "Kilograms";
+      this.quantityValue = "2";
     },
     printData() {
       console.log(this.productToEdit);
