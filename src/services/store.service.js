@@ -252,6 +252,41 @@ async function updateStockAmount(data) {
     return response.data;
 };
 
+async function getImageBuffer(file) {
+
+    let formData = new FormData();
+    formData.append("image", file);
+
+    let response;
+    try {
+        response = await storesClient.post(
+            `/getImageBuffer`, formData, {
+                "Content-Type": "multipart/form-data",
+                headers: authHeader()
+            });
+    } catch (error) {
+        errorHandler(error, "getImageBuffer");
+        return Promise.reject(error)
+    };
+    //console.log(response.data)
+
+    return response.data;
+};
+
+async function getProductImage(storeId, productId) {
+    let response;
+    try {
+        response = await storesClient.get(
+            `/get-product-image/${storeId}/${productId}`);
+    } catch (error) {
+        errorHandler(error, "getProductImage");
+        return Promise.reject(error)
+    };
+    //console.log(response.data)
+
+    return response.data;
+};
+
 export const storeService = {
     getSingleStore,
     getAllStores,
@@ -268,5 +303,7 @@ export const storeService = {
     addStoreImage,
     deleteStoreImage,
     deleteProduct,
-    updateStockAmount
+    updateStockAmount,
+    getImageBuffer,
+    getProductImage
 };

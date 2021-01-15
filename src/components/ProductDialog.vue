@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="show"
-    max-width="400px"
+    max-width="60%"
     @keydown.esc="cancel"
     @click:outside="cancel"
   >
@@ -52,7 +52,12 @@
               <v-text-field
                 v-model="price"
                 class="inputPrice"
-                @input="checkPriceFormat"
+                @input="
+                  checkPriceFormat;
+                  $v.price.$touch();
+                "
+                :error-messages="priceErrors"
+                @blur="$v.price.$touch()"
                 placeholder="Format: ##.##"
                 label="Price"
                 required
@@ -61,13 +66,26 @@
               />
             </v-col>
             <v-col>
-              <v-text-field
+              <!-- <v-text-field
                 v-model="image"
                 label="Image"
                 required
                 :error-messages="imageErrors"
                 @input="$v.image.$touch()"
                 @blur="$v.image.$touch()"
+              /> -->
+              <v-file-input
+                prepend-icon="mdi-camera"
+                v-model="image"
+                accept="image/*"
+                :label="imageLabel"
+                show-size
+                truncate-length="15"
+                required
+                @change="getImageBuffer()"
+                @input="$v.image.$touch()"
+                @blur="$v.image.$touch()"
+                :error-messages="imageErrors"
               />
             </v-col>
           </v-row>
@@ -134,6 +152,17 @@ import { mapActions } from "vuex";
 
 import { storeService } from "../services";
 
+const file_size_validation = file => {
+  if (!file) {
+    return true;
+  }
+  console.log(file);
+  console.log(file.size);
+  const maxFileSize = 3000000;
+  return file.size <= maxFileSize; //4000000 = 4mb
+  //return file.size < 100; // 100 = 100byte
+};
+
 export default {
   name: "AddProductDialog",
 
@@ -156,7 +185,7 @@ export default {
       maxLength: maxLength(200)
     },
     price: { required },
-    image: { required },
+    image: { required, file_size_validation },
     quantityType: { required },
     quantityValue: { required }
   },
@@ -168,7 +197,9 @@ export default {
       description: "",
       price: "",
       pricePrefix: "€ ",
-      image: "",
+      image: null,
+      imageLabel: "Upload Image*",
+      imageBuffer: "",
       quantityType: "Kilograms",
       quantityTypeItems: ["Kilograms", "Grams", "Pieces"],
       quantityValue: ""
@@ -177,11 +208,13 @@ export default {
 
   watch: {
     productToEdit: function(newVal) {
-      if (newVal != null) {
+      if (newVal !== null) {
         this.title = newVal.title;
         this.description = newVal.description;
         this.price = newVal.price;
-        this.image = newVal.imgSrc;
+        this.imageLabel = "Update Image*";
+        this.imageBuffer = newVal.image;
+        //this.image = newVal.imgSrc;
         this.quantityType = newVal.quantityType;
         this.quantityValue = newVal.quantityValue;
       }
@@ -223,11 +256,19 @@ export default {
         errors.push("The product description is required.");
       return errors;
     },
+    priceErrors() {
+      const errors = [];
+      if (!this.$v.price.$dirty) return errors;
+      !this.$v.price.required && errors.push("The price is required.");
+      return errors;
+    },
     imageErrors() {
       const errors = [];
       if (!this.$v.image.$dirty) return errors;
       !this.$v.image.required &&
         errors.push("An image of the product is required.");
+      !this.$v.image.file_size_validation &&
+        errors.push("The image is too large");
       return errors;
     },
     quantityTypeErrors() {
@@ -268,7 +309,7 @@ export default {
         storeId: this.$route.params.id,
         title: this.title,
         description: this.description,
-        imgSrc: this.image,
+        imgSrc: this.imageBuffer,
         price: this.price,
         currency: "EUR",
         currencySymbol: "€",
@@ -312,6 +353,7 @@ export default {
       }
       this.cancel();
     },
+
     checkPriceFormat() {
       //test.substr(test.indexOf(".")+1,2)
       if (this.price.indexOf(".") == -1) {
@@ -320,14 +362,32 @@ export default {
         //this.price = this.price + ".00";
       }
     },
+
+    async getImageBuffer() {
+      let buffer = "";
+      if (!this.image) {
+        return;
+      }
+      try {
+        buffer = await storeService.getImageBuffer(this.image);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      console.log(buffer);
+      this.imageBuffer = buffer;
+    },
+
     cancel() {
       this.$v.$reset();
       this.title = "";
       this.description = "";
       this.price = "";
-      this.image = "";
+      this.image = null;
+      this.imageLabel = "Upload Image*";
       this.quantityType = "Kilograms";
       this.quantityValue = "";
+      this.imageBuffer = "";
       this.$emit("productToEdit-to-null");
       this.show = false;
     },
@@ -336,8 +396,6 @@ export default {
       this.description = "Test Test Test Test Test ";
       this.price = "1.50";
       this.pricePrefix = "€ ";
-      this.image =
-        "https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg";
       this.quantityType = "Kilograms";
       this.quantityValue = "2";
     },

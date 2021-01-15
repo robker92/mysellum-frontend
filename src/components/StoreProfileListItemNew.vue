@@ -1,5 +1,10 @@
 <template>
   <div>
+    <ProductAvailabilityNotificationDialog
+      v-model="showProductAvailabilityNotificationDialog"
+      :productId="product.productId"
+      :storeId="product.storeId"
+    />
     <v-card :disabled="cardDisabled">
       <v-speed-dial
         v-if="modifiable"
@@ -374,7 +379,15 @@
     <div v-if="cardDisabled" id="notificationButtonDiv">
       <v-tooltip bottom nudge-top="5px">
         <template v-slot:activator="{ on, attrs }">
-          <v-btn dark small color="primary" class="" v-bind="attrs" v-on="on">
+          <v-btn
+            dark
+            small
+            color="primary"
+            class=""
+            v-bind="attrs"
+            v-on="on"
+            @click="showProductAvailabilityNotificationDialog = true"
+          >
             <v-icon>mdi-email</v-icon>
           </v-btn>
         </template>
@@ -394,6 +407,7 @@ import { storeService } from "../services";
 
 //import { required, maxLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
+import ProductAvailabilityNotificationDialog from "../components/ProductAvailabilityNotificationDialog";
 
 //Custom validation
 function quantityNotInStock(value) {
@@ -416,12 +430,17 @@ export default {
     modifiable: Boolean
   },
 
+  components: {
+    ProductAvailabilityNotificationDialog: ProductAvailabilityNotificationDialog
+  },
+
   data() {
     return {
       amountTextField: 1,
       fab: false,
       stockAmount: "",
-      productQuantity: parseInt(this.product.stockAmount) <= 0 ? 0 : 1
+      productQuantity: parseInt(this.product.stockAmount) <= 0 ? 0 : 1,
+      showProductAvailabilityNotificationDialog: false
       // quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
       // quantityItems2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     };

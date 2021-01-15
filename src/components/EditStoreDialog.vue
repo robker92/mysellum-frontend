@@ -95,7 +95,7 @@
                         absolute
                         top
                         left
-                        color="white"
+                        color="red"
                         @click="deleteImage(index)"
                       >
                         <v-icon>mdi-delete</v-icon>
@@ -890,7 +890,7 @@ export default {
 
     submitEditStore: async function() {
       console.log(this.addressLine1);
-      var payload = {
+      let payload = {
         storeId: this.$route.params.id,
         title: this.storeTitle,
         description: this.editedHtmlText,
@@ -908,6 +908,7 @@ export default {
           lng: this.lng
         }
       };
+      console.log(payload);
       //this.$emit("overlay-start");
       this.overlay = true;
       try {

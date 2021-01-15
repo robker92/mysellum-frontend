@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" max-width="400px">
+  <v-dialog v-model="show" max-width="400px" @click:outside="cancel">
     <v-card>
       <v-card-title>
         <span class="loginHeadline">{{ $t("loginDialog.dialogTitle") }}</span>
@@ -197,7 +197,7 @@ export default {
       try {
         await this.login(credentials);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         console.log(error.response.data);
         let msg;
         if (error.response.data.type === "incorrect") {
@@ -215,11 +215,11 @@ export default {
     },
 
     cancel() {
-      this.show = false;
       this.$v.$reset();
       this.email = "";
       this.password = "";
       this.showPassword = false;
+      this.show = false;
     },
 
     handleSubmit() {

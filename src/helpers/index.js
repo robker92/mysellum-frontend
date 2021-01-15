@@ -8,3 +8,4 @@ export * from "./map-options";
 export * from "./others";
 export * from "./shopping-cart";
 export * from "./error-handler";
+export * from "./array-compare";

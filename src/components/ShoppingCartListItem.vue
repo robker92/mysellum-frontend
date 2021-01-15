@@ -2,12 +2,7 @@
   <div>
     <v-row no-gutters height="60px" align="center">
       <v-col sm="1">
-        <v-img
-          :src="product.imgSrc"
-          aspect-ratio="1.7"
-          height="45px"
-          width="45px"
-        >
+        <v-img :src="image" aspect-ratio="1.7" height="45px" width="45px">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
               <v-progress-circular
@@ -107,6 +102,7 @@
 
 */
 import { mapState, mapActions } from "vuex";
+import { storeService } from "../services";
 //import { checkAuthentication } from "../helpers";
 
 //import { addProductLoggedOut, removeProductLoggedOut } from "../helpers";
@@ -122,8 +118,17 @@ export default {
 
   data() {
     return {
-      amountTextField: this.amount
+      amountTextField: this.amount,
+      image: ""
     };
+  },
+
+  async mounted() {
+    let productId = this.product.productId;
+    this.image = await storeService.getProductImage(
+      this.product.storeId,
+      productId
+    );
   },
 
   computed: {

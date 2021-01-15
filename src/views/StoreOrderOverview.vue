@@ -73,6 +73,7 @@
                       <v-list-item
                         v-for="(item, index) in sortTypes"
                         :key="index"
+                        @click="sortListClicked(index)"
                         link
                       >
                         <v-list-item-icon>
@@ -118,7 +119,7 @@
                     {{ getComputedDate(order.date) }}
                   </v-list-item-action-text>
 
-                  <!-- {{ order.date ? getComputedDate(order.date) : "" }}<v-icon color="grey lighten-1">
+                  <!-- old: {{ getComputedDate(order.date) }} {{ order.date ? getComputedDate(order.date) : "" }}<v-icon color="grey lighten-1">
                 mdi-star-outline
               </v-icon> -->
                   <v-icon
@@ -459,6 +460,12 @@
 <script>
 import { orderService } from "../services";
 import StoreOrderOverviewStatusTimeline from "../components/StoreOrderOverviewStatusTimeline";
+import {
+  compareArrayDateAsc,
+  compareArrayDateDesc,
+  compareArrayOrderIdAsc,
+  compareArrayOrderIdDesc
+} from "../helpers";
 
 export default {
   name: "StoreOrderOverviewView",
@@ -587,6 +594,17 @@ export default {
         }
       }
     }
+    // computedDate: {
+    //   get(orderDate) {
+    //     if (orderDate) {
+    //       let date = new Date(orderDate);
+    //       console.log(date.getMonth().toString() + "." + date.getFullYear());
+    //       return date.getMonth().toString() + "." + date.getFullYear();
+    //     } else {
+    //       return "";
+    //     }
+    //   }
+    // }
   },
 
   async mounted() {
@@ -600,17 +618,67 @@ export default {
     print() {
       console.log(this.$i18n.locale);
     },
+
     getComputedDate(orderDate) {
       //console.log(orderDate);
 
       if (orderDate) {
-        var date = new Date(orderDate);
+        let date = new Date(orderDate);
         console.log(date.getMonth().toString() + "." + date.getFullYear());
         return date.getMonth().toString() + "." + date.getFullYear();
       } else {
         return "";
       }
     },
+
+    sortListClicked(index) {
+      console.log(index);
+      switch (index) {
+        case 0:
+          this.orderList.sort(compareArrayDateDesc);
+          break;
+        case 1:
+          this.orderList.sort(compareArrayDateAsc);
+          break;
+        case 2:
+          this.orderList.sort(compareArrayOrderIdDesc);
+          break;
+        case 3:
+          this.orderList.sort(compareArrayOrderIdAsc);
+          break;
+      }
+    },
+
+    // compareArrayElements(a, b, element) {
+    //   if (a[element] < b[element]) {
+    //     console.log("hi1");
+    //     return -1;
+    //   }
+    //   if (a[element] > b[element]) {
+    //     console.log("hi2");
+    //     return 1;
+    //   }
+    //   console.log("hi3");
+    //   return 0;
+    // },
+
+    // compareArrayDate(a, b) {
+    //   if (a.date > b.date) {
+    //     console.log("hi1");
+    //     return -1;
+    //   }
+    //   if (a.date < b.date) {
+    //     console.log("hi2");
+    //     return 1;
+    //   }
+    //   console.log("hi3");
+    //   return 0;
+    // },
+
+    // sortDateDescending() {
+    //   let sortedList = this.orderList.sort(this.compareArrayDate);
+    //   console.log(sortedList);
+    // },
 
     getComputedAddress(addressObject) {
       if (addressObject) {

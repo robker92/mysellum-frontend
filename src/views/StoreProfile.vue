@@ -149,15 +149,12 @@
             v-model="currentImgIndex"
             show-arrows-on-hover
             height="400px"
+            cycle
             hide-delimiters
           >
-            <!--cycle @change="carouselImageChanged" -->
-            <v-carousel-item
-              v-for="(img, i) in profileData.images"
-              :key="i"
-              eager
-            >
-              <v-img :src="img.src" height="100%" eager>
+            <!--cycle @change="carouselImageChanged" eager-->
+            <v-carousel-item v-for="(img, i) in profileData.images" :key="i">
+              <v-img :src="img.src" height="100%">
                 <template v-slot:placeholder>
                   <v-row
                     class="fill-height ma-0"
@@ -558,6 +555,7 @@ import StoreProfileReviewListItem from "../components/StoreProfileReviewListItem
 import EditStoreDialog from "../components/EditStoreDialog";
 import ReviewDialog from "../components/ReviewDialog";
 import ProductDialog from "../components/ProductDialog";
+
 //import AddStoreImageDialog from "../components/AddStoreImageDialog";
 import GoogleMapProfile from "../components/GoogleMapProfile";
 
@@ -595,6 +593,7 @@ export default {
       showReviewDialog: false,
       showProductDialog: false,
       showAddStoreImageDialog: false,
+      showProductAvailabilityNotificationDialog: false,
       tagsString: "",
       productToEdit: null,
       reviewToEdit: null,
@@ -624,7 +623,7 @@ export default {
         }, 3000);
     },
     currentImgIndex(val) {
-      console.log(val);
+      //console.log(val);
       for (let i = 0; i < this.profileData.images.length; i++) {
         if (val !== i) {
           //styles for other images
@@ -722,6 +721,7 @@ export default {
   async mounted() {
     let id = this.$route.params.id;
     let response = await storeService.getSingleStore(id);
+    console.log("store:");
     console.log(response);
     this.dataset = response;
     this.mapData = response.mapData;

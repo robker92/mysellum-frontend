@@ -70,6 +70,8 @@ export function calculateTotalCartSum(shoppingCart) {
 
 export function addProductLoggedOutHelper(product, quantity, currentCart) {
     return new Promise((resolve) => {
+        //delete the image to save localstorage space
+        delete product["imgSrc"];
         let arrayElement = [product, quantity];
 
         let found = false;
@@ -83,8 +85,8 @@ export function addProductLoggedOutHelper(product, quantity, currentCart) {
                 arrayElement[1] = parseInt(quantity) + currentCart[i][1];
                 currentCart.splice(i, 1, arrayElement);
                 break;
-            }
-        }
+            };
+        };
         //Product not in cart
         if (found === false) {
             currentCart.push(arrayElement);
@@ -106,10 +108,10 @@ export function removeProductLoggedOutHelper(product, quantity, currentCart) {
                 currentCart.splice(i, 1, arrayElement);
                 if (currentCart[i][1] <= 0) {
                     currentCart.splice(i, 1);
-                }
+                };
                 break;
-            }
-        }
+            };
+        };
         //return currentCart;
         resolve(currentCart);
     })
@@ -130,7 +132,7 @@ export function shoppingCartMerge(cart1, cart2) {
                     found = true;
                     cart1[j][1] = cart1[j][1] + cart2[i][1];
                     break;
-                }
+                };
             };
             //when the product was not found, push it to cart 1
             if (found === false) {

@@ -74,6 +74,21 @@
     <LoginDialog v-model="showLoginDialog" />
     <CreateStoreDialog v-model="showCreateStoreDialog" />
     <SettingsDialog v-model="showSettingsDialog" />
+
+    <v-text-field
+      v-model="searchTerm"
+      append-icon="mdi-magnify"
+      width="200px"
+      height="30px"
+      clear-icon="mdi-close-circle"
+      clearable
+      label="Start search"
+      type="text"
+      filled
+      shaped
+      @click:append="searchForTerm"
+    ></v-text-field>
+
     <LanguageSwitcher class="ml-2" />
 
     <v-menu
@@ -349,7 +364,8 @@ export default {
       showSettingsDialog: false,
       userLoggedIn: false,
       menu: false,
-      group: ""
+      group: "",
+      searchTerm: ""
     };
   },
 
@@ -435,6 +451,9 @@ export default {
       this.logout();
       //this.addSuccessSnackbar("Successfully logged out!");
       // console.log(this.loggedIn);
+    },
+    searchForTerm() {
+      console.log(this.searchTerm);
     },
     printCart() {
       console.log(this.user.shoppingCart);

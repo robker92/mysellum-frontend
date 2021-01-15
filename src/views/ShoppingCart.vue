@@ -349,13 +349,13 @@ export default {
         currency: "EUR",
         currencySymbol: "€"
       };
-      var response = await orderService.createOrder(data);
-      console.log(response);
-      if (response.status == 200) {
-        //Delete Shopping Cart
-        //Delete Order State Info
-        this.$router.push({ name: "SuccessfulOrder" });
+      try {
+        await orderService.createOrder(data);
+      } catch (error) {
+        //this.addErrorSnackbar("Error while creating the order.");
+        return;
       }
+      this.$router.push({ name: "SuccessfulOrder" });
     },
 
     async mergeProcedure() {

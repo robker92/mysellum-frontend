@@ -118,9 +118,11 @@ export default {
     postcode: { required },
     addressLine1: { required, maxLength: maxLength(40) }
   },
+
   props: {
     value: Boolean
   },
+
   data() {
     return {
       dialog: false,
@@ -165,6 +167,7 @@ export default {
       return errors;
     }
   },
+
   methods: {
     cancel() {
       this.show = false;
