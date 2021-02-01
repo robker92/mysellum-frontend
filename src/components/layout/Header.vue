@@ -75,19 +75,26 @@
     <CreateStoreDialog v-model="showCreateStoreDialog" />
     <SettingsDialog v-model="showSettingsDialog" />
 
-    <v-text-field
-      v-model="searchTerm"
-      append-icon="mdi-magnify"
-      width="200px"
-      height="30px"
-      clear-icon="mdi-close-circle"
-      clearable
-      label="Start search"
-      type="text"
-      filled
-      shaped
-      @click:append="searchForTerm"
-    ></v-text-field>
+    <v-card
+      width="25%"
+      color="grey lighten-3"
+      height="50px"
+      class=""
+      flat
+      dense
+    >
+      <v-text-field
+        v-model="searchTerm"
+        append-icon="mdi-magnify"
+        clear-icon="mdi-close-circle"
+        class="pt-3"
+        clearable
+        label="Search for store"
+        type="text"
+        dense
+        @click:append="searchForTerm"
+      ></v-text-field>
+    </v-card>
 
     <LanguageSwitcher class="ml-2" />
 

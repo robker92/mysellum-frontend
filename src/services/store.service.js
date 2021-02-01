@@ -19,13 +19,36 @@ const storesClient = axios.create({
 });
 
 async function getSingleStore(storeId) {
-    let response = await storesClient.get(
-        `/${storeId}`
+    let response
+    try {
+    response = await storesClient.get(
+        `/single-store/${storeId}`
     );
+    } catch(error) {
+        errorHandler(error, "getSingleStore");
+        return error
+    }
     console.log(response.data)
 
     return response.data;
-}
+};
+
+async function getStoreProducts(data) {
+    let storeId = data.storeId;
+    let searchSuffix = "";
+    if (data.searchTerm) {
+        searchSuffix = "search=" + data.searchTerm.replace(" ", "-") + "&";
+    };
+    let priceSuffix = "";
+    if (data.priceMax) {
+        priceSuffix = "priceMin=" + data.priceMin + "&priceMax=" + data.priceMax;
+    };
+    console.log(`/store-products/${storeId}?${searchSuffix}${priceSuffix}`)
+    let response = await storesClient.get(
+        `/store-products/${storeId}?${searchSuffix}${priceSuffix}`
+    );
+    return response.data.products;
+};
 
 async function getAllStores() {
 
@@ -48,11 +71,49 @@ async function getFilteredStores(searchTerm) {
 };
 
 async function getFilteredStores2(filterObject) {
-
+    console.log("at service");
+    console.log(filterObject);
     let response = await storesClient.post(
         `/getFilteredStores2`,
         filterObject
     );
+    console.log(response.data)
+
+    return response.data;
+};
+
+async function filterSortSearch(data) {
+    //Build the url query
+    let urlQuery = "";
+    if (data.searchTerm.length > 0) {
+        urlQuery = urlQuery + "&searchTerm=" + data.searchTerm;
+    };
+    if (data.countries.length > 0) {
+        urlQuery = urlQuery + "&countries=" + JSON.stringify(data.countries);
+    };
+    if (data.states.length > 0) {
+        urlQuery = urlQuery + "&states=" + JSON.stringify(data.states);
+    };
+    if (data.cities.length > 0) {
+        urlQuery = urlQuery + "&cities=" + JSON.stringify(data.cities);
+    };
+    if (data.sort.length > 0) {
+        urlQuery = urlQuery + "&sort=" + data.sort;
+    };
+    urlQuery = urlQuery + "&pageSize=" + data.pageSize;
+    urlQuery = urlQuery + "&pageNum=" + data.pageNum;
+    urlQuery = urlQuery + "&pickup=" + data.pickup.toString();
+    urlQuery = urlQuery + "&delivery=" + data.delivery.toString();
+
+    let response;
+    try {
+        response = await storesClient.get(
+            `/search-delivery?${urlQuery}`
+        );
+    } catch (error) {
+        errorHandler(error, "filterSortSearch");
+        return error
+    };
     console.log(response.data)
 
     return response.data;
@@ -80,7 +141,7 @@ async function addReview(data) {
         );
     } catch (error) {
         errorHandler(error, "addReview");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -100,7 +161,7 @@ async function editReview(data) {
         );
     } catch (error) {
         errorHandler(error, "editReview");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -117,7 +178,7 @@ async function deleteReview(data) {
         );
     } catch (error) {
         errorHandler(error, "editReview");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -127,7 +188,7 @@ async function deleteReview(data) {
 async function createStore(data) {
 
     let response = await storesClient.post(
-        '/createStore',
+        '/store',
         data
     );
     console.log(response.data)
@@ -138,13 +199,13 @@ async function editStore(data) {
     let response;
     try {
         response = await storesClient.patch(
-            '/editStore/' + data.storeId,
+            '/store/' + data.storeId,
             data, {
                 headers: authHeader()
             });
     } catch (error) {
         errorHandler(error, "editStore");
-        return Promise.reject(error)
+        return error
     };
 
     console.log(response.data)
@@ -161,41 +222,41 @@ async function addStoreImage(data) {
             });
     } catch (error) {
         errorHandler(error, "addStoreImage");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
     return response.data;
 };
 
-async function deleteStoreImage(data) {
-    let response;
-    try {
-        response = await storesClient.delete(
-            `/deleteStoreImage/${data.storeId}/${data.imageId}`, {
-                headers: authHeader()
-            });
-    } catch (error) {
-        errorHandler(error, "deleteStoreImage");
-        return Promise.reject(error)
-    };
-    console.log(response.data)
+// async function deleteStoreImage(data) {
+//     let response;
+//     try {
+//         response = await storesClient.delete(
+//             `/deleteStoreImage/${data.storeId}/${data.imageId}`, {
+//                 headers: authHeader()
+//             });
+//     } catch (error) {
+//         errorHandler(error, "deleteStoreImage");
+//         return Promise.reject(error)
+//     };
+//     console.log(response.data)
 
-    return response.data;
-};
+//     return response.data;
+// };
 
 async function createProduct(data) {
     console.log(authHeader())
     let response;
     try {
         response = await storesClient.post(
-            `/createProduct/${data.storeId}`,
+            `/product/${data.storeId}`,
             data, {
                 headers: authHeader()
             });
     } catch (error) {
         errorHandler(error, "createProduct");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -203,16 +264,17 @@ async function createProduct(data) {
 };
 
 async function editProduct(data) {
+    console.log(data._id)
     let response;
     try {
         response = await storesClient.patch(
-            `/editProduct/${data.storeId}/${data.productId}`,
+            `/product/${data.storeId}/${data._id}`,
             data, {
                 headers: authHeader()
             });
     } catch (error) {
         errorHandler(error, "editProduct");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -220,15 +282,16 @@ async function editProduct(data) {
 };
 
 async function deleteProduct(data) {
+    console.log(data)
     let response;
     try {
         response = await storesClient.delete(
-            `/deleteProduct/${data.storeId}/${data.productId}`, {
+            `/product/${data.storeId}/${data.productId}`, {
                 headers: authHeader()
             });
     } catch (error) {
         errorHandler(error, "deleteProduct");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -239,13 +302,13 @@ async function updateStockAmount(data) {
     let response;
     try {
         response = await storesClient.patch(
-            `/updateStockAmount/${data.storeId}/${data.productId}`,
+            `/product-stock/${data.storeId}/${data._id}`,
             data, {
                 headers: authHeader()
             });
     } catch (error) {
         errorHandler(error, "updateStockAmount");
-        return Promise.reject(error)
+        return error
     };
     console.log(response.data)
 
@@ -260,15 +323,15 @@ async function getImageBuffer(file) {
     let response;
     try {
         response = await storesClient.post(
-            `/getImageBuffer`, formData, {
+            `/image-buffer-resized`, formData, {
                 "Content-Type": "multipart/form-data",
                 headers: authHeader()
             });
     } catch (error) {
         errorHandler(error, "getImageBuffer");
-        return Promise.reject(error)
+        return error
     };
-    //console.log(response.data)
+    console.log(response.data)
 
     return response.data;
 };
@@ -277,10 +340,10 @@ async function getProductImage(storeId, productId) {
     let response;
     try {
         response = await storesClient.get(
-            `/get-product-image/${storeId}/${productId}`);
+            `/product-image/${storeId}/${productId}`);
     } catch (error) {
         errorHandler(error, "getProductImage");
-        return Promise.reject(error)
+        return error
     };
     //console.log(response.data)
 
@@ -289,10 +352,12 @@ async function getProductImage(storeId, productId) {
 
 export const storeService = {
     getSingleStore,
+    getStoreProducts,
     getAllStores,
     getFilteredStores,
     getFilteredStores2,
     getStoresByLocation,
+    filterSortSearch,
     addReview,
     createStore,
     editStore,
@@ -301,7 +366,7 @@ export const storeService = {
     editReview,
     deleteReview,
     addStoreImage,
-    deleteStoreImage,
+    //deleteStoreImage,
     deleteProduct,
     updateStockAmount,
     getImageBuffer,

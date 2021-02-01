@@ -4,10 +4,10 @@
 
 <script>
 //import loadGoogleMapsApi from 'load-google-maps-api'
-import { getGoogleMapLoader } from "../helpers";
+//import { getGoogleMapLoader } from "../helpers";
 import { mapOptions, getMarkerIconURL } from "../helpers";
 // eslint-disable-next-line no-unused-vars
-import { Loader } from "google-maps";
+//import { Loader } from "google-maps";
 
 export default {
   name: "GoogleMapProfile",
@@ -27,10 +27,13 @@ export default {
       // const loader = new Loader("AIzaSyAbBngkySn9wEK5O9EZ31jUaGKe6jsg56M");
       // const google = await loader.load();
 
-      const googleMapLoaderProfile = await getGoogleMapLoader();
+      //const googleMapLoaderProfile = await getGoogleMapLoader();
 
       // eslint-disable-next-line no-unused-vars
-      const mapProfile = new googleMapLoaderProfile.maps.Map(
+
+      //const googleInstance = new google.maps;
+      // eslint-disable-next-line no-undef
+      const mapProfile = new google.maps.Map(
         document.getElementById("mapProfile"),
         {
           center: {
@@ -53,12 +56,14 @@ export default {
       let icon = {
         //url: markerFishIcon, // url
         url: iconURL,
-        scaledSize: new googleMapLoaderProfile.maps.Size(50, 50) // scaled size
+        // eslint-disable-next-line no-undef
+        scaledSize: new google.maps.Size(50, 50) // scaled size
         //origin: new this.google2.maps.Point(0, 0), // origin
         //anchor: new this.google2.maps.Point(0, 0) // anchor
       };
 
-      new googleMapLoaderProfile.maps.Marker({
+      // eslint-disable-next-line no-undef
+      new google.maps.Marker({
         position: this.mapData.location,
         map: mapProfile,
         icon: iconURL !== undefined ? icon : null,

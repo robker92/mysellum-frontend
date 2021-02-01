@@ -19,7 +19,7 @@ import markerFishIcon from "../assets/markers/fish.png";
 //import markerFishIcon from "../assets/fish.png";
 
 // eslint-disable-next-line no-unused-vars
-import { Loader } from "google-maps";
+//import { Loader } from "google-maps";
 
 import MapInfoWindow from "./MapInfoWindow.vue";
 import Vue from "vue";

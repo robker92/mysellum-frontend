@@ -62,7 +62,8 @@
           v-bind:key="index"
           v-bind:store="store"
         >
-          <v-hover v-slot:default="{ hover }">
+          <SearchStoreListItem :store="store" />
+          <!-- <v-hover v-slot:default="{ hover }">
             <v-card
               height="550px"
               :class="{ 'on-hover': hover }"
@@ -157,7 +158,7 @@
                 </v-card-text>
               </router-link>
             </v-card>
-          </v-hover>
+          </v-hover> -->
           <!-- </router-link> -->
         </v-col>
       </v-row>
@@ -176,13 +177,15 @@
 </template>
 
 <script>
+import SearchStoreListItem from "../components/SearchStoreListItem";
 import { storeService } from "../services";
 import GoogleMap from "../components/GoogleMap.vue";
 
 export default {
   name: "SearchPickupView",
   components: {
-    GoogleMap: GoogleMap
+    GoogleMap: GoogleMap,
+    SearchStoreListItem: SearchStoreListItem
   },
   data() {
     return {

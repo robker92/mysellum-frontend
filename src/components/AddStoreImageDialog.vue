@@ -92,6 +92,7 @@ export default {
         return this.value;
       },
       set(value) {
+        this.$v.$reset();
         this.$emit("input", value);
       }
     },
@@ -149,12 +150,12 @@ export default {
       //console.log(imageURL);
       //URL.revokeObjectURL(imageURL); //"destroys" the blob url
       console.log(this.file.size);
-      let buffer = "";
+      let response = "";
       if (!this.file) {
         return;
       }
       try {
-        buffer = await storeService.getImageBuffer(this.file);
+        response = await storeService.getImageBuffer(this.file);
       } catch (error) {
         console.log(error);
         return;
@@ -162,7 +163,7 @@ export default {
 
       let data = {
         //src: this.imageSrc,
-        src: buffer,
+        src: response.buffer,
         size: this.file.size,
         //file: this.imageUpload,
         title: this.imageTitle
@@ -174,6 +175,7 @@ export default {
       this.imageTitle = "";
       this.url = "";
       this.file = null;
+      this.$v.$reset();
       this.show = false;
     },
     cancel() {

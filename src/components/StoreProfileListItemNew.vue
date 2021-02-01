@@ -2,7 +2,7 @@
   <div>
     <ProductAvailabilityNotificationDialog
       v-model="showProductAvailabilityNotificationDialog"
-      :productId="product.productId"
+      :productId="product._id"
       :storeId="product.storeId"
     />
     <v-card :disabled="cardDisabled">
@@ -635,14 +635,15 @@ export default {
     },
 
     deleteProduct: async function() {
-      var data = {
+      let data = {
         storeId: this.$route.params.id,
-        productId: this.product.productId
+        productId: this.product._id
       };
+      console.log(data);
       this.$emit("overlay-start");
-      var response = await storeService.deleteProduct(data);
+      let response = await storeService.deleteProduct(data);
       console.log(response);
-      this.$emit("delete-product", this.product.productId);
+      this.$emit("delete-product", this.product._id);
       this.$emit("overlay-end");
     },
 
@@ -661,7 +662,7 @@ export default {
     updateStock: async function() {
       var data = {
         storeId: this.$route.params.id,
-        productId: this.product.productId,
+        _id: this.product._id,
         stockAmount: parseInt(this.stockAmount)
       };
       this.$emit("overlay-start");
@@ -672,7 +673,7 @@ export default {
         return;
       }
       //console.log(response);
-      this.$emit("update-stock", this.product.productId, this.stockAmount);
+      this.$emit("update-stock", this.product._id, this.stockAmount);
       this.$emit("overlay-end");
       this.stockAmount = "";
     }

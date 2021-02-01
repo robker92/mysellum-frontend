@@ -460,12 +460,7 @@
 <script>
 import { orderService } from "../services";
 import StoreOrderOverviewStatusTimeline from "../components/StoreOrderOverviewStatusTimeline";
-import {
-  compareArrayDateAsc,
-  compareArrayDateDesc,
-  compareArrayOrderIdAsc,
-  compareArrayOrderIdDesc
-} from "../helpers";
+import { compareArrayAsc, compareArrayDesc } from "../helpers";
 
 export default {
   name: "StoreOrderOverviewView",
@@ -635,16 +630,16 @@ export default {
       console.log(index);
       switch (index) {
         case 0:
-          this.orderList.sort(compareArrayDateDesc);
+          this.orderList.sort(compareArrayDesc("date"));
           break;
         case 1:
-          this.orderList.sort(compareArrayDateAsc);
+          this.orderList.sort(compareArrayAsc("date"));
           break;
         case 2:
-          this.orderList.sort(compareArrayOrderIdDesc);
+          this.orderList.sort(compareArrayDesc("orderId"));
           break;
         case 3:
-          this.orderList.sort(compareArrayOrderIdAsc);
+          this.orderList.sort(compareArrayAsc("orderId"));
           break;
       }
     },

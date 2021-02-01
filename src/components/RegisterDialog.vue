@@ -160,6 +160,22 @@
             @change="$v.checkboxTermsConditions.$touch()"
             @blur="$v.checkboxTermsConditions.$touch()"
           ></v-checkbox>
+          <v-autocomplete
+            id="googleAddressAutocomplete"
+            label="Address Autocomplete"
+            ref="myid"
+            hide-no-data
+            v-model="addressAutocompleteModel"
+            :items="itemsAutocomplete"
+            :search-input.sync="addressAutocompleteSearch"
+          />
+          <input
+            ref="myid2"
+            id="googleAddressAutocomplete2"
+            placeholder="Enter your address"
+            onFocus="geolocate()"
+            type="text"
+          />
         </v-container>
         <small>* {{ $t("registerDialog.requiredFieldDescription") }}</small>
       </v-card-text>
@@ -189,6 +205,7 @@
 */
 //import axios from 'axios'
 //import userServices from "../services/userServices";
+//import { getGoogleMapLoader } from "../helpers";
 
 import { mapActions } from "vuex";
 import { userService } from "../services";
@@ -241,6 +258,7 @@ export default {
       }
     },
     select: { required }
+
     // checkbox: {
     //   checked(val) {
     //     return val;
@@ -250,6 +268,38 @@ export default {
 
   props: {
     value: Boolean
+  },
+  watch: {
+    value() {
+      // this.$nextTick(function() {
+      //   console.log("changed");
+      //   let refs = this.$refs;
+      //   console.log(refs.myid3);
+      //   var autocompleteInput = document.querySelector(
+      //     "#googleAddressAutocomplete2"
+      //   );
+      //   // eslint-disable-next-line no-undef
+      //   this.autocomplete = new google.maps.places.Autocomplete(
+      //     //this.$refs.myid2,
+      //     /** @type {!HTMLInputElement} */ (autocompleteInput),
+      //     { types: ["geocode"] }
+      //   );
+      //   this.autocomplete.setFields(["address_component"]);
+      // });
+    },
+    async addressAutocompleteSearch() {
+      if (this.addressAutocompleteSearch === "") {
+        this.itemsAutocomplete = [];
+      }
+      console.log(this.addressAutocompleteSearch);
+      let result = await this.service.getQueryPredictions(
+        {
+          input: this.addressAutocompleteSearch
+        },
+        this.callbackFct
+      );
+      console.log(result);
+    }
   },
 
   data() {
@@ -275,10 +325,43 @@ export default {
 
       select: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
-      checkbox: false
+      checkbox: false,
+
+      itemsAutocomplete: [],
+      addressAutocompleteModel: null,
+      addressAutocompleteSearch: null,
+      autocomplete: null,
+      service: null
     };
   },
 
+  mounted() {
+    // eslint-disable-next-line no-undef
+    this.service = new google.maps.places.AutocompleteService();
+    // service.getQueryPredictions(
+    //   { input: "pizza near Syd" },
+    //   displaySuggestions
+    // );
+    //const googleLoader = await getGoogleMapLoader();
+    //console.log(googleLoader);
+    // Create the autocomplete object, restricting the search predictions to
+    // geographical location types.
+    // this.$nextTick(function() {
+    //   console.log(this.$refs);
+    // });
+    // console.log(document.getElementById("googleAddressAutocomplete2"));
+    // eslint-disable-next-line no-undef
+    // this.autocomplete = new google.maps.places.Autocomplete(
+    //   this.$refs["myid"],
+    //   { types: ["geocode"] }
+    // );
+    // Avoid paying for data that you don't need by restricting the set of
+    // place fields that are returned to just the address components.
+    //this.autocomplete.setFields(["address_component"]);
+    // When the user selects an address from the drop-down, populate the
+    // address fields in the form.
+    //autocomplete.addListener("place_changed", fillInAddress);
+  },
   computed: {
     show: {
       get() {
@@ -443,6 +526,27 @@ export default {
     //...mapActions("account", ["register"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     //handleAvailabilityRequest: async function (event) {
+
+    async getAutocompleteItems(evt) {
+      console.log(evt);
+      console.log(this.addressAutocompleteSearch);
+      let result = await this.service.getQueryPredictions(
+        {
+          input: this.addressAutocompleteSearch
+        },
+        this.callbackFct
+      );
+      console.log(result);
+    },
+    callbackFct(predictions, status) {
+      console.log(predictions);
+      console.log(status);
+      this.itemsAutocomplete = [];
+      for (var i = 0; i < predictions.length; i++) {
+        this.itemsAutocomplete.unshift(predictions[i].description);
+      }
+      console.log("hi2");
+    },
     submitRegistration: async function() {
       /*
       if (
@@ -526,6 +630,23 @@ export default {
       this.city = "TestCity";
       this.postcode = 12345;
       this.$v.$touch();
+    },
+
+    geolocate() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const geolocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          // eslint-disable-next-line no-undef
+          const circle = new google.maps.Circle({
+            center: geolocation,
+            radius: position.coords.accuracy
+          });
+          this.autocomplete.setBounds(circle.getBounds());
+        });
+      }
     }
   }
 };
@@ -538,5 +659,12 @@ export default {
 .inputPostcode input::-webkit-outer-spin-button,
 .inputPostcode input::-webkit-inner-spin-button {
   -webkit-appearance: none;
+}
+
+.pac-container:after {
+  /* Disclaimer: not needed to show 'powered by Google' if also a Google Map is shown */
+
+  background-image: none !important;
+  height: 0px;
 }
 </style>

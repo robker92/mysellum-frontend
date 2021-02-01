@@ -137,7 +137,14 @@
                     </v-row>
                   </v-card>
                 </v-col>
-                <v-col cols="12" xs="6" sm="6" md="4" lg="3">
+                <v-col
+                  cols="12"
+                  xs="6"
+                  sm="6"
+                  md="4"
+                  lg="3"
+                  v-if="storeImages.length !== storeImagesMax"
+                >
                   <v-hover v-slot:default="{ hover }">
                     <v-card
                       :elevation="hover ? 16 : 2"
@@ -427,6 +434,7 @@
                     </template>
                   </v-select>
                 </v-col>
+                <v-btn @click="printAddress"> Print</v-btn>
               </v-row>
             </v-container>
           </v-card>
@@ -436,22 +444,47 @@
           <v-card class="ma-3">
             <v-container>
               <div class="text-left text-body-1">
-                Receive a notification if...
+                Notifications
               </div>
-              <v-switch
-                v-model="notificationOrderReceive"
-                label="an order is received."
-                hint="test test test test test"
-                persistent-hint
-                class="ml-5"
-              ></v-switch>
-              <v-switch
-                v-model="notificationOrderReturn"
-                label="a return is submitted."
-                class="ml-5"
-              ></v-switch>
               <v-row align="center">
-                <v-col cols="12" lg="2" xl="2">
+                <v-col cols="12" lg="6" xl="6">
+                  <v-switch
+                    v-model="notificationOrderReceive"
+                    label="Orders received (recommended)"
+                    hint="We will notify you every time you receive a new order from a customer."
+                    persistent-hint
+                    class="ml-5"
+                  ></v-switch>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="12" lg="6" xl="6">
+                  <v-switch
+                    v-model="notificationOrderReturn"
+                    label="Product out of stock (recommended)"
+                    hint="We will notify you every time a product's stock falls below a defined limit."
+                    persistent-hint
+                    class="ml-5"
+                  ></v-switch>
+                </v-col>
+                <v-col cols="12" lg="6" xl="6">
+                  <v-row>
+                    <div class="text-left text-body-1">Limit:</div>
+                    <v-slider
+                      v-model="stockNotificationValue"
+                      :thumb-size="24"
+                      thumb-label="always"
+                      :max="100"
+                      :min="0"
+                      :disabled="
+                        notificationOrderReturn === false ? true : false
+                      "
+                    ></v-slider>
+                  </v-row>
+                </v-col>
+              </v-row>
+              <v-row align="center">
+                <v-col cols="12" lg="5" xl="5">
                   <div>
                     an order is received.
                   </div>
@@ -639,27 +672,49 @@ export default {
   },
 
   watch: {
-    profileData: function(newVal) {
-      if (newVal != null) {
-        console.log(newVal);
-        this.storeTitle = newVal.title;
-        this.storeSubtitle = "";
-        this.storeDescription = newVal.description;
-        this.tagsComboBoxModel = newVal.tags;
-        this.storeImages = [...newVal.images];
-        this.editedHtmlText = newVal.description;
-      }
-    },
-    mapData: function(newVal) {
-      if (newVal != null) {
-        console.log(newVal);
-        this.addressLine1 = newVal.address.addressLine1;
-        this.postcode = newVal.address.postalCode;
-        this.city = newVal.address.city;
-        this.mapIcon = newVal.mapIcon || "";
-        this.lat = newVal.location.lat;
-        this.lng = newVal.location.lng;
-      }
+    // profileData: function(newVal) {
+    //   console.log("at editdialog");
+    //   if (newVal != null) {
+    //     console.log("at editdialog");
+    //     console.log(newVal);
+    //     this.storeTitle = newVal.title;
+    //     this.storeSubtitle = "";
+    //     this.storeDescription = newVal.description;
+    //     this.tagsComboBoxModel = newVal.tags;
+    //     this.storeImages = [...newVal.images];
+    //     this.editedHtmlText = newVal.description;
+    //   }
+    // },
+    // mapData: function(newVal) {
+    //   console.log("at editdialog");
+    //   if (newVal) {
+    //     console.log("at editdialog");
+    //     console.log(newVal);
+    //     this.addressLine1 = newVal.address.addressLine1;
+    //     this.postcode = newVal.address.postalCode;
+    //     this.city = newVal.address.city;
+    //     this.mapIcon = newVal.mapIcon || "";
+    //     this.lat = newVal.location.lat;
+    //     this.lng = newVal.location.lng;
+    //   }
+    // },
+    // mapData: {
+    //   handler: function(newVal) {
+    //     // watch it
+    //     console.log("mapdata changed");
+    //     this.addressLine1 = newVal.address.addressLine1;
+    //     this.postcode = newVal.address.postalCode;
+    //     this.city = newVal.address.city;
+    //     this.mapIcon = newVal.mapIcon || "";
+    //     this.lat = newVal.location.lat;
+    //     this.lng = newVal.location.lng;
+    //   },
+    //   deep: true
+    // },
+
+    //Watch show status to initialize data
+    show() {
+      this.initializeData();
     }
   },
 
@@ -707,6 +762,7 @@ export default {
       //Notifications
       notificationOrderReceive: false,
       notificationOrderReturn: false,
+      stockNotificationValue: 0,
 
       //Settings
       //Store Address
@@ -732,6 +788,9 @@ export default {
       set(value) {
         this.$emit("input", value);
       }
+    },
+    profileDataWatcher() {
+      return this.profileData;
     },
     numberCharactersInEditor: {
       get() {
@@ -862,6 +921,33 @@ export default {
     ...mapActions("stores", ["createStore"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
+    printAddress() {
+      console.log(this.addressLine1);
+      console.log(this.city);
+      console.log(this.storeTitle);
+    },
+
+    initializeData() {
+      //ProfileData
+      if (this.profileData) {
+        this.storeTitle = this.profileData.title;
+        this.storeSubtitle = "";
+        this.storeDescription = this.profileData.description;
+        this.tagsComboBoxModel = this.profileData.tags;
+        this.storeImages = [...this.profileData.images];
+        this.editedHtmlText = this.profileData.description;
+      }
+      //MapData
+      if (this.mapData) {
+        this.addressLine1 = this.mapData.address.addressLine1;
+        this.postcode = this.mapData.address.postalCode;
+        this.city = this.mapData.address.city;
+        this.mapIcon = this.mapData.mapIcon || "";
+        this.lat = this.mapData.location.lat;
+        this.lng = this.mapData.location.lng;
+      }
+    },
+
     showHelp(message) {
       console.log(message);
       //this.chosenIcon = "fish";
@@ -931,6 +1017,7 @@ export default {
 
     cancel() {
       console.log(this.profileData);
+      console.log(this.mapData);
       this.storeTitle = this.profileData.title;
       this.storeDescription = this.profileData.description;
       this.editedHtmlText = this.profileData.description;

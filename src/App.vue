@@ -113,7 +113,7 @@
 <script>
 //<Footer />
 import { mapState, mapActions } from "vuex";
-import { setLoader } from "./helpers";
+//import { setLoader } from "./helpers";
 
 //import HelloWorld from './components/HelloWorld'
 import Header from "./components/layout/Header";
@@ -165,9 +165,9 @@ export default {
       "addCloseSnackbar"
     ]),
 
-    setGoogleMapLoader() {
-      setLoader();
-    },
+    // setGoogleMapLoader() {
+    //   setLoader();
+    // },
     //Alert
     addSuccessAlert() {
       this.successAlert("Successfully logged in!");
@@ -200,10 +200,10 @@ export default {
     print() {
       console.log(this.alertArray);
     }
-  },
-  beforeMount() {
-    this.setGoogleMapLoader();
   }
+  // beforeMount() {
+  //   this.setGoogleMapLoader();
+  // }
 };
 </script>
 

@@ -1,19 +1,160 @@
 <template>
   <v-container>
-    <v-text-field
-      v-model="searchTerm"
-      :append-outer-icon="'mdi-send'"
-      type="text"
-      label="Search"
-      clear-icon="mdi-close-circle"
-      clearable
-      @click:clear="clearMessage"
-      @click:append-outer="addTermToTagArray('tags')"
-      @keyup.enter="addTermToTagArray('tags')"
-    ></v-text-field>
+    <!-- SEARCH ROW -->
+    <v-row>
+      <v-text-field
+        v-model="searchTerm"
+        :append-outer-icon="'mdi-send'"
+        type="text"
+        label="Search"
+        clear-icon="mdi-close-circle"
+        clearable
+        outlined
+        dense
+        @click:clear="clearMessage"
+        @click:append-outer="searchFilterSort(true)"
+        @keyup.enter="searchFilterSort(true)"
+      ></v-text-field>
+      <!-- @click:append-outer="addTermToTagArray('tags')"
+        @keyup.enter="addTermToTagArray('tags')" -->
+      <!-- FILTER MENU -->
+      <v-menu
+        bottom
+        left
+        :nudge-bottom="10"
+        offset-y
+        :close-on-content-click="false"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn v-bind="attrs" v-on="on" outlined color="primary" class="ml-3">
+            <v-icon color="primary">mdi-filter-menu</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-container>
+            <div class="text-left text-h6">Filters:</div>
+            <v-autocomplete
+              v-model="selectedCountries"
+              :items="countries"
+              outlined
+              dense
+              chips
+              small-chips
+              label="Countries"
+              multiple
+              clearable
+              @change="filterChanged = true"
+              style="width:300px"
+              ><template v-slot:selection="{ item, index }">
+                <v-chip v-if="index === 0" small>
+                  <span>{{ item }}</span>
+                </v-chip>
+                <span v-if="index === 1" class="grey--text caption">
+                  (+{{ selectedCountries.length - 1 }} others)
+                </span>
+              </template>
+            </v-autocomplete>
+            <v-autocomplete
+              v-model="selectedStates"
+              :items="states"
+              outlined
+              dense
+              chips
+              small-chips
+              label="States"
+              multiple
+              clearable
+              @change="filterChanged = true"
+              style="width:300px"
+              ><template v-slot:selection="{ item, index }">
+                <v-chip v-if="index === 0" small>
+                  <span>{{ item }}</span>
+                </v-chip>
+                <span v-if="index === 1" class="grey--text caption">
+                  (+{{ selectedStates.length - 1 }} others)
+                </span>
+              </template>
+            </v-autocomplete>
+            <v-autocomplete
+              v-model="selectedCities"
+              :items="cities"
+              outlined
+              dense
+              chips
+              small-chips
+              label="Cities"
+              multiple
+              clearable
+              @change="filterChanged = true"
+              style="width:300px"
+              ><template v-slot:selection="{ item, index }">
+                <v-chip v-if="index === 0" small>
+                  <span>{{ item }}</span>
+                </v-chip>
+                <span v-if="index === 1" class="grey--text caption">
+                  (+{{ selectedCities.length - 1 }} others)
+                </span>
+              </template>
+            </v-autocomplete>
+            <v-checkbox
+              v-model="checkBoxPickup"
+              label="Pick-Up"
+              @change="filterChanged = true"
+              hide-details
+            ></v-checkbox>
+            <v-checkbox
+              v-model="checkBoxDelivery"
+              label="Delivery"
+              @change="filterChanged = true"
+              hide-details
+            ></v-checkbox>
+          </v-container>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              :disabled="filterChanged ? false : true"
+              @click="searchFilterSort(true)"
+              >Set</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+      <!-- SORT MENU -->
+      <v-menu bottom left :nudge-bottom="10" offset-y max-width="250px">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn v-bind="attrs" v-on="on" outlined color="primary" class="ml-3">
+            <v-icon color="primary">mdi-sort</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-list dense nav>
+            <v-list-item-group v-model="selectedSort" color="primary">
+              <v-list-item
+                v-for="(item, index) in sortTypes"
+                :key="index"
+                @click="sortListClicked(index)"
+                link
+              >
+                <v-list-item-icon>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title class="text-left">
+                    {{ item.type }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-menu>
+    </v-row>
     <!--        @click:clear="clearMessage"
       @click:append-outer="searchForTerm"
       @keyup.enter="searchForTerm"-->
+
+    <!-- FILTER ARRAY APPROACH  -->
     <v-row>
       <v-chip
         v-for="tag in filterArray"
@@ -33,7 +174,7 @@
         criteria.
       </p>
     </div>
-    <div v-if="storeData">
+    <div v-if="loadingStoreData === false">
       <!-- <div
         v-for="(store, index) in storeData"
         v-bind:key="index"
@@ -47,14 +188,16 @@
           md="4"
           lg="3"
           xl="2"
-          v-for="(store, index) in computedStores"
+          v-for="(store, index) in this.storeData"
           v-bind:key="index"
           v-bind:store="store"
         >
           <!-- <router-link :to="{ path: `/storeprofile/${store._id}` }"> -->
           <!--height="200px"
               style="width:300px;" -->
-          <v-hover v-slot:default="{ hover }">
+
+          <SearchStoreListItem :store="store" />
+          <!-- <v-hover v-slot:default="{ hover }">
             <v-card
               height="550px"
               :class="{ 'on-hover': hover }"
@@ -149,17 +292,23 @@
                 </v-card-text>
               </router-link>
             </v-card>
-          </v-hover>
-          <!-- </router-link> -->
+          </v-hover> -->
+          <!-- </router-link> v-if="totalStoreCount > parseInt(selectedPageSize)"-->
         </v-col>
       </v-row>
-      <v-row>
-        <v-pagination
-          v-model="currentPage"
-          :length="numOfPages"
-          v-if="storeData.length > storesPerPage"
-          class="py-5"
-        />
+      <v-row align="center">
+        <v-spacer />
+        <div style="width:150px">
+          <v-select
+            :items="pageSizes"
+            v-model="selectedPageSize"
+            label="Stores per page"
+            outlined
+            dense
+          ></v-select>
+        </div>
+        <v-pagination v-model="currentPage" :length="numOfPages" class="py-5" />
+        <v-spacer />
       </v-row>
     </div>
     <div v-else>
@@ -187,11 +336,14 @@
 </template>
 
 <script>
+import SearchStoreListItem from "../components/SearchStoreListItem";
 import { storeService } from "../services";
 
 export default {
   name: "SearchDeliveryView",
-  components: {},
+  components: {
+    SearchStoreListItem: SearchStoreListItem
+  },
   data() {
     return {
       storeData: null,
@@ -203,15 +355,63 @@ export default {
       filterObject: {
         tags: []
       },
+      selectedSort: 0,
+      sortTypes: [
+        { type: "Date", icon: "mdi-sort-calendar-ascending", tooltip: "" },
+        { type: "Date", icon: "mdi-sort-calendar-descending", tooltip: "" },
+        { type: "Order Id", icon: "mdi-sort-numeric-ascending", tooltip: "" },
+        { type: "Order Id", icon: "mdi-sort-numeric-descending", tooltip: "" },
+        {
+          type: "Completion",
+          icon: "mdi-sort-bool-ascending-variant",
+          tooltip: ""
+        },
+        {
+          type: "Completion",
+          icon: "mdi-sort-bool-descending-variant",
+          tooltip: ""
+        }
+      ],
+      filterChanged: false,
+      selectedCountries: [],
+      selectedStates: [],
+      selectedCities: [],
+      countries: ["Germany", "France", "Great-Britain"],
+      states: ["Bayern", "Baden-Württemberg", "Niedersachen"],
+      cities: ["München", "Ingolstadt", "Great-Britain"],
+      checkBoxDelivery: true,
+      checkBoxPickup: true,
       //Pagination
+      totalStoreCount: 0,
+      selectedPageSize: "3",
+      pageSizes: ["3", "5", "10", "50", "100"],
       currentPage: 1,
-      storesPerPage: 5,
-      numSkeletonLoaders: 10
+      //storesPerPage: 3,
+      numSkeletonLoaders: 10,
+
+      loadingStoreData: true
     };
   },
+  watch: {
+    filterArray() {
+      console.log("changed");
+    },
+    currentPage() {
+      this.searchFilterSort(false);
+      // let result = await storeService.filterSortSearch(this.getPayload());
+      // this.storeData = result.stores;
+      // this.totalStoreCount = result.totalCount;
+    },
+    selectedPageSize() {
+      this.searchFilterSort(true);
+    }
+  },
   async mounted() {
-    var result = await storeService.getAllStores();
-    this.storeData = result.stores;
+    this.searchFilterSort(true);
+    // this.loadingStoreData = true;
+    // let result = await storeService.filterSortSearch(this.getPayload());
+    // this.storeData = result.stores;
+    // this.totalStoreCount = result.totalCount;
   },
 
   computed: {
@@ -223,17 +423,17 @@ export default {
 
     //Pagination:
     numOfPages() {
-      return Math.ceil(this.storeData.length / this.storesPerPage);
-    },
-    computedStores() {
-      return this.storeData.slice(this.sliceStart, this.sliceEnd);
-    },
-    sliceStart() {
-      return (this.currentPage - 1) * this.storesPerPage;
-    },
-    sliceEnd() {
-      return this.sliceStart + this.storesPerPage;
+      return Math.ceil(this.totalStoreCount / parseInt(this.selectedPageSize));
     }
+    // computedStores() {
+    //   return this.storeData.slice(this.sliceStart, this.sliceEnd);
+    // },
+    // sliceStart() {
+    //   return (this.currentPage - 1) * parseInt(this.selectedPageSize);
+    // },
+    // sliceEnd() {
+    //   return this.sliceStart + parseInt(this.selectedPageSize);
+    // }
 
     // avgRatingFloatValue: {
     //   get() {
@@ -244,30 +444,79 @@ export default {
   },
 
   methods: {
-    getAvgRating(store) {
-      return parseFloat(store.profileData.avgRating);
+    // getAvgRating(store) {
+    //   return parseFloat(store.profileData.avgRating);
+    // },
+    // getCutDescription(description) {
+    //   return description.substr(0, 100) + "\u2026";
+    // },
+    getPayload() {
+      let payload = {
+        searchTerm: this.searchTerm,
+        countries: this.selectedCountries,
+        states: this.selectedStates,
+        cities: this.selectedCities,
+        sort: "",
+        pickup: this.checkBoxPickup,
+        delivery: this.checkBoxDelivery,
+        pageSize: parseInt(this.selectedPageSize),
+        pageNum: this.currentPage
+      };
+      return payload;
     },
-    getCutDescription(description) {
-      return description.substr(0, 100) + "\u2026";
-    },
-    searchForTerm: async function() {
-      var result;
-      console.log(this.searchTerm);
-      if (this.searchTerm != "" && this.searchTerm != null) {
-        result = await storeService.getFilteredStores(this.searchTerm);
-        // this.testIdArray = result.idArray;
-        // this.dataset = result.stores;
-      } else if (this.searchTerm == "" || this.searchTerm == null) {
-        result = await storeService.getAllStores();
+    async searchFilterSort(resetToPage1) {
+      // let payload = {
+      //   searchTerm: this.searchTerm,
+      //   countries: this.selectedCountries,
+      //   states: this.selectedStates,
+      //   cities: this.selectedCities,
+      //   sort: "",
+      //   pickup: this.checkBoxPickup,
+      //   delivery: this.checkBoxDelivery,
+      //   pageSize: parseInt(this.selectedPageSize),
+      //   pageNum: this.currentPage
+      // };
+      let payload = this.getPayload();
+      if (resetToPage1 === true) {
+        payload.pageNum = 1;
+        this.currentPage = 1;
       }
-      this.storeData = result.stores;
-      if (this.searchTerm != "") {
-        this.filterArray.push(["searchTerm", this.searchTerm]);
+      //console.log(this.getPayload());
+      this.loadingStoreData = true;
+      let queryResult;
+      try {
+        queryResult = await storeService.filterSortSearch(payload);
+      } catch (error) {
+        console.log(error);
+        return;
       }
-      this.searchTerm = "";
+      this.storeData = queryResult.stores;
+      this.totalStoreCount = queryResult.totalCount;
+      this.loadingStoreData = false;
+      //console.log(payload);
+      this.filterChanged = false;
     },
+    // searchForTerm: async function() {
+    //   var result;
+    //   console.log(this.searchTerm);
+    //   if (this.searchTerm !== "" && this.searchTerm !== null) {
+    //     result = await storeService.getFilteredStores(this.searchTerm);
+    //     // this.testIdArray = result.idArray;
+    //     // this.dataset = result.stores;
+    //   } else if (this.searchTerm === "" || this.searchTerm === null) {
+    //     result = await storeService.getAllStores();
+    //   }
+    //   this.storeData = result.stores;
+    //   if (this.searchTerm !== "") {
+    //     this.filterArray.push(["searchTerm", this.searchTerm]);
+    //   }
+    //   this.searchTerm = "";
+    // },
+    // addCountriesToFilterArray() {
+    //   //this.filterArray.push([type, this.searchTerm]);
+    // },
     addTermToTagArray(type) {
-      if (this.searchTerm != "") {
+      if (this.searchTerm !== "") {
         this.filterArray.push([type, this.searchTerm]);
 
         this.filterObject[type].push(this.searchTerm);
@@ -298,13 +547,15 @@ export default {
       //this.searchForTerm();
       this.getFilteredStores();
     },
-    getFilteredStores: async function() {
-      //var result = await storeService.getFilteredStores(this.filterArray);
-      var result = await storeService.getFilteredStores2(this.filterObject);
-      this.storeData = result.stores;
-    },
+    // getFilteredStores: async function() {
+    //   //var result = await storeService.getFilteredStores(this.filterArray);
+    //   console.log("at function in view");
+    //   let result = await storeService.getFilteredStores2(this.filterObject);
+    //   this.storeData = result.stores;
+    // },
     clearMessage() {
       this.searchTerm = "";
+      this.searchFilterSort();
       //this.searchForTerm();
     }
     // deleteFilterTag(tag) {

@@ -3,6 +3,7 @@
     v-model="show"
     max-width="60%"
     @keydown.esc="cancel"
+    @keyup.enter="submitProduct()"
     @click:outside="cancel"
   >
     <!--  <div style="background:transparent;color:transparent">
@@ -200,6 +201,7 @@ export default {
       image: null,
       imageLabel: "Upload Image*",
       imageBuffer: "",
+      imageDetails: {},
       quantityType: "Kilograms",
       quantityTypeItems: ["Kilograms", "Grams", "Pieces"],
       quantityValue: ""
@@ -213,7 +215,14 @@ export default {
         this.description = newVal.description;
         this.price = newVal.price;
         this.imageLabel = "Update Image*";
-        this.imageBuffer = newVal.image;
+        this.imageBuffer = newVal.imgSrc;
+        this.imageDetails = newVal.imageDetails;
+        this.image = {
+          buffer: newVal.imgSrc,
+          size: newVal.imageDetails.size,
+          originalname: newVal.imageDetails.originalname,
+          name: newVal.imageDetails.name
+        };
         //this.image = newVal.imgSrc;
         this.quantityType = newVal.quantityType;
         this.quantityValue = newVal.quantityValue;
@@ -290,7 +299,7 @@ export default {
         !this.$v.title.$invalid &&
         !this.$v.description.$invalid &&
         !this.$v.price.$invalid &&
-        !this.$v.image.$invalid &&
+        //!this.$v.image.$invalid &&
         !this.$v.quantityType.$invalid &&
         !this.$v.quantityValue.$invalid
       ) {
@@ -304,12 +313,15 @@ export default {
 
   methods: {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
     submitProduct: async function() {
+      //console.log(this.image);
       let payload = {
         storeId: this.$route.params.id,
         title: this.title,
         description: this.description,
         imgSrc: this.imageBuffer,
+        imageDetails: this.imageDetails,
         price: this.price,
         currency: "EUR",
         currencySymbol: "€",
@@ -318,8 +330,11 @@ export default {
         quantityValue: this.quantityValue,
         stockAmount: 1
       };
+
       if (this.productToEdit === null) {
         //Add new product
+        console.log("details");
+        console.log(payload.imageDetails);
         this.$emit("overlay-start");
         //let newProduct;
         let response;
@@ -329,25 +344,27 @@ export default {
           this.$emit("overlay-end");
           return;
         }
-        payload["productId"] = response.productId;
-        this.$emit("add-new-product", payload);
+        //payload["_id"] = response.product._id;
+        this.$emit("add-new-product", response.product);
         this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully added!");
         //
       } else if (this.productToEdit !== null) {
         //Edit existing product
+        console.log(this.productToEdit._id);
         this.$emit("overlay-start");
         //console.log(this.productToEdit.productId);
-        payload["productId"] = this.productToEdit.productId;
-
+        payload["_id"] = this.productToEdit._id;
+        let response;
         try {
-          await storeService.editProduct(payload);
+          response = await storeService.editProduct(payload);
         } catch (error) {
           this.$emit("overlay-end");
           return;
         }
 
-        this.$emit("update-product", payload);
+        this.$emit("update-product", response.product);
+        this.$emit("recalculate-max-price");
         this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully edited!");
       }
@@ -364,18 +381,20 @@ export default {
     },
 
     async getImageBuffer() {
-      let buffer = "";
+      let result;
       if (!this.image) {
         return;
       }
       try {
-        buffer = await storeService.getImageBuffer(this.image);
+        result = await storeService.getImageBuffer(this.image);
       } catch (error) {
         console.log(error);
         return;
       }
-      console.log(buffer);
-      this.imageBuffer = buffer;
+      //console.log(buffer);
+      this.imageBuffer = result.buffer;
+      this.imageDetails = result.imageDetails;
+      console.log(this.imageDetails);
     },
 
     cancel() {
@@ -384,6 +403,8 @@ export default {
       this.description = "";
       this.price = "";
       this.image = null;
+      this.imageBuffer = "";
+      this.imageDetails = {};
       this.imageLabel = "Upload Image*";
       this.quantityType = "Kilograms";
       this.quantityValue = "";

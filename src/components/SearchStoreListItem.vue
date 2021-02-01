@@ -24,11 +24,7 @@
           >
             <v-img :src="img.src" height="100%" eager>
               <template v-slot:placeholder>
-                <v-row
-                  class="fill-height ma-0"
-                  align="center"
-                  justify="center"
-                >
+                <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular
                     indeterminate
                     color="grey lighten-2"
@@ -70,7 +66,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <div v-if="storeData">
+                <div v-if="store">
                   <v-chip-group column>
                     <v-chip
                       outlined
@@ -103,7 +99,7 @@
 //v-model="avgRating"
 //
 //{{ ok ? 'YES' : 'NO' }}
-import { mapState } from "vuex";
+//import { mapState } from "vuex";
 
 export default {
   name: "SearchStoreListItem",
@@ -112,42 +108,41 @@ export default {
   },
   data() {
     return {
-      amountTextField: this.amount,
+      //amountTextField: this.amount,
       //avgRating: parseFloat(this.store.profileData.avgRating),
       //avgRating: 0,
       //avgRating: parseFloat(this.getAvgRating()),
-      favorite: false
+      //favorite: false
       //numberRatings: this.store.profileData.reviews.length
     };
   },
   computed: {
     //...mapState("shoppingCart", ["productsInCart", "counter"]),
-
-    ...mapState("account", ["user", "loggedIn"]),
-    avgRatingFloatValue: {
-      get() {
-        //this function will determine what is displayed in the input
-        return parseFloat(this.store.profileData.avgRating);
-      }
-    }
+    // ...mapState("account", ["user", "loggedIn"]),
+    // avgRatingFloatValue: {
+    //   get() {
+    //     //this function will determine what is displayed in the input
+    //     return parseFloat(this.store.profileData.avgRating);
+    //   }
+    // }
   },
   methods: {
     print() {
       console.log(this.store);
     },
-    favoriteButtonClick() {
-      if (this.favorite == true) {
-        this.favorite = false;
-      } else {
-        this.favorite = true;
-      }
-    },
+    // favoriteButtonClick() {
+    //   if (this.favorite == true) {
+    //     this.favorite = false;
+    //   } else {
+    //     this.favorite = true;
+    //   }
+    // },
     getCutDescription(description) {
       return description.substr(0, 100) + "\u2026";
     },
     getAvgRating(store) {
       return parseFloat(store.profileData.avgRating);
-    },
+    }
     // getAvgRating() {
     //   if (this.store != null) {
     //     return this.store.profileData.avgRating;
