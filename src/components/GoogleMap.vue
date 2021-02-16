@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 <template>
   <div>
     <!-- <div id="myinfo" class="info">
@@ -36,38 +37,6 @@ export default {
       markerObject: {},
       contentStringArray: [],
       activeInfoWindows: []
-      // mapOptions: [
-      //   {
-      //     featureType: "road",
-      //     elementType: "geometry",
-      //     stylers: [{ color: "#ffffff" }]
-      //   },
-      //   {
-      //     featureType: "road.arterial",
-      //     elementType: "labels.text.fill",
-      //     stylers: [{ color: "#757575" }]
-      //   },
-      //   {
-      //     featureType: "road.highway",
-      //     elementType: "geometry",
-      //     stylers: [{ color: "#dadada" }]
-      //   },
-      //   {
-      //     featureType: "road.highway",
-      //     elementType: "labels.text.fill",
-      //     stylers: [{ color: "#616161" }]
-      //   },
-      //   {
-      //     featureType: "road.local",
-      //     elementType: "labels.text.fill",
-      //     stylers: [{ color: "#9e9e9e" }]
-      //   },
-      //   {
-      //     featureType: "transit.line",
-      //     elementType: "geometry",
-      //     stylers: [{ color: "#dadada" }]
-      //   }
-      // ]
     };
   },
 
@@ -115,15 +84,6 @@ export default {
         let markersToRemove = this.identifyMarkersToRemove(newVal);
         this.deleteIdentifiedMarkers(markersToRemove);
       }
-      //    this.$worker.run((arg) => {
-      //   return `Hello, ${arg}!`
-      // }, ['World'])
-      // .then(result => {
-      //   console.log(result)
-      // })
-      // .catch(e => {
-      //   console.error(e)
-      // })
     }
   },
 
@@ -137,7 +97,8 @@ export default {
   methods: {
     initMap: async function() {
       //const google = await getGoogleMapLoader();
-      this.map = new this.google2.maps.Map(document.getElementById("map2"), {
+      // eslint-disable-next-line no-undef
+      this.map = new google.maps.Map(document.getElementById("map2"), {
         center: { lat: 51.9481, lng: 10.26517 },
         //zoom: 10,
         zoom: 13,
@@ -149,7 +110,8 @@ export default {
       });
     },
     addGetBoundsEvent(map) {
-      this.google2.maps.event.addListener(map, "idle", () => {
+      // eslint-disable-next-line no-undef
+      google.maps.event.addListener(map, "idle", () => {
         let bounds = map.getBounds();
         let ne = bounds.getNorthEast();
         let sw = bounds.getSouthWest();
@@ -182,7 +144,8 @@ export default {
         //   maxWidth: 400
         // });
 
-        var marker = new this.google2.maps.Marker({
+        // eslint-disable-next-line no-undef
+        var marker = new google.maps.Marker({
           position: item.mapData.location,
           //animation: this.google2.maps.Animation.DROP,
           icon: markerFishIcon,
@@ -205,7 +168,8 @@ export default {
         });
         instance.$mount();
 
-        var infowindow = new this.google2.maps.InfoWindow({
+        // eslint-disable-next-line no-undef
+        var infowindow = new google.maps.InfoWindow({
           //content: this.contentStringArray[index],
           content: instance.$el,
           maxWidth: 400
@@ -267,12 +231,14 @@ export default {
       let icon = {
         //url: markerFishIcon, // url
         url: iconURL,
-        scaledSize: new this.google2.maps.Size(50, 50) // scaled size
+        // eslint-disable-next-line no-undef
+        scaledSize: new google.maps.Size(50, 50) // scaled size
         //origin: new this.google2.maps.Point(0, 0), // origin
         //anchor: new this.google2.maps.Point(0, 0) // anchor
       };
 
-      let marker = new this.google2.maps.Marker({
+      // eslint-disable-next-line no-undef
+      let marker = new google.maps.Marker({
         position: store.mapData.location,
         //animation: this.google2.maps.Animation.DROP,
         icon: iconURL !== undefined ? icon : null,
@@ -295,7 +261,8 @@ export default {
       });
       instance.$mount();
 
-      let infowindow = new this.google2.maps.InfoWindow({
+      // eslint-disable-next-line no-undef
+      let infowindow = new google.maps.InfoWindow({
         content: instance.$el,
         maxWidth: 400
       });
@@ -482,7 +449,8 @@ export default {
         });
         instance.$mount();
 
-        var infowindow = new this.google2.maps.InfoWindow({
+        // eslint-disable-next-line no-undef
+        var infowindow = new google.maps.InfoWindow({
           content: this.contentStringArray[i]
           //content: instance.$el,
           //maxWidth: 50

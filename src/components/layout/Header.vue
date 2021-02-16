@@ -19,7 +19,7 @@
     </router-link>
 
     <v-toolbar-title>Title</v-toolbar-title>
-
+    <v-btn @click="createDevData">Create Dev Data</v-btn>
     <v-spacer />
 
     <!--     <v-btn icon>
@@ -131,7 +131,7 @@
 
             <v-list-item-content class="text-left">
               <v-list-item-title>
-                {{ this.user.name.firstName }}{{ this.user.name.lastName }}
+                {{ this.user.name.firstName }} {{ this.user.name.lastName }}
               </v-list-item-title>
 
               <v-list-item-subtitle>{{
@@ -355,6 +355,8 @@ import SettingsDialog from "../SettingsDialog";
 
 import LanguageSwitcher from "../LanguageSwitcher";
 
+import { createDevDataService } from "../../services";
+
 export default {
   name: "Header",
   data() {
@@ -466,6 +468,9 @@ export default {
       console.log(this.user.shoppingCart);
       console.log(this.user.productCounter);
       console.log(this.productCounter);
+    },
+    async createDevData() {
+      await createDevDataService();
     }
     // checkProductCounter() {
     //   if (this.loggedIn === false) {

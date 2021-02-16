@@ -6,13 +6,21 @@
       </v-toolbar>
       <v-card-text>
         <v-container>
-          <v-row v-if="emailSendingSuccess" align="center" class="mt-1">
+          <v-row
+            v-if="emailSendingSuccess && !emailSendingError"
+            align="center"
+            class="mt-1"
+          >
             <v-alert dense text type="success">
               Thank you! We will notify you as soon as the product is available
               again.
             </v-alert>
           </v-row>
-          <v-row v-if="emailSendingError" align="center" class="mt-1">
+          <v-row
+            v-if="emailSendingError && !emailSendingSuccess"
+            align="center"
+            class="mt-1"
+          >
             <v-alert dense text type="error">
               We are sorry, an error occurred while registering your e-mail
               address. Please try again.
@@ -143,9 +151,11 @@ export default {
         await notifService.rgstrPrdctAvNotif(payload);
       } catch (error) {
         this.emailSendingError = true;
+        this.emailSendingSuccess = false;
         return;
       }
-      this.emailSendingSuccess = true;
+      this.emailSendingSuccess = true;  
+      this.emailSendingError = false;
     },
     close() {
       console.log(this.loggedIn);

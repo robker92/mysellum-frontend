@@ -83,34 +83,6 @@ export default {
   },
 
   methods: {
-    // changeLocale() {
-    //   //console.log(this.currentLocale);
-    //   console.log(this.chosenLocale);
-    //   if (this.chosenLocale !== "en") {
-    //     import(`@/locale/translations/${this.chosenLocale}.json`).then(msgs => {
-    //       //console.log(msgs);
-
-    //       i18n.setLocaleMessage(this.chosenLocale, msgs.default || msgs);
-    //       i18n.locale = this.chosenLocale;
-    //       //let locale = this.$i18n.locale;
-
-    //       // let to = this.$router.resolve({ params: { locale } });
-    //       // this.$router.push(to.location);
-
-    //       //let to = this.$router.resolve({ params: { locale } });
-    //       //console.log(this.$router.currentRoute.params.locale); current locale
-    //       if (this.chosenLocale !== this.$router.currentRoute.params.locale) {
-    //         this.pushToRouter(this.chosenLocale);
-    //       }
-    //     });
-    //   } else {
-    //     i18n.locale = this.chosenLocale;
-    //     if (this.chosenLocale !== this.$router.currentRoute.params.locale) {
-    //       this.pushToRouter(this.chosenLocale);
-    //     }
-    //   }
-    //   //this.$emit("change-current-locale", this.chosenLocale);
-    // },
     pushToRouter(locale) {
       let to = this.$router.resolve({ params: { locale } });
       this.$router.push(to.location.path);
@@ -149,30 +121,13 @@ export default {
       //this.$emit("change-current-locale", this.chosenLocale);
     },
 
-    // getRoute(locale) {
-    //   return this.$router.resolve({ params: { locale } });
-    // },
-
     getCurrentLocale() {
-      //console.log("current locale: " + i18n.locale);
-      //console.log(this.$router.currentRoute.params.locale);
       if (i18n.locale === "de") {
         return { index: 1, locale: "de", flag: "de" };
       } else {
         return { index: 0, locale: "en", flag: "gb" };
       }
     },
-
-    // changeImage(index) {
-    //   console.log(index);
-    //   console.log(this.selectedListItem);
-    //   console.log(this.items[index]);
-    //   this.print();
-    // },
-
-    // changeImage2(item) {
-    //   console.log(item.locale);
-    // },
 
     print() {
       console.log(this.selectedListItem);

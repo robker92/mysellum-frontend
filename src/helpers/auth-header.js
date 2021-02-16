@@ -1,9 +1,6 @@
 /* eslint-disable prettier/prettier */
 export function authHeader() {
-    // return authorization header with jwt token
-    //let user = JSON.parse(localStorage.getItem('user'))
-
-    let authToken = getCookie("authToken")
+    let authToken = getCookie("authToken");
     console.log(authToken);
     if (authToken != "") {
         return {

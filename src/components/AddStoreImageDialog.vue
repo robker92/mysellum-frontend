@@ -114,35 +114,6 @@ export default {
   },
 
   methods: {
-    // imageFileChanged() {
-    //   if (!this.file) {
-    //     return;
-    //   }
-    //   this.imageFile = files[0];
-    // },
-    /*     submitImage: async function() {
-      var data = {
-        storeId: this.$route.params.id,
-        imageSrc: this.imageSrc,
-        title: this.imageTitle
-      };
-      console.log(data);
-
-      var addImageResult = await storeService.addStoreImage(data);
-      this.$emit("add-store-image", addImageResult.imageData);
-
-      //console.log(data);
-      this.imageSrc = "";
-      this.imageTitle = "";
-      this.show = false;
-    }, */
-    // Preview_image(e) {
-    //   if (e) {
-    //     this.url = URL.createObjectURL(this.imageUpload);
-    //   } else {
-    //     this.url = "";
-    //   }
-    // },
     submitImage: async function() {
       //Another image preview method:
       //Note that URL may be prefixed in webkit-browsers, so use: var url = (URL || webkitURL).createObjectURL(...);

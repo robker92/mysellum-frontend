@@ -9,65 +9,6 @@ export function calculateTotalCartSum(shoppingCart) {
     return sum.toFixed(2);
 }
 
-// export function addProductLoggedOut(product, quantity) {
-//     let vuexObjct = JSON.parse(localStorage.getItem("vuex"));
-//     let arrayElement = [product, parseInt(quantity)];
-//     let currentCart = vuexObjct.account.shoppingCart;
-//     let currentCounter = vuexObjct.account.productCounter;
-
-//     let found = false;
-//     for (let i = 0; i < currentCart.length; i++) {
-//         if (
-//             product.productId === currentCart[i][0].productId &&
-//             product.storeId === currentCart[i][0].storeId
-//         ) {
-//             //Product already in cart
-//             found = true;
-//             currentCart[i][1] = currentCart[i][1] + parseInt(quantity);
-//             currentCounter = currentCounter + parseInt(quantity);
-//             //localStorage.setItem("cart", JSON.stringify(currentCart));
-//             break;
-//         }
-//     }
-//     //Product not in cart
-//     if (found === false) {
-//         // TODO
-//         currentCart.push(arrayElement);
-//         currentCounter = currentCounter + parseInt(quantity);
-//         //localStorage.setItem("vuex", JSON.stringify(vuexObjct));
-//     }
-//     vuexObjct.account.shoppingCart = currentCart;
-//     vuexObjct.account.productCounter = currentCounter;
-//     localStorage.setItem("vuex", JSON.stringify(vuexObjct));
-// }
-
-// export function removeProductLoggedOut(product, quantity) {
-//     let vuexObjct = JSON.parse(localStorage.getItem("vuex"));
-//     // TODO
-//     let currentCart = vuexObjct.account.shoppingCart;
-//     let currentCounter = vuexObjct.account.productCounter;
-
-//     for (var i = 0; i < currentCart.length; i++) {
-//         //Check if added product exists in cart
-//         if (
-//             currentCart[i][0].productId === product.productId &&
-//             currentCart[i][0].storeId === product.storeId
-//         ) {
-//             currentCart[i][1] = currentCart[i][1] - parseInt(quantity);
-//             currentCounter = currentCounter - parseInt(quantity);
-//             //Delete the array element if amount == 0
-//             if (currentCart[i][1] <= 0) {
-//                 currentCart.splice(i, 1);
-//                 console.log(currentCart);
-//             }
-//             break;
-//         }
-//     }
-//     vuexObjct.account.shoppingCart = currentCart;
-//     vuexObjct.account.productCounter = currentCounter;
-//     localStorage.setItem("vuex", JSON.stringify(vuexObjct));
-// }
-
 export function addProductLoggedOutHelper(product, quantity, currentCart) {
     return new Promise((resolve) => {
         //delete the image to save localstorage space

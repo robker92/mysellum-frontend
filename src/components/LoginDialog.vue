@@ -69,9 +69,6 @@
 //import { mapActions, mapGetters } from "vuex";
 import { mapActions, mapState } from "vuex";
 
-// import { userService } from "../services";
-// import userServices from "../services/userServices";
-
 import { required, email } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
@@ -98,22 +95,9 @@ export default {
     };
   },
 
-  // watch: {
-  //   loginStatus(val) {
-  //     if (val === true) {
-  //       this.addSuccessSnackbar("Successfully logged in!");
-  //       this.cancel();
-  //     } else {
-  //       this.addErrorSnackbar("Unsuccessfully logged in!");
-  //     }
-  //   }
-  // },
-
   computed: {
     ...mapState("account", ["user", "loggedIn"]),
-    // loginStatus() {
-    //   return this.loggedIn;
-    // },
+
     show: {
       get() {
         return this.value;
@@ -141,29 +125,11 @@ export default {
 
     buttonIsDisabled() {
       if (!this.$v.email.$invalid && !this.$v.password.$invalid) {
-        //Register User with input data
         return false;
       } else {
         return true;
       }
     }
-
-    // checkLoginStatus: {
-    //   get() {
-    //     if (this.loggedIn === true) {
-    //       this.addSuccessSnackbar("Successfully logged in!");
-    //       this.cancel();
-    //       return "";
-    //     } else {
-    //       //use response message
-    //       this.addErrorSnackbar("Unsuccessfully logged in!");
-    //       return "";
-    //     }
-    //   }
-    // }
-    // ...mapGetters("account", {
-    //   info: "loginInfo"
-    // })
   },
 
   methods: {
@@ -171,29 +137,11 @@ export default {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
     submitLogin: async function() {
-      // if (!this.$v.email.$invalid && !this.$v.password.$invalid) {
-      //   //Register User with input data
-      //   this.show = false
-      // } else {
-      //   this.$v.$touch()
-      // }
       var credentials = {
         email: this.email,
         password: this.password
       };
-      // console.log(credentials);
-      // var result = await userServices.loginUser(credentials);
-      // localStorage.setItem("user", JSON.stringify(result.user));
-      // console.log(result);
-      // //console.log(this.$cookie.get('access_token'))
-      // this.show = false;
 
-      // var result2 = await userService.login(credentials);
-      // console.log(result2);
-
-      //this.login(credentials);
-      //var email = this.email;
-      //var password = this.password;
       try {
         await this.login(credentials);
       } catch (error) {

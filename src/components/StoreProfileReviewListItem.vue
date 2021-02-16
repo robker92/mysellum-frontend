@@ -14,7 +14,7 @@
             <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
               <div class="text-left">
                 <v-rating
-                  v-model="review.rating"
+                  v-model="reviewRating"
                   background-color="orange lighten-3"
                   color="orange"
                   dense
@@ -26,7 +26,7 @@
           <v-row dense>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
               <div class="text-body-2 text-left">
-                By {{ review.userName }} on
+                By {{ reviewUserName }} on
                 {{ reviewDateTimeComputed }}
               </div>
             </v-col>
@@ -112,8 +112,18 @@ export default {
             this.review.datetimeCreated.indexOf("T")
           );
         }
-
         return dateCreated;
+      }
+    },
+    reviewUserName: {
+      get() {
+        console.log(this.review.userName);
+        return this.review.userName;
+      }
+    },
+    reviewRating: {
+      get() {
+        return parseInt(this.review.rating);
       }
     }
     // checkEmails() {

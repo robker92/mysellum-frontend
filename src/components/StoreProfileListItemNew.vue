@@ -221,7 +221,7 @@
             </v-btn>
           </template>
         </v-select>
-      </v-card> -->
+      </v-card> "cardDisabled === false ? productQuantity : 0"-->
         <v-card v-if="modifiable === false" flat class="mt-5">
           <v-row class="mt-3" no-gutters>
             <v-col cols="12" xs="5" sm="9" md="9" lg="9" xl="9">
@@ -248,6 +248,7 @@
               >
                 <v-icon>mdi-cart-plus</v-icon>
               </v-btn>
+              <v-btn @click="print">print</v-btn>
             </v-col>
           </v-row>
         </v-card>
@@ -439,7 +440,7 @@ export default {
       amountTextField: 1,
       fab: false,
       stockAmount: "",
-      productQuantity: parseInt(this.product.stockAmount) <= 0 ? 0 : 1,
+      productQuantity: parseInt(this.product.stockAmount) <= 0 ? 0 : 1, //parseInt(this.product.stockAmount) <= 0 ? 0 : 1,
       showProductAvailabilityNotificationDialog: false
       // quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
       // quantityItems2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -456,12 +457,12 @@ export default {
     ]),
     descriptionComputed: {
       get() {
-        if (this.product.quantityType == "Kilograms") {
+        if (this.product.quantityType === "Kilograms") {
           return `${this.product.description}, ${this.product.quantityValue}kg (1kg = ${this.pricePerKilogramComputed}€)`;
-        } else if (this.product.quantityType == "Grams") {
+        } else if (this.product.quantityType === "Grams") {
           return `${this.product.description}, ${this.product.quantityValue}g (100g = ${this.pricePerGramComputed}€)`;
-        } else if (this.product.quantityType == "Pieces") {
-          let suffix = this.product.quantityValue == "1" ? "" : "s";
+        } else if (this.product.quantityType === "Pieces") {
+          let suffix = this.product.quantityValue === "1" ? "" : "s";
           return `${this.product.description}, ${this.product.quantityValue} piece${suffix}`;
         } else {
           return this.product.description;
@@ -676,6 +677,12 @@ export default {
       this.$emit("update-stock", this.product._id, this.stockAmount);
       this.$emit("overlay-end");
       this.stockAmount = "";
+    },
+    print() {
+      console.log(this.productQuantity);
+      console.log(this.product.stockAmount);
+      console.log(this.stockAmount);
+      console.log(this.quantityItemsComputed);
     }
   }
 };

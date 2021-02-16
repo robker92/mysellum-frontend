@@ -26,7 +26,7 @@ async function getSingleStore(storeId) {
     );
     } catch(error) {
         errorHandler(error, "getSingleStore");
-        return error
+        throw error
     }
     console.log(response.data)
 

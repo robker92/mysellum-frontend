@@ -124,7 +124,7 @@ export default {
   },
 
   async mounted() {
-    let productId = this.product.productId;
+    let productId = this.product._id;
     this.image = await storeService.getProductImage(
       this.product.storeId,
       productId

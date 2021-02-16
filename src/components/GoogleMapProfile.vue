@@ -3,8 +3,6 @@
 </template>
 
 <script>
-//import loadGoogleMapsApi from 'load-google-maps-api'
-//import { getGoogleMapLoader } from "../helpers";
 import { mapOptions, getMarkerIconURL } from "../helpers";
 // eslint-disable-next-line no-unused-vars
 //import { Loader } from "google-maps";

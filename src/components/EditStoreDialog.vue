@@ -226,7 +226,7 @@
             </v-container>
           </v-card> -->
 
-          <v-card class="ma-3">
+          <!-- <v-card class="ma-3">
             <v-container>
               <div
                 class="text-caption text-left grey--text text--darken-1 mx-0"
@@ -263,88 +263,15 @@
                       <v-icon>mdi-format-align-justify</v-icon>
                     </v-btn>
                   </v-item-group>
-                </v-card>
-
-                <!--                 <v-card flat class="mr-3 my-1">
-                  <v-item-group>
-                    <v-btn @click="setFormat('createLink')">
-                      <v-icon>mdi-link-variant-plus</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('unlink')">
-                      <v-icon>mdi-link-variant-minus</v-icon>
-                    </v-btn>
-                  </v-item-group>
                 </v-card> -->
 
-                <v-card flat class="mr-3 my-1">
-                  <v-item-group>
-                    <v-btn @click="setFormat('insertUnorderedList')">
-                      <v-icon>mdi-format-list-bulleted</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('insertOrderedList')">
-                      <v-icon>mdi-format-list-numbered</v-icon>
-                    </v-btn>
-                  </v-item-group>
-                </v-card>
-
-                <v-card flat class="mr-3 my-1">
-                  <v-item-group>
-                    <v-btn @click="fontSizeFunction('addition')">
-                      <v-icon>mdi-format-font-size-increase</v-icon>
-                    </v-btn>
-                    <v-btn @click="fontSizeFunction('subtraction')">
-                      <v-icon>mdi-format-font-size-decrease</v-icon>
-                    </v-btn>
-                  </v-item-group>
-                </v-card>
-
-                <v-spacer />
-                <v-card flat class="my-1">
-                  <v-item-group>
-                    <!-- <v-btn @click="setFormat('removeFormat')">
-                      <v-icon>mdi-format-clear</v-icon>
-                    </v-btn> -->
-                    <v-btn @click="setFormat('undo')">
-                      <v-icon>mdi-undo</v-icon>
-                    </v-btn>
-                  </v-item-group>
-                </v-card>
-              </v-row>
-
-              <!-- <v-btn @click="printInputs()">Print</v-btn> -->
-              <div
-                id="editor"
-                ref="editor"
-                class="editor pa-0"
-                contenteditable
-                v-html="storeDescription"
-                @input="onInput"
-                autocorrection="off"
-                autocomplete="off"
-                onkeypress="setTimeout(function() { var height = document.getElementById('editor').scrollHeight; console.log(height); if(height > 350){document.getElementById('editor').style.height = height+'px';}}, 0)"
-                onpaste="setTimeout(function() { var height = document.getElementById('editor').scrollHeight; console.log(height); if(height > 350){document.getElementById('editor').style.height = height+'px';}}, 0)"
-              />
-              <div v-if="show" class="text-caption text-right">
-                <div
-                  v-if="
-                    numberCharactersInEditor <= storeDescriptionMax &&
-                      numberCharactersInEditor >= storeDescriptionMin
-                  "
-                >
-                  {{ numberCharactersInEditor }} / {{ storeDescriptionMax }}
-                </div>
-                <div v-else class="red--text">
-                  {{ numberCharactersInEditor }} / {{ storeDescriptionMax }}
-                </div>
-              </div>
-              <div
-                v-if="$v.storeDescription.$invalid"
-                class="text-body-2 red--text"
-              >
-                {{ storeDescriptionErrors[0] }}
-              </div>
-            </v-container>
-          </v-card>
+          <EditStoreDialogDescriptionTextArea
+            v-if="show"
+            :storeDescriptionInput="storeDescription"
+            v-on:description-text-changed="changeDescriptionText"
+            v-on:description-valid="storeDescriptionInvalid = false"
+            v-on:description-invalid="storeDescriptionInvalid = true"
+          />
 
           <v-container>
             <v-btn color="indigo" text @click="cancel">Close</v-btn>
@@ -458,71 +385,29 @@
                 </v-col>
               </v-row>
               <v-row align="center">
-                <v-col cols="12" lg="6" xl="6">
-                  <v-switch
-                    v-model="notificationOrderReturn"
-                    label="Product out of stock (recommended)"
-                    hint="We will notify you every time a product's stock falls below a defined limit."
-                    persistent-hint
-                    class="ml-5"
-                  ></v-switch>
-                </v-col>
-                <v-col cols="12" lg="6" xl="6">
-                  <v-row>
-                    <div class="text-left text-body-1">Limit:</div>
-                    <v-slider
-                      v-model="stockNotificationValue"
-                      :thumb-size="24"
-                      thumb-label="always"
-                      :max="100"
-                      :min="0"
-                      :disabled="
-                        notificationOrderReturn === false ? true : false
-                      "
-                    ></v-slider>
-                  </v-row>
-                </v-col>
+                <v-switch
+                  v-model="notificationOrderReturn"
+                  label="Product out of stock (recommended)"
+                  hint="We will notify you every time a product's stock falls below a defined limit."
+                  persistent-hint
+                  class="ml-5"
+                ></v-switch>
+                <!-- </v-col>
+                <v-col cols="12" lg="6" xl="6"> label="Limit:"-->
+
+                <v-slider
+                  v-model="stockNotificationValue"
+                  track-color="green"
+                  :thumb-size="24"
+                  thumb-label="always"
+                  hint="Threshold value"
+                  label="Limit:"
+                  persistent-hint
+                  :max="100"
+                  :min="0"
+                  :disabled="notificationOrderReturn === false ? true : false"
+                ></v-slider>
               </v-row>
-              <v-row align="center">
-                <v-col cols="12" lg="5" xl="5">
-                  <div>
-                    an order is received.
-                  </div>
-                </v-col>
-                <v-col cols="12" lg="10" xl="10">
-                  <v-switch
-                    v-model="notificationOrderReceive"
-                    class="ml-5"
-                  ></v-switch>
-                </v-col>
-              </v-row>
-              <v-row align="center">
-                <v-col cols="12" lg="2" xl="2">
-                  <div>
-                    a return is submitted.
-                  </div>
-                </v-col>
-                <v-col cols="12" lg="10" xl="10">
-                  <v-switch
-                    v-model="notificationOrderReturn"
-                    class="ml-5"
-                  ></v-switch>
-                </v-col>
-              </v-row>
-              <v-switch>
-                <template v-slot:label>
-                  <span>Label text</span>
-                </template>
-              </v-switch>
-              <v-switch
-                class="v-input--reverse v-input--expand"
-                hint="This label matches most of the examples in the Material Design documentation."
-                persistent-hint
-              >
-                <template v-slot:label>
-                  Expanded + reversed label
-                </template>
-              </v-switch>
             </v-container>
           </v-card>
         </v-tab-item>
@@ -618,8 +503,10 @@
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
-import AddStoreImageDialog from "../components/AddStoreImageDialog";
-import ShowHelpDialog from "../components/ShowHelpDialog";
+import AddStoreImageDialog from "./AddStoreImageDialog";
+import EditStoreDialogDescriptionTextArea from "./editStoreDialogComponents/DescriptionTextArea";
+import ShowHelpDialog from "./ShowHelpDialog";
+
 import { mapState, mapActions } from "vuex";
 
 import { storeService } from "../services";
@@ -634,7 +521,8 @@ export default {
 
   components: {
     AddStoreImageDialog: AddStoreImageDialog,
-    ShowHelpDialog: ShowHelpDialog
+    ShowHelpDialog: ShowHelpDialog,
+    EditStoreDialogDescriptionTextArea: EditStoreDialogDescriptionTextArea
   },
 
   props: {
@@ -651,11 +539,11 @@ export default {
       minLength: minLength(10),
       maxLength: maxLength(100)
     },
-    storeDescription: {
-      required,
-      minLength: minLength(100),
-      maxLength: maxLength(1000)
-    },
+    // storeDescription: {
+    //   required,
+    //   minLength: minLength(100),
+    //   maxLength: maxLength(1000)
+    // },
     storeImages: {
       required,
       minLength: minLength(1),
@@ -729,8 +617,9 @@ export default {
       storeTitleMax: 100,
       storeSubtitle: "",
       storeDescription: "",
-      storeDescriptionMin: 100,
-      storeDescriptionMax: 1000,
+      storeDescriptionInvalid: true,
+      // storeDescriptionMin: 100,
+      // storeDescriptionMax: 1000,
       storeImages: [],
       storeImagesMin: 1,
       storeImagesMax: 10,
@@ -792,18 +681,18 @@ export default {
     profileDataWatcher() {
       return this.profileData;
     },
-    numberCharactersInEditor: {
-      get() {
-        if (this.show == true) {
-          return new DOMParser().parseFromString(
-            this.editedHtmlText,
-            "text/html"
-          ).body.innerText.length;
-        } else {
-          return 0;
-        }
-      }
-    },
+    // numberCharactersInEditor: {
+    //   get() {
+    //     if (this.show == true) {
+    //       return new DOMParser().parseFromString(
+    //         this.editedHtmlText,
+    //         "text/html"
+    //       ).body.innerText.length;
+    //     } else {
+    //       return 0;
+    //     }
+    //   }
+    // },
 
     storeTitleErrors() {
       const errors = [];
@@ -851,29 +740,29 @@ export default {
         errors.push("At least one store image is required.");
       return errors;
     },
-    storeDescriptionErrors() {
-      const errors = [];
-      //var description = this.$v.storeDescription;
-      //if (!description.$dirty) return errors;
-      //console.log(this.numberCharactersInEditor);
-      if (this.numberCharactersInEditor > 1000) {
-        errors.push(
-          `The store description must be at most ${this.storeDescriptionMax} characters long.`
-        );
-      }
-      if (
-        this.numberCharactersInEditor < 100 &&
-        this.numberCharactersInEditor > 0
-      ) {
-        errors.push(
-          `The store description must be at least ${this.storeDescriptionMin} characters long.`
-        );
-      }
-      if (this.numberCharactersInEditor == 0) {
-        errors.push("The store description is required.");
-      }
-      return errors;
-    },
+    // storeDescriptionErrors() {
+    //   const errors = [];
+    //   //var description = this.$v.storeDescription;
+    //   //if (!description.$dirty) return errors;
+    //   //console.log(this.numberCharactersInEditor);
+    //   if (this.numberCharactersInEditor > 1000) {
+    //     errors.push(
+    //       `The store description must be at most ${this.storeDescriptionMax} characters long.`
+    //     );
+    //   }
+    //   if (
+    //     this.numberCharactersInEditor < 100 &&
+    //     this.numberCharactersInEditor > 0
+    //   ) {
+    //     errors.push(
+    //       `The store description must be at least ${this.storeDescriptionMin} characters long.`
+    //     );
+    //   }
+    //   if (this.numberCharactersInEditor == 0) {
+    //     errors.push("The store description is required.");
+    //   }
+    //   return errors;
+    // },
     cityErrors() {
       const errors = [];
       if (!this.$v.city.$dirty) return errors;
@@ -899,10 +788,11 @@ export default {
     },
 
     editButtonDisabled() {
-      if (this.show == true) {
+      if (this.show === true) {
         if (
-          this.numberCharactersInEditor >= 100 &&
-          this.numberCharactersInEditor <= 1000 &&
+          this.storeDescriptionInvalid === false &&
+          // this.numberCharactersInEditor >= 100 &&
+          // this.numberCharactersInEditor <= 1000 &&
           !this.$v.storeTitle.$invalid &&
           !this.$v.storeImages.$invalid &&
           !this.$v.tagsComboBoxModel.$invalid
@@ -940,7 +830,7 @@ export default {
       //MapData
       if (this.mapData) {
         this.addressLine1 = this.mapData.address.addressLine1;
-        this.postcode = this.mapData.address.postalCode;
+        this.postcode = this.mapData.address.postcode;
         this.city = this.mapData.address.city;
         this.mapIcon = this.mapData.mapIcon || "";
         this.lat = this.mapData.location.lat;
@@ -1019,7 +909,7 @@ export default {
       console.log(this.profileData);
       console.log(this.mapData);
       this.storeTitle = this.profileData.title;
-      this.storeDescription = this.profileData.description;
+      // this.storeDescription = this.profileData.description;
       this.editedHtmlText = this.profileData.description;
       document.getElementById("editor").innerHTML = this.editedHtmlText;
       this.tagsComboBoxModel = this.profileData.tags;
@@ -1040,14 +930,14 @@ export default {
       console.log(this.storeImages);
     },
 
-    setFormat(command) {
-      document.execCommand(command, false, "");
-    },
+    // setFormat(command) {
+    //   document.execCommand(command, false, "");
+    // },
 
-    onInput(e) {
-      this.editedHtmlText = e.target.innerHTML;
-      this.$v.storeDescription.$touch();
-    },
+    // onInput(e) {
+    //   this.editedHtmlText = e.target.innerHTML;
+    //   this.$v.storeDescription.$touch();
+    // },
 
     getImgSortArrLeftDisabled(index) {
       if (index === 0) {
@@ -1084,70 +974,42 @@ export default {
       arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
       return arr; // for testing
     },
-    // testFunction2() {
-    //   //console.log(document.getElementById("editor").text().length);
-    //   console.log(this.$refs.editor.innerText.length);
-    //   console.log(this.numberCharactersInEditor);
-    // },
 
-    // testFunction() {
-    //   //console.log(e.target.innerHTML)
-    //   console.log(window.getSelection());
+    // fontSizeFunction(type) {
     //   var selection = window.getSelection();
     //   var currentFontSize = window
     //     .getComputedStyle(selection.anchorNode.parentElement, null)
     //     .getPropertyValue("font-size");
-    //   console.log(
-    //     window
-    //       .getComputedStyle(selection.anchorNode.parentElement, null)
-    //       .getPropertyValue("font-size")
-    //   );
-
-    //   document.execCommand(
-    //     "fontSize",
-    //     false,
-    //     this.fontSizeTranslation(currentFontSize) + 1
-    //   );
-
-    //   console.log(
-    //     window
-    //       .getComputedStyle(selection.anchorNode.parentElement, null)
-    //       .getPropertyValue("font-size")
-    //   );
-    //   //console.log(window.getComputedStyle(e));
+    //   console.log(currentFontSize);
+    //   var newFontSize;
+    //   if (type == "addition") {
+    //     newFontSize = this.fontSizeTranslation(currentFontSize) + 1;
+    //   } else if (type == "subtraction") {
+    //     newFontSize = this.fontSizeTranslation(currentFontSize) - 1;
+    //   }
+    //   document.execCommand("fontSize", false, newFontSize);
     // },
 
-    fontSizeFunction(type) {
-      var selection = window.getSelection();
-      var currentFontSize = window
-        .getComputedStyle(selection.anchorNode.parentElement, null)
-        .getPropertyValue("font-size");
-      console.log(currentFontSize);
-      var newFontSize;
-      if (type == "addition") {
-        newFontSize = this.fontSizeTranslation(currentFontSize) + 1;
-      } else if (type == "subtraction") {
-        newFontSize = this.fontSizeTranslation(currentFontSize) - 1;
-      }
-      document.execCommand("fontSize", false, newFontSize);
-    },
+    // fontSizeTranslation(pxSize) {
+    //   if (pxSize == "10px") {
+    //     return 1;
+    //   } else if (pxSize == "13px") {
+    //     return 2;
+    //   } else if (pxSize == "16px") {
+    //     return 3;
+    //   } else if (pxSize == "18px") {
+    //     return 4;
+    //   } else if (pxSize == "24px") {
+    //     return 5;
+    //   } else if (pxSize == "32px") {
+    //     return 6;
+    //   } else if (pxSize == "48px") {
+    //     return 7;
+    //   }
+    // },
 
-    fontSizeTranslation(pxSize) {
-      if (pxSize == "10px") {
-        return 1;
-      } else if (pxSize == "13px") {
-        return 2;
-      } else if (pxSize == "16px") {
-        return 3;
-      } else if (pxSize == "18px") {
-        return 4;
-      } else if (pxSize == "24px") {
-        return 5;
-      } else if (pxSize == "32px") {
-        return 6;
-      } else if (pxSize == "48px") {
-        return 7;
-      }
+    changeDescriptionText(newDescription) {
+      this.editedHtmlText = newDescription;
     }
   }
 };
@@ -1164,32 +1026,5 @@ export default {
 
 .editor {
   height: 350px;
-}
-
-/* Reversed input variant https://codepen.io/alanaktion/pen/OJPQKdx */
-.v-input--reverse .v-input__slot {
-  flex-direction: row-reverse;
-  justify-content: flex-end;
-  .v-application--is-ltr & {
-    .v-input--selection-controls__input {
-      margin-right: 0;
-      margin-left: 8px;
-    }
-  }
-  .v-application--is-rtl & {
-    .v-input--selection-controls__input {
-      margin-left: 0;
-      margin-right: 8px;
-    }
-  }
-}
-
-/*  Bonus "expand" variant */
-.v-input--expand .v-input__slot {
-  /*justify-content: space-between; */
-  .v-label {
-    display: block;
-    flex: 1;
-  }
 }
 </style>
