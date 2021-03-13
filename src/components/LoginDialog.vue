@@ -16,6 +16,7 @@
                 required
                 @input="$v.email.$touch()"
                 @blur="$v.email.$touch()"
+                @keyup.enter.native="submitLogin"
               />
               <v-text-field
                 prepend-icon="mdi-lock-question"

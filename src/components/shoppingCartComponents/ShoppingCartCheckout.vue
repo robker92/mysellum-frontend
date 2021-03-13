@@ -207,7 +207,13 @@
     </div>
     <v-row>
       <v-col cols="12" xl="2">
-        <v-radio-group v-model="radioGroupPayment" @change="checkValidation()">
+        <v-radio-group
+          v-model="radioGroupPayment"
+          @change="
+            checkValidation();
+            writeOrderInfoToState();
+          "
+        >
           <v-radio :label="`Paypal`" value="paypalPayment" />
           <v-radio :label="`Credit Card`" value="creditCardPayment" />
           <v-radio :label="`Payment on invoice`" value="invoicePayment">
@@ -282,7 +288,7 @@
     </div> -->
     <v-btn @click="print">Print Data</v-btn>
     <v-btn @click="fill">Fill Data</v-btn>
-
+    <v-btn @click="writeOrderInfoToState()">save</v-btn>
     <!-- <v-timeline>
       <v-timeline-item fill-dot small left class="text-right">
         <router-link
@@ -303,7 +309,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { userService } from "../services";
+import { userService } from "../../services";
 
 import {
   required,
@@ -509,6 +515,7 @@ export default {
 
   methods: {
     ...mapActions("order", ["saveOrderDataToState"]),
+
     fill() {
       this.shippingFirstName = "TestName1";
       this.shippingLastName = "TestName2";
@@ -534,6 +541,7 @@ export default {
       console.log("hi");
       this.shippingAddressLine1 = value;
     },
+
     checkValidation() {
       if (this.checkInputFields == false && this.checkRadioButtons == false) {
         this.$emit("step2-continue-button", false);
@@ -541,6 +549,7 @@ export default {
         this.$emit("step2-continue-button", true);
       }
     },
+
     writeOrderInfoToState() {
       var orderData = {
         shippingAddress: {

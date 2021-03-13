@@ -268,6 +268,22 @@ const actions = {
     }) {
         commit("emptyLoadedCartSuccess");
     },
+
+    emptyShoppingCart({
+        dispatch,
+        commit,
+        state
+    }) {
+        commit("emptyShoppingCartSuccess");
+    },
+
+    setOwnedStoreId({
+        dispatch,
+        commit,
+        state
+    }, storeId) {
+        commit("setOwnedStoreIdSuccess", storeId);
+    },
 };
 
 // function shoppingCartRoutine(state, shoppingCart) {
@@ -419,6 +435,14 @@ const mutations = {
     // undoMergeFailure(state) {},
     emptyLoadedCartSuccess(state) {
         state.loadedCart = [];
+    },
+    emptyShoppingCartSuccess(state) {
+        state.shoppingCart = [];
+        state.productCounter = 0;
+    },
+
+    setOwnedStoreIdSuccess(state, storeId) {
+        state.user.ownedStoreId = storeId;
     }
 };
 

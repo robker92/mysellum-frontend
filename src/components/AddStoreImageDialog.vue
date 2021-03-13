@@ -38,8 +38,13 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="cancel">Close</v-btn>
-        <v-btn color="blue darken-1" text @click="submitImage">Submit</v-btn>
+        <v-btn color="primary" text @click="cancel">Close</v-btn>
+        <v-btn
+          color="primary"
+          @click="submitImage"
+          :disabled="submitButtonDisabled"
+          >Submit</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -109,6 +114,12 @@ export default {
       !this.$v.file.file_size_validation &&
         errors.push("The file is too large");
       return errors;
+    },
+    submitButtonDisabled() {
+      if (!this.file || !this.imageTitle) {
+        return true;
+      }
+      return false;
     }
     //...mapState("account", ["user", "loggedIn"])
   },

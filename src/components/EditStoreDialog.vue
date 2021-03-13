@@ -42,9 +42,6 @@
           Settings
         </v-tab>
 
-        <!--       <v-card-title>
-        <span class="text-h5">Edit Your Store</span>
-      </v-card-title> -->
         <v-tab-item>
           <!-- <div class="text-h6 text-left ml-3">Store Profile:</div> -->
           <v-card class="ma-3">
@@ -53,19 +50,6 @@
                 Images*
               </div>
 
-              <!--    <div
-                class="text-caption text-left grey--text text--darken-1 mx-0"
-              >       <v-btn
-            @click.stop="showAddStoreImageDialog = true"
-            fab
-            absolute
-            top
-            right
-            dark
-            color="pink"
-            >
-            <v-icon>mdi-plus</v-icon>
-            </v-btn> -->
               <AddStoreImageDialog
                 v-model="showAddStoreImageDialog"
                 v-on:add-store-image="addNewImageToArray"
@@ -214,56 +198,6 @@
               />
             </v-container>
           </v-card>
-
-          <!--           <v-card class="ma-3" max-width="95%">
-            <v-container>
-              <v-textarea
-                v-model="storeDescription"
-                :counter="1000"
-                label="Store Description*"
-                required
-              />
-            </v-container>
-          </v-card> -->
-
-          <!-- <v-card class="ma-3">
-            <v-container>
-              <div
-                class="text-caption text-left grey--text text--darken-1 mx-0"
-              >
-                Store Description*
-              </div>
-              <v-row class="mx-0 mt-1 mb-3">
-                <v-card flat class="mr-3 my-1">
-                  <v-item-group>
-                    <v-btn @click="setFormat('italic')">
-                      <v-icon>mdi-format-italic</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('bold')">
-                      <v-icon>mdi-format-bold</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('underline')">
-                      <v-icon>mdi-format-underline</v-icon>
-                    </v-btn>
-                  </v-item-group>
-                </v-card>
-
-                <v-card flat class="mr-3 my-1">
-                  <v-item-group>
-                    <v-btn @click="setFormat('justifyCenter')">
-                      <v-icon>mdi-format-align-center</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('justifyLeft')">
-                      <v-icon>mdi-format-align-left</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('justifyRight')">
-                      <v-icon>mdi-format-align-right</v-icon>
-                    </v-btn>
-                    <v-btn @click="setFormat('justifyFull')">
-                      <v-icon>mdi-format-align-justify</v-icon>
-                    </v-btn>
-                  </v-item-group>
-                </v-card> -->
 
           <EditStoreDialogDescriptionTextArea
             v-if="show"
@@ -432,6 +366,48 @@
                 hac habitasse platea dictumst. Fusce ac felis sit amet ligula
                 pharetra condimentum.
               </p>
+
+              <v-btn
+                text
+                href="https://www.paypal.com/us/webapps/mpp/security/seller-protection"
+                target="_blank"
+                class="no-uppercase"
+              >
+                Paypal's Seller Protection Privacy
+                <v-icon right>mdi-link-variant</v-icon>
+              </v-btn>
+              <v-btn
+                text
+                href="https://www.paypal.com/us/webapps/mpp/security/seller-protection"
+                target="_blank"
+                class="no-uppercase"
+              >
+                Sign-up to Paypal
+              </v-btn>
+
+              <v-hover v-slot="{ hover }">
+                <v-card
+                  max-width="500px"
+                  max-height="100px"
+                  :elevation="hover ? 8 : 0"
+                  :class="{ 'on-hover': hover }"
+                  flat
+                  @click="signupPaypal"
+                >
+                  <v-container>
+                    <v-row align="center" class="ma-1">
+                      <v-img
+                        max-height="70"
+                        max-width="90"
+                        src="../assets/paypal/de-pp-logo-100px.png"
+                      ></v-img>
+                      <div class="ml-3">
+                        Sign-up to Paypal
+                      </div>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-hover>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -528,7 +504,8 @@ export default {
   props: {
     value: Boolean,
     profileData: Object,
-    mapData: Object
+    mapData: Object,
+    paypalSignupLink: String
   },
 
   mixins: [validationMixin],
@@ -618,6 +595,7 @@ export default {
       storeSubtitle: "",
       storeDescription: "",
       storeDescriptionInvalid: true,
+      editedHtmlText: "", //Variable for saved html text -> will be saved as store description in the end
       // storeDescriptionMin: 100,
       // storeDescriptionMax: 1000,
       storeImages: [],
@@ -661,11 +639,12 @@ export default {
       lat: "",
       lng: "",
       //htmlText: "Hello <strong>this</strong> is a test", //Variable for Input Store Description
-      editedHtmlText: "", //Variable for saved html text -> will be saved as store description in the end
 
       showShowHelpDialog: false,
       helpDialogTitle: "",
       helpDialogMessage: ""
+
+      // paypal
     };
   },
 
@@ -711,7 +690,7 @@ export default {
     },
     storeTagsErrors() {
       const errors = [];
-      var tagsArray = this.$v.tagsComboBoxModel;
+      let tagsArray = this.$v.tagsComboBoxModel;
       if (!tagsArray.$dirty) return errors;
       !tagsArray.maxLength &&
         errors.push(
@@ -1010,6 +989,11 @@ export default {
 
     changeDescriptionText(newDescription) {
       this.editedHtmlText = newDescription;
+    },
+
+    signupPaypal() {
+      const win = window.open(this.paypalSignupLink, "_blank");
+      win.focus();
     }
   }
 };
@@ -1026,5 +1010,9 @@ export default {
 
 .editor {
   height: 350px;
+}
+
+.no-uppercase {
+  text-transform: none;
 }
 </style>

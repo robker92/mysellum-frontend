@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ma-3">
+  <v-card class="ma-1" color="grey lighten-4">
     <v-container>
       <div class="text-caption text-left grey--text text--darken-1 mx-0">
         Store Description*
@@ -80,6 +80,7 @@
         autocomplete="off"
         onkeypress="setTimeout(function() { var height = document.getElementById('editor').scrollHeight; console.log(height); if(height > 350){document.getElementById('editor').style.height = height+'px';}}, 0)"
         onpaste="setTimeout(function() { var height = document.getElementById('editor').scrollHeight; console.log(height); if(height > 350){document.getElementById('editor').style.height = height+'px';}}, 0)"
+        tabindex="100"
       />
       <div class="text-caption text-right">
         <div
@@ -210,7 +211,7 @@ export default {
     fontSizeTranslation(pxSize) {
       if (pxSize == "10px") {
         return 1;
-      } else if (pxSize == "13px") {
+      } else if (pxSize == "13px" || pxSize == "14px") {
         return 2;
       } else if (pxSize == "16px") {
         return 3;
@@ -231,5 +232,6 @@ export default {
 <style>
 .editor {
   height: 350px;
+  background-color: white;
 }
 </style>

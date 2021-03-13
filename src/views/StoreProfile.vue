@@ -220,6 +220,7 @@
         v-model="showEditStoreDialog"
         :profileData="profileData"
         :mapData="mapData"
+        :paypalSignupLink="paypalSignupLink"
         v-on:edit-store="updateStoreData"
         v-on:overlay-start="startLoadingOverlay"
         v-on:overlay-end="endLoadingOverlay"
@@ -794,6 +795,9 @@ export default {
       loadingErrorStore: false,
       loadingErrorProducts: false,
 
+      // paypal
+      paypalSignupLink: "",
+
       //store activation
       demoActivationSteps: {
         profileComplete: true,
@@ -1037,6 +1041,11 @@ export default {
     this.mapData = responseStore.mapData;
     this.profileData = responseStore.profileData;
     this.tagsString = this.dataset.profileData.tags.join(", ");
+
+    if (this.dataset.payment.paypal) {
+      this.paypalSignupLink = this.dataset.payment.paypal.urls.actionUrl.href;
+    }
+    console.log(this.paypalSignupLink);
     this.avgRating = parseFloat(this.dataset.profileData.avgRating);
     //end store loading
     this.loadingStore = false;

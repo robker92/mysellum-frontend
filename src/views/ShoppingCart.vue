@@ -200,6 +200,16 @@
                   :computedTotalSum="computedTotalSum"
                 />
 
+                <!-- Smart Buttons -->
+                <!-- <v-card width="250px" class="mt-3">
+                  <v-container>
+                    <PaypalSmartButton
+                      :orderData="{}"
+                      v-on:paypal-order-flow-finished="orderCreated"
+                    />
+                  </v-container>
+                </v-card> -->
+
                 <v-card-actions class="mt-3">
                   <v-spacer />
                   <v-btn text @click="e1 = e1 - 1">
@@ -208,6 +218,16 @@
                   <v-btn color="primary" @click="createOrder">
                     Complete Purchase
                   </v-btn>
+
+                  <!-- Smart Buttons -->
+                  <v-card width="250px" class="mt-3">
+                    <v-container>
+                      <PaypalSmartButton
+                        :data="getCreateOrderData()"
+                        v-on:paypal-order-flow-finished="orderCreated"
+                      />
+                    </v-container>
+                  </v-card>
                 </v-card-actions>
               </v-container>
             </v-card>
@@ -227,12 +247,14 @@
 */
 import { calculateTotalCartSum, shoppingCartMerge } from "../helpers";
 import { mapState, mapActions } from "vuex";
-import ShoppingCartListItem from "../components/ShoppingCartListItem";
-import ShoppingCartCheckout from "../components/ShoppingCartCheckout";
-import ShoppingCartFinalOverview from "../components/ShoppingCartFinalOverview";
+import ShoppingCartListItem from "../components/shoppingCartComponents/ShoppingCartListItem";
+import ShoppingCartCheckout from "../components/shoppingCartComponents/ShoppingCartCheckout";
+import ShoppingCartFinalOverview from "../components/shoppingCartComponents/ShoppingCartFinalOverview";
 import LoginDialog from "../components/LoginDialog";
 
 import { orderService } from "../services";
+
+import PaypalSmartButton from "../components/shoppingCartComponents/PaypalSmartButton.vue";
 
 export default {
   name: "ShoppingCartView",
@@ -241,7 +263,8 @@ export default {
     ShoppingCartListItem,
     ShoppingCartCheckout,
     ShoppingCartFinalOverview,
-    LoginDialog
+    LoginDialog,
+    PaypalSmartButton
   },
 
   data() {
@@ -252,7 +275,15 @@ export default {
       step3Editable: false,
       step2ContinueDisabled: true,
 
-      showLoginDialog: false
+      showLoginDialog: false,
+
+      orderData2: {
+        description: "Buy thing",
+        amount: {
+          currency_code: "USD",
+          value: 1000
+        }
+      }
       //step3CompletePurchaseDisabled: true
     };
   },
@@ -294,7 +325,8 @@ export default {
       "mergeCarts",
       "undoMerge",
       "updateCart",
-      "emptyLoadedCart"
+      "emptyLoadedCart",
+      "emptyShoppingCart"
     ]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
@@ -324,6 +356,8 @@ export default {
     },
 
     createOrder: async function() {
+      console.log(this.shoppingCart);
+      console.log(this.orderData);
       var data = {
         user: {
           email: this.user.email
@@ -343,9 +377,9 @@ export default {
         },
         shippingAddress: this.orderData.shippingAddress,
         billingAddress: this.orderData.billingAddress,
-        products: this.user.shoppingCart,
+        products: this.shoppingCart,
         payment: this.orderData.payment,
-        totalSum: calculateTotalCartSum(this.user.shoppingCart),
+        totalSum: calculateTotalCartSum(this.shoppingCart),
         currency: "EUR",
         currencySymbol: "€"
       };
@@ -355,6 +389,9 @@ export default {
         //this.addErrorSnackbar("Error while creating the order.");
         return;
       }
+
+      // empty shopping cart
+      this.emptyShoppingCart();
       this.$router.push({ name: "SuccessfulOrder" });
     },
 
@@ -395,6 +432,21 @@ export default {
       }
       this.emptyLoadedCart();
       this.addSuccessSnackbar("Merge was aborted!");
+    },
+
+    orderCreated() {
+      console.log("hi");
+    },
+
+    getCreateOrderData() {
+      const data = {
+        userEmail: this.user.email,
+        products: this.shoppingCart,
+        shippingAddress: this.orderData.shippingAddress,
+        totalSum: calculateTotalCartSum(this.shoppingCart),
+        currencyCode: "EUR"
+      };
+      return data;
     }
     // enableCompletePurchaseStep3() {
     //   this.step3CompletePurchaseDisabled = false;

@@ -18,7 +18,7 @@ export function addProductLoggedOutHelper(product, quantity, currentCart) {
         let found = false;
         for (let i = 0; i < currentCart.length; i++) {
             if (
-                product.productId === currentCart[i][0].productId &&
+                product._id === currentCart[i][0]._id &&
                 product.storeId === currentCart[i][0].storeId
             ) {
                 //Product already in cart
@@ -42,7 +42,7 @@ export function removeProductLoggedOutHelper(product, quantity, currentCart) {
         for (let i = 0; i < currentCart.length; i++) {
             //Check if added product exists in cart
             if (
-                currentCart[i][0].productId === product.productId &&
+                currentCart[i][0]._id === product._id &&
                 currentCart[i][0].storeId === product.storeId
             ) {
                 arrayElement[1] = currentCart[i][1] - parseInt(quantity);
@@ -67,7 +67,7 @@ export function shoppingCartMerge(cart1, cart2) {
             found = false;
             for (let j = 0; j < cart1.length; j++) {
                 if (
-                    cart2[i][0].productId === cart1[j][0].productId &&
+                    cart2[i][0]._id === cart1[j][0]._id &&
                     cart2[i][0].storeId === cart1[j][0].storeId
                 ) {
                     found = true;
@@ -91,7 +91,7 @@ export function shoppingCartUndoMerge(cart1, cart2) {
             //run through cart 1 and look for cart 2's product
             for (let j = 0; j < cart1.length; j++) {
                 if (
-                    cart2[i][0].productId === cart1[j][0].productId &&
+                    cart2[i][0]._id === cart1[j][0]._id &&
                     cart2[i][0].storeId === cart1[j][0].storeId
                 ) {
                     //decrease cart 1's quantity by cart 2's quantity

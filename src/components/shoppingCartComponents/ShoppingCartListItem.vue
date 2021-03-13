@@ -52,9 +52,10 @@
       <v-col v-if="modifiable == true" sm="1">
         <v-btn
           class="mx-2"
-          dark
           x-small
           color="primary"
+          :dark="plusButtonDark"
+          :disabled="plusButtonDisabled"
           @click.stop="putInCart()"
         >
           <v-icon dark>mdi-plus</v-icon>
@@ -102,7 +103,7 @@
 
 */
 import { mapState, mapActions } from "vuex";
-import { storeService } from "../services";
+import { storeService } from "../../services";
 //import { checkAuthentication } from "../helpers";
 
 //import { addProductLoggedOut, removeProductLoggedOut } from "../helpers";
@@ -125,10 +126,15 @@ export default {
 
   async mounted() {
     let productId = this.product._id;
-    this.image = await storeService.getProductImage(
-      this.product.storeId,
-      productId
-    );
+    try {
+      this.image = await storeService.getProductImage(
+        this.product.storeId,
+        productId
+      );
+    } catch (error) {
+      console.log(error);
+      this.addErrorSnackbar("An unexpected error has occurred, we are sorry.");
+    }
   },
 
   computed: {
@@ -166,6 +172,24 @@ export default {
           return true;
         } else {
           return false;
+        }
+      }
+    },
+    plusButtonDisabled: {
+      get() {
+        if (this.amount >= this.product.stockAmount) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+    plusButtonDark: {
+      get() {
+        if (this.amount >= this.product.stockAmount) {
+          return false;
+        } else {
+          return true;
         }
       }
     }

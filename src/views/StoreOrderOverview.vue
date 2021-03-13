@@ -603,10 +603,10 @@ export default {
   },
 
   async mounted() {
-    //var id = this.$route.params.id;
-    var response = await orderService.getAllOrders();
+    const storeId = this.$route.params.id;
+    const response = await orderService.getStoresOrders(storeId);
     console.log(response);
-    this.orderList = response;
+    this.orderList = response.orders;
   },
 
   methods: {

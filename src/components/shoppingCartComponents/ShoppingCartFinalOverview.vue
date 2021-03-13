@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-card>
       <v-card-title>
         <div class="text-h6 text-left font-weight-medium">
@@ -94,7 +94,7 @@
       <p>{{ this.orderData.payment }}</p>
     </v-sheet> -->
 
-    <v-row>
+    <v-row class="mt-3">
       <v-col cols="12" sm="6" lg="4" xl="4">
         <v-card v-if="this.orderData.shippingAddress">
           <v-card-title>
@@ -205,11 +205,11 @@
     <!-- <v-btn class="bottomright" dark color="indigo" @click.stop="createOrder"
       >Complete Purchase</v-btn
     > -->
-  </v-container>
+  </div>
 </template>
 
 <script>
-import ShoppingCartListItem from "../components/ShoppingCartListItem";
+import ShoppingCartListItem from "./ShoppingCartListItem";
 // import { calculateTotalCartSum } from "../helpers";
 // import { orderService } from "../services";
 //mapActions
