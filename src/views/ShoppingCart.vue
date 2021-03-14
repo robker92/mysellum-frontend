@@ -223,7 +223,7 @@
                   <v-card width="250px" class="mt-3">
                     <v-container>
                       <PaypalSmartButton
-                        :data="getCreateOrderData()"
+                        :data="getPaypalCreateOrderData()"
                         v-on:paypal-order-flow-finished="orderCreated"
                       />
                     </v-container>
@@ -433,17 +433,15 @@ export default {
       this.emptyLoadedCart();
       this.addSuccessSnackbar("Merge was aborted!");
     },
-
     orderCreated() {
       console.log("hi");
     },
-
-    getCreateOrderData() {
+    getPaypalCreateOrderData() {
       const data = {
-        userEmail: this.user.email,
+        // userEmail: this.user.email,
         products: this.shoppingCart,
         shippingAddress: this.orderData.shippingAddress,
-        totalSum: calculateTotalCartSum(this.shoppingCart),
+        // totalSum: calculateTotalCartSum(this.shoppingCart),
         currencyCode: "EUR"
       };
       return data;

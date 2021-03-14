@@ -27,7 +27,8 @@ export default {
     const script = document.createElement("script");
     const clientId =
       "AZ4Ot1_cYotHmBv5ljIROuwrazfyUOkvSR2hDVfCrAaB1wTpkkaTzi9C7dIp08HTX6lEVMdOZ4l4FZrc";
-    const merchantId = "CAD3FBJY72FE8"; //
+    const merchantId = "UW8X6XK7RGLP8"; //
+    // const merchantId = "sb-wqpm05264764@business.example.com";
     // &vault=true&commit=false
     script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=${merchantId}&currency=EUR&intent=capture`;
     script.addEventListener("load", this.setLoaded);
