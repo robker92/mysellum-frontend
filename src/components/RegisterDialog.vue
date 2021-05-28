@@ -198,15 +198,6 @@
 </template>
 
 <script>
-/*
-  <v-row>
-    <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required></v-select>
-  </v-row>
-*/
-//import axios from 'axios'
-//import userServices from "../services/userServices";
-//import { getGoogleMapLoader } from "../helpers";
-
 import { mapActions } from "vuex";
 import { userService } from "../services";
 
@@ -258,12 +249,6 @@ export default {
       }
     },
     select: { required }
-
-    // checkbox: {
-    //   checked(val) {
-    //     return val;
-    //   }
-    // }
   },
 
   props: {
@@ -338,29 +323,6 @@ export default {
   mounted() {
     // eslint-disable-next-line no-undef
     this.service = new google.maps.places.AutocompleteService();
-    // service.getQueryPredictions(
-    //   { input: "pizza near Syd" },
-    //   displaySuggestions
-    // );
-    //const googleLoader = await getGoogleMapLoader();
-    //console.log(googleLoader);
-    // Create the autocomplete object, restricting the search predictions to
-    // geographical location types.
-    // this.$nextTick(function() {
-    //   console.log(this.$refs);
-    // });
-    // console.log(document.getElementById("googleAddressAutocomplete2"));
-    // eslint-disable-next-line no-undef
-    // this.autocomplete = new google.maps.places.Autocomplete(
-    //   this.$refs["myid"],
-    //   { types: ["geocode"] }
-    // );
-    // Avoid paying for data that you don't need by restricting the set of
-    // place fields that are returned to just the address components.
-    //this.autocomplete.setFields(["address_component"]);
-    // When the user selects an address from the drop-down, populate the
-    // address fields in the form.
-    //autocomplete.addListener("place_changed", fillInAddress);
   },
   computed: {
     show: {
@@ -370,19 +332,7 @@ export default {
       set(value) {
         this.$emit("input", value);
       }
-    } /*
-    checkboxErrors() {
-      const errors = []
-      if (!this.$v.checkbox.$dirty) return errors
-      !this.$v.checkbox.checked && errors.push('You must agree to continue!')
-      return errors
-    },*/,
-    // selectErrors() {
-    //   const errors = [];
-    //   if (!this.$v.select.$dirty) return errors;
-    //   !this.$v.select.required && errors.push("Item is required.");
-    //   return errors;
-    // },
+    },
     firstNameErrors() {
       const errors = [];
       if (!this.$v.firstName.$dirty) return errors;
@@ -478,7 +428,6 @@ export default {
         errors.push(this.$t("registerDialog.addressLine1FieldLengthError"));
       return errors;
     },
-
     checkboxTermsConditionsErrors() {
       const errors = [];
       if (!this.$v.checkboxTermsConditions.$dirty) return errors;
@@ -525,7 +474,6 @@ export default {
   methods: {
     //...mapActions("account", ["register"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
-    //handleAvailabilityRequest: async function (event) {
 
     async getAutocompleteItems(evt) {
       console.log(evt);
@@ -538,6 +486,7 @@ export default {
       );
       console.log(result);
     },
+
     callbackFct(predictions, status) {
       console.log(predictions);
       console.log(status);
@@ -547,25 +496,8 @@ export default {
       }
       console.log("hi2");
     },
+
     submitRegistration: async function() {
-      /*
-      if (
-        !this.$v.firstName.$invalid &&
-        !this.$v.lastName.$invalid &&
-        !this.$v.email.$invalid &&
-        !this.$v.birthDate.$invalid &&
-        !this.$v.password.$invalid &&
-        !this.$v.passwordConfirmation.$invalid &&
-        !this.$v.addressLine1.$invalid &&
-        !this.$v.postcode.$invalid &&
-        !this.$v.city.$invalid
-      ) {
-        //Register User with input data
-        this.show = false
-      } else {
-        this.$v.$touch()
-      }
-      */
       console.log(this.birthdateFormatted);
       let user = {
         firstName: this.firstName,
@@ -578,8 +510,6 @@ export default {
         addressLine1: this.addressLine1
       };
       console.log(user);
-      //await userServices.registerUser(requestBody);
-      //let response;
       try {
         await userService.register(user);
       } catch (error) {

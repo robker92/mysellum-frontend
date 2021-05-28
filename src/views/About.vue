@@ -1,13 +1,100 @@
 <template>
-  <div id="aboutViewDiv" class="about">
-    <router-link to="/">Home</router-link>
-    <h1>This is an about page</h1>
+  <v-container>
+    <div class="text-h3">
+      Du bist nur drei Schritte von deinem lokalen kulinarischen Erlebnis
+      entfernt. Ob frisches FLeishc, frischer Fisch oder doch nur frische Eier
+      vom Bauern? Auf Mysellum findest du alles was das Herz begehrt. Go2sellum
+      Robert Kerscher ist der Gründer dieser Platform. Er ist ein toller Typ,
+      sieht super aus und sehr intelligent. Er hat die Website ganz allein
+      programmiert. Chapeau!
+    </div>
+    <v-row align="center" class="mt-5">
+      <v-col cols="12" offset-lg="2" lg="4">
+        <v-sheet
+          rounded
+          color="grey"
+          class="mx-auto"
+          height="350"
+          width="350"
+        ></v-sheet>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <div class="text-h5 font-weight-bold text-left">1. Stöbere</div>
+        <div class="text-body-1 text-justify">
+          Beginne, indem du Unterkünfte oder Entdeckungen durchstöberst.
+          Verwende Filter, um deine gewünschten Optionen einzugrenzen. Du kannst
+          beispielsweise nach gesamten Unterkünften und eigenständigem Check-in
+          filtern oder danach, ob Haustiere erlaubt sind. Du hast auch die
+          Möglichkeit, deine Favoriten auf einer Wunschliste zu speichern.
+        </div>
+      </v-col>
+    </v-row>
+    <v-row align="center">
+      <v-col cols="12" offset-lg="2" lg="4">
+        <div class="text-h5 font-weight-bold text-left">2. Buche</div>
+        <div class="text-body-1 text-justify">
+          Du hast gefunden, wonach du suchst? Dann informiere dich über deinen
+          Gastgeber, prüfe die Bewertungen anderer Gäste und mache dich mit den
+          Stornierungsoptionen vertraut. Anschließend kannst du in nur wenigen
+          Klicks buchen.
+        </div>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <v-sheet
+          rounded
+          color="grey"
+          class="mx-auto"
+          height="350"
+          width="350"
+        ></v-sheet>
+      </v-col>
+    </v-row>
+    <v-row align="center">
+      <v-col cols="12" offset-lg="2" lg="4">
+        <v-sheet
+          rounded
+          color="grey"
+          class="mx-auto"
+          height="350"
+          width="350"
+        ></v-sheet>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <div class="text-h5 font-weight-bold text-left">
+          3. Mach dich auf die Reise
+        </div>
+        <div class="text-body-1 text-justify">
+          Das war’s schon! Kontaktiere deinen Gastgeber in der App, um Tipps für
+          die Umgebung, Antworten auf deine Fragen oder andere Empfehlungen zu
+          erhalten. Du kannst dich auch jederzeit an Airbnb wenden, wenn du
+          zusätzliche Unterstützung benötigst.
+        </div>
+      </v-col>
+    </v-row>
+    <v-divider class="my-4" />
+    <!-- <v-row>
+      <v-col cols="12" lg="4">
+        <v-card flat>
+
+
+        </v-card>
+      </v-col>
+
+    </v-row> -->
     <!-- <GoogleMap v-if="mapData" v-bind:markers="mapData" /> -->
-  </div>
+    <Testimonials />
+    <v-divider class="my-4" />
+    <Reasons type="buy" />
+    <v-divider class="my-4" />
+    <Reasons type="sell" />
+    <v-divider class="my-4" />
+  </v-container>
 </template>
 
 <script>
 //import GoogleMap from "../components/GoogleMap.vue";
+import Testimonials from "../components/Testimonials.vue";
+import Reasons from "../components/Reasons.vue";
 import fakeBackendData from "../fakeBackend/retailerMapInfo.json";
 
 import axios from "axios";
@@ -16,6 +103,8 @@ export default {
   name: "AboutView",
   components: {
     //GoogleMap
+    Testimonials: Testimonials,
+    Reasons: Reasons
   },
   data() {
     return {

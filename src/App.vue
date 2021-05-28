@@ -2,57 +2,6 @@
   <v-app>
     <Header />
 
-    <!-- <v-navigation-drawer v-model="navDrawer" absolute temporary right>
-      <template v-slot:prepend>
-        <v-list-item two-line>
-          <v-list-item-avatar>
-            <img src="https://randomuser.me/api/portraits/women/81.jpg" />
-          </v-list-item-avatar>
-
-          <v-list-item-content>
-            <v-list-item-title>Jane Smith</v-list-item-title>
-            <v-list-item-subtitle>Logged In</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
-
-      <v-divider></v-divider>
-
-      <v-list nav dense>
-        <v-list-item-group
-          v-model="group"
-          active-class="deep-purple--text text--accent-4"
-        >
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-cog</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-cog</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-cog</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer> -->
-
     <v-main>
       <v-container fluid>
         <v-container>
@@ -111,11 +60,7 @@
 </template>
 
 <script>
-//<Footer />
 import { mapState, mapActions } from "vuex";
-//import { setLoader } from "./helpers";
-
-//import HelloWorld from './components/HelloWorld'
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer2";
 
@@ -123,21 +68,16 @@ export default {
   name: "App",
 
   components: {
-    //HelloWorld
     Header,
     Footer
   },
 
-  data: () => ({
-    //navDrawer: false,
-    //alertArray: [],
-    //showAlert: false
-    //showSnackbar: false
-  }),
+  data: () => ({}),
 
   computed: {
     ...mapState("alert", ["alertArray"]),
     ...mapState("snackbar", ["snackbarObjct"]),
+
     computedShowSnackbar: {
       get() {
         return this.snackbarObjct.showSnackbar;
@@ -146,6 +86,7 @@ export default {
         this.closeSnack();
       }
     },
+
     computedTimeout: {
       get() {
         if (this.snackbarObjct.timeout != "") {
@@ -165,45 +106,41 @@ export default {
       "addCloseSnackbar"
     ]),
 
-    // setGoogleMapLoader() {
-    //   setLoader();
-    // },
-    //Alert
     addSuccessAlert() {
       this.successAlert("Successfully logged in!");
       setTimeout(() => {
         this.clearAlert();
       }, 5000);
     },
+
     addErrorAlert() {
       this.errorAlert("Unsuccessfully logged in!");
       setTimeout(() => {
         this.clearAlert();
       }, 5000);
     },
+
     removeAlert() {
       this.clearAlert();
     },
+
     //Snackbar
     addSuccessSnack() {
       this.addSuccessSnackbar("Successfully logged in!");
     },
+
     addErrorSnack() {
-      // if (this.snackbarObjct.showSnackbar == true) {
-      //   this.closeSnackbar();
-      // }
       this.addErrorSnackbar("Log in attempt failed!");
     },
+
     closeSnack() {
       this.addCloseSnackbar();
     },
+
     print() {
       console.log(this.alertArray);
     }
   }
-  // beforeMount() {
-  //   this.setGoogleMapLoader();
-  // }
 };
 </script>
 

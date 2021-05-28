@@ -34,43 +34,16 @@
         <GoogleMap v-if="mapData" v-bind:markers="mapData" />
       </v-col>
     </v-row>
-    <!-- <v-row no-gutters v-if="dataset">
-      <SearchStoreListItem
-        v-for="(store, index) in computedStores"
-        v-bind:key="index"
-        v-bind:store="store"
-      />
-    </v-row>
-    <div v-if="dataset">
-      <v-pagination
-        v-model="currentPage"
-        :length="numOfPages"
-        v-if="dataset.length > storesPerPage"
-      />
-    </div> -->
-    <!-- <v-data-table
-      v-if="dataset"
-      :headers="headers"
-      :items="dataset"
-      hide-default-header
-      hide-default-footer
-      class="elevation-1"
-      @click:row="handleRowClick"
-    ></v-data-table> -->
   </div>
 </template>
 
 <script>
-//style="height: 400px;"
-//<div id="searchViewDiv" class="searchDiv" height="auto">
-import GoogleMap from "../components/GoogleMap.vue";
+import GoogleMap from "../components/searchComponents/GoogleMap.vue";
 import fakeBackendData from "../fakeBackend/retailerMapInfo.json";
 
 import { storeService } from "../services";
 
-//import axios from "axios";
-
-import SearchStoreListItem from "../components/SearchStoreListItem";
+import SearchStoreListItem from "../components/searchComponents/SearchStoreListItem";
 
 export default {
   name: "SearchView",
@@ -91,23 +64,6 @@ export default {
     };
   },
   async mounted() {
-    // axios
-    //   //.get("http://localhost:3000/stores/5edfa27995ec324a216ea1c0")
-    //   .get("http://localhost:3000/stores")
-    //   .then(response => {
-    //     console.log(response.data);
-    //     this.dataset = response.data;
-    //     this.mapData = response.data;
-    //     this.headers = [
-    //       {
-    //         text: "Store",
-    //         align: "start",
-    //         value: "profileData.title"
-    //       },
-    //       { text: "Tags", value: "profileData.tags" }
-    //     ];
-    //     //this.productList = response.data.profileData
-    //   });
     var result = await storeService.getAllStores();
     this.dataset = result.stores;
     this.mapData = result.stores;
@@ -127,10 +83,6 @@ export default {
       return Math.ceil(this.dataset.length / this.storesPerPage);
     },
     computedStores() {
-      // if (this.offset > this.profileData.reviews.length) {
-      //   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      //   this.currentPage = this.numOfPages;
-      // }
       return this.dataset.slice(this.sliceStart, this.sliceEnd);
     },
     sliceStart() {
@@ -139,21 +91,6 @@ export default {
     sliceEnd() {
       return this.sliceStart + this.storesPerPage;
     }
-    // filteredStores: function() {
-    //   if (this.idArray == null) {
-    //     return this.dataset;
-    //   } else {
-    //     return this.dataset.filter(store => {
-    //       //var found = this.dataset.some(el => el._id === name)
-    //       var found = this.testIdArray.includes(store._id);
-    //       return found;
-    //       // var found = this.dataset.some(el => this.testdata.includes(el._id));
-    //       // return found;
-
-    //       //return store._id == this.testdata._id;
-    //     });
-    //   }
-    // }
   },
   methods: {
     handleRowClick(row) {
@@ -165,7 +102,7 @@ export default {
       this.searchForTerm();
     },
     searchForTerm: async function() {
-      var result;
+      let result;
       console.log(this.searchTerm);
       if (this.searchTerm != "" && this.searchTerm != null) {
         result = await storeService.getFilteredStores(this.searchTerm);

@@ -24,10 +24,10 @@
             <v-list-item
               v-for="(listItem, i) in aboutList"
               :key="i"
-              @click="printData"
+              :to="{ name: listItem.viewName }"
             >
               <v-list-item-content class="text-left">
-                <v-list-item-title>{{ listItem }}</v-list-item-title>
+                <v-list-item-title>{{ listItem.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -97,19 +97,6 @@
         </v-col>
       </v-row>
 
-      <!--  </v-container>     <v-card-text class="white--text pt-0">
-        Phasellus feugiat arcu sapien, et iaculis ipsum elementum sit amet.
-        Mauris cursus commodo interdum. Praesent ut risus eget metus luctus
-        accumsan id ultrices nunc. Sed at orci sed massa consectetur dignissim a
-        sit amet dui. Duis commodo vitae velit et faucibus. Morbi vehicula
-        lacinia malesuada. Nulla placerat augue vel ipsum ultrices, cursus
-        iaculis dui sollicitudin. Vestibulum eu ipsum vel diam elementum tempor
-        vel ut orci. Orci varius natoque penatibus et magnis dis parturient
-        montes, nascetur ridiculus mus.
-      </v-card-text> -->
-      <!--  <v-row>
-      <v-divider></v-divider>
-    </v-row> -->
       <v-row justify="center" align="center" class="mt-5 text-caption">
         <v-col cols="12" lg="8" xl="8">
           <div class="white--text text-left">
@@ -143,30 +130,10 @@
               {{ icon }}
             </v-icon>
           </v-btn>
-          <!-- <LanguageSwitcher
-                :currentLocale="currentLocale"
-                v-on:change-current-locale="changeCurrentLocale"
-              /> -->
         </v-col>
-        <!--  <v-col cols="12" lg="4" xl="1">
-            <LanguageSwitcher />
-          </v-col> </v-card>-->
       </v-row>
     </v-container>
   </v-footer>
-  <!-- <v-footer color="primary lighten-1" padless height="auto">
-    <v-row justify="center" no-gutters>
-      <v-btn
-        v-for="link in links"
-        :key="link"
-        color="white"
-        text
-        rounded
-        class="my-2"
-        >{{ link }}</v-btn
-      >
-    </v-row>
-  </v-footer> -->
 </template>
 
 <script>
@@ -181,7 +148,11 @@ export default {
     //currentLocale: i18n.locale,
     //currentLocale: this.$router.currentRoute.params.locale,
     //currentLocale: this.$route.query.locale,
-    aboutList: ["So funktioniert Title", "Pressebereich", "Karriere"],
+    aboutList: [
+      { title: "So funktioniert Mysellum", viewName: "About" },
+      { title: "FAQ", viewName: "FAQ" },
+      { title: "Kontakt", viewName: "CustomerContact" }
+    ],
     communityList: [
       "Vielfalt & Zugehörigkeit",
       "Partner von Title",

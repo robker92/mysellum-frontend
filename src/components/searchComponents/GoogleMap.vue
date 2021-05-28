@@ -1,9 +1,6 @@
 /* eslint-disable no-undef */
 <template>
   <div>
-    <!-- <div id="myinfo" class="info">
-      <p>I am a div on top of a google map ..</p>
-    </div> -->
     <div id="map"></div>
     <div id="map2"></div>
   </div>
@@ -11,21 +8,15 @@
 
 <script>
 //import loadGoogleMapsApi from 'load-google-maps-api'
-import { getGoogleMapLoader } from "../helpers";
-import { mapOptions, getMarkerIconURL } from "../helpers";
-//import beerIcon from "../assets/icons8-bier-30.png";
-//import wineIcon from "../assets/icons8-wein-64.png";
-//import wineIcon from "../assets/icons8-weinglas-48.png";
-import markerFishIcon from "../assets/markers/fish.png";
-//import markerFishIcon from "../assets/fish.png";
-
-// eslint-disable-next-line no-unused-vars
+import { getGoogleMapLoader } from "../../helpers";
+import { mapOptions, getMarkerIconURL } from "../../helpers";
+import markerFishIcon from "../../assets/markers/fish.png";
 //import { Loader } from "google-maps";
 
 import MapInfoWindow from "./MapInfoWindow.vue";
 import Vue from "vue";
-import vuetify from "../plugins/vuetify";
-import router from "../router";
+import vuetify from "../../plugins/vuetify";
+import router from "../../router";
 
 export default {
   name: "GoogleMap",
@@ -43,6 +34,7 @@ export default {
   props: {
     markers: Array,
     stores: Array
+    // mapBoundries: Object
   },
 
   watch: {
@@ -85,12 +77,54 @@ export default {
         this.deleteIdentifiedMarkers(markersToRemove);
       }
     }
+
+    // mapBoundries: function(newVal, oldVal) {
+    //   console.log(newVal);
+    //   if (newVal) {
+    //     const sw = new google.maps.LatLng(
+    //       parseFloat(newVal.min_lat),
+    //       parseFloat(newVal.min_lng)
+    //     );
+    //     // console.log(sw.toJSON());
+    //     const ne = new google.maps.LatLng(
+    //       parseFloat(newVal.max_lat),
+    //       parseFloat(newVal.max_lng)
+    //     );
+    //     // var test = parseFloat(newVal.min_lat);
+    //     // console.log(typeof test);
+    //     // const input = [
+    //     //   {
+    //     //     lat: parseFloat(newVal.min_lat),
+    //     //     lng: parseFloat(newVal.min_lng)
+    //     //   },
+    //     //   {
+    //     //     lat: parseFloat(newVal.max_lat),
+    //     //     lng: parseFloat(newVal.max_lng)
+    //     //   }
+    //     // ];
+    //     // console.log([sw, ne]);
+    //     const LatLngBounds = new google.maps.LatLngBounds([sw, ne]);
+    //     // console.log(LatLngBounds.getNorthEast());
+    //     // this.map.setZoom(newVal.zoom);
+    //     this.map.fitBounds(LatLngBounds);
+    //   }
+    // }
   },
 
   async mounted() {
-    this.google2 = await getGoogleMapLoader();
+    // this.google2 = await getGoogleMapLoader();
     await this.initMap();
-    this.getCurrentLocation(this.map);
+    // check if the result of the param validation function
+    if (this.checkBoundryQueryParams()) {
+      console.log(`hi1`);
+      // set the map boundries to the url param when check passed
+      this.setMapBoundries(this.map);
+    } else {
+      console.log(`hi2`);
+      // if check did not pass (invalid values or no values provided) set the center of the map
+      // to the current location
+      this.setCurrentLocation(this.map);
+    }
     this.addGetBoundsEvent(this.map);
   },
 
@@ -109,108 +143,113 @@ export default {
         options: { styles: mapOptions }
       });
     },
+
     addGetBoundsEvent(map) {
       // eslint-disable-next-line no-undef
       google.maps.event.addListener(map, "idle", () => {
-        let bounds = map.getBounds();
-        let ne = bounds.getNorthEast();
-        let sw = bounds.getSouthWest();
-        let mapBoundaries = {
+        const bounds = map.getBounds();
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        const mapBoundaries = {
           min_lat: sw.toJSON().lat,
           max_lat: ne.toJSON().lat,
           min_lng: sw.toJSON().lng,
           max_lng: ne.toJSON().lng
+          // zoom: map.getZoom()
         };
+        // send boundries to Search view
         this.$emit("map-boundaries-changed", mapBoundaries);
-        //console.log(mapBoundaries);
+        // adjust url params
+        this.updateBoundryQueryParams();
       });
     },
-    initMarkerArray(storeArray) {
-      //############ OLD
-      // eslint-disable-next-line no-unused-vars
-      storeArray.forEach((item, index) => {
-        //var mapData = item.mapData;
-        var clicked = false;
-        var tagsString = item.profileData["tags"].join(", ");
-        var contentString = this.getContentString(
-          item._id,
-          item.mapData.img,
-          item.profileData.title,
-          item.profileData.subtitle,
-          tagsString
-        );
-        // var infowindow = new this.google2.maps.InfoWindow({
-        //   content: contentString,
-        //   maxWidth: 400
-        // });
 
-        // eslint-disable-next-line no-undef
-        var marker = new google.maps.Marker({
-          position: item.mapData.location,
-          //animation: this.google2.maps.Animation.DROP,
-          icon: markerFishIcon,
-          //map: null,
-          map: this.map,
-          title: item.profileData.title,
-          storeId: item._id
-        });
+    // initMarkerArray(storeArray) {
+    //   //############ OLD
+    //   // eslint-disable-next-line no-unused-vars
+    //   storeArray.forEach((item, index) => {
+    //     //var mapData = item.mapData;
+    //     var clicked = false;
+    //     var tagsString = item.profileData["tags"].join(", ");
+    //     var contentString = this.getContentString(
+    //       item._id,
+    //       item.mapData.img,
+    //       item.profileData.title,
+    //       item.profileData.subtitle,
+    //       tagsString
+    //     );
+    //     // var infowindow = new this.google2.maps.InfoWindow({
+    //     //   content: contentString,
+    //     //   maxWidth: 400
+    //     // });
 
-        //Custom Info Window
-        var CustomInfoWindow = Vue.extend(MapInfoWindow);
-        var instance = new CustomInfoWindow({
-          propsData: {
-            content: "This displays as info-window content!",
-            store: storeArray[index],
-            locale: this.$i18n.locale
-          },
-          vuetify,
-          router
-        });
-        instance.$mount();
+    //     // eslint-disable-next-line no-undef
+    //     var marker = new google.maps.Marker({
+    //       position: item.mapData.location,
+    //       //animation: this.google2.maps.Animation.DROP,
+    //       icon: markerFishIcon,
+    //       //map: null,
+    //       map: this.map,
+    //       title: item.profileData.title,
+    //       storeId: item._id
+    //     });
 
-        // eslint-disable-next-line no-undef
-        var infowindow = new google.maps.InfoWindow({
-          //content: this.contentStringArray[index],
-          content: instance.$el,
-          maxWidth: 400
-        });
+    //     //Custom Info Window
+    //     var CustomInfoWindow = Vue.extend(MapInfoWindow);
+    //     var instance = new CustomInfoWindow({
+    //       propsData: {
+    //         content: "This displays as info-window content!",
+    //         store: storeArray[index],
+    //         locale: this.$i18n.locale
+    //       },
+    //       vuetify,
+    //       router
+    //     });
+    //     instance.$mount();
 
-        //console.log(this.contentStringArray[i]);
-        marker.addListener("click", () => {
-          if (clicked == false) {
-            infowindow.open(this.map, marker);
-            clicked = true;
-            this.activeInfoWindows.push(infowindow);
-          } else {
-            infowindow.close();
-            clicked = false;
-          }
-        });
-        marker.addListener("mouseover", function() {
-          if (clicked == false) {
-            infowindow.open(this.map, marker);
-          }
-        });
-        marker.addListener("mouseout", function() {
-          if (clicked == false) {
-            infowindow.close();
-          }
-        });
-        //var info = document.getElementById("myinfo");
-        this.map.addListener("click", evt => {
-          this.activeInfoWindows.forEach(function(window) {
-            window.close();
-          });
-          clicked = false;
-          console.log(evt.latLng.toJSON());
-        });
+    //     // eslint-disable-next-line no-undef
+    //     var infowindow = new google.maps.InfoWindow({
+    //       //content: this.contentStringArray[index],
+    //       content: instance.$el,
+    //       maxWidth: 400
+    //     });
 
-        this.markerArray.push(marker);
-        this.markerObject[item._id] = marker;
-        //console.log(this.markerArray[0].storeId);
-        this.contentStringArray.push(contentString);
-      });
-    },
+    //     //console.log(this.contentStringArray[i]);
+    //     marker.addListener("click", () => {
+    //       if (clicked == false) {
+    //         infowindow.open(this.map, marker);
+    //         clicked = true;
+    //         this.activeInfoWindows.push(infowindow);
+    //       } else {
+    //         infowindow.close();
+    //         clicked = false;
+    //       }
+    //     });
+    //     marker.addListener("mouseover", function() {
+    //       if (clicked == false) {
+    //         infowindow.open(this.map, marker);
+    //       }
+    //     });
+    //     marker.addListener("mouseout", function() {
+    //       if (clicked == false) {
+    //         infowindow.close();
+    //       }
+    //     });
+    //     //var info = document.getElementById("myinfo");
+    //     this.map.addListener("click", evt => {
+    //       this.activeInfoWindows.forEach(function(window) {
+    //         window.close();
+    //       });
+    //       clicked = false;
+    //       console.log(evt.latLng.toJSON());
+    //     });
+
+    //     this.markerArray.push(marker);
+    //     this.markerObject[item._id] = marker;
+    //     //console.log(this.markerArray[0].storeId);
+    //     this.contentStringArray.push(contentString);
+    //   });
+    // },
 
     // identifyMarkersToRemoveObject(storeArray) {
     //   let markerObjectKeys = Object.keys(this.markerObject);
@@ -227,8 +266,8 @@ export default {
       // console.log(store.mapData.mapIcon);
       // console.log(this.markerBaseUrl + store.mapData.mapIcon + ".png");
       // console.log(markerFishIcon);
-      let iconURL = getMarkerIconURL(store.mapData.mapIcon);
-      let icon = {
+      const iconURL = getMarkerIconURL(store.mapData.mapIcon);
+      const icon = {
         //url: markerFishIcon, // url
         url: iconURL,
         // eslint-disable-next-line no-undef
@@ -262,29 +301,34 @@ export default {
       instance.$mount();
 
       // eslint-disable-next-line no-undef
-      let infowindow = new google.maps.InfoWindow({
+      let infoWindow = new google.maps.InfoWindow({
         content: instance.$el,
         maxWidth: 400
       });
 
+      const that = this;
       marker.addListener("click", () => {
-        if (clicked == false) {
-          infowindow.open(this.map, marker);
+        if (clicked === false) {
+          infoWindow.open(this.map, marker);
           clicked = true;
-          this.activeInfoWindows.push(infowindow);
+          this.activeInfoWindows.push(infoWindow);
+          that.$emit("elevate-store", marker.storeId);
         } else {
-          infowindow.close();
+          infoWindow.close();
           clicked = false;
+          that.$emit("unelevate-store", marker.storeId);
         }
       });
       marker.addListener("mouseover", function() {
-        if (clicked == false) {
-          infowindow.open(this.map, marker);
+        if (clicked === false) {
+          infoWindow.open(this.map, marker);
+          that.$emit("elevate-store", marker.storeId);
         }
       });
       marker.addListener("mouseout", function() {
-        if (clicked == false) {
-          infowindow.close();
+        if (clicked === false) {
+          infoWindow.close();
+          that.$emit("unelevate-store", marker.storeId);
         }
       });
 
@@ -293,6 +337,7 @@ export default {
         this.activeInfoWindows.forEach(function(window) {
           window.close();
         });
+        that.$emit("unelevate-all-stores");
         clicked = false;
         //console.log(evt.latLng.toJSON());
       });
@@ -498,123 +543,124 @@ export default {
       this.markerArray = [];
     },
 
-    getContentString(id, img, title, subtitle, tagsString) {
-      var contentString =
-        '<div id="infoWindowContent">' +
-        '<div style="float:left;display: inline-block;">' +
-        // '<router-link to="/storeprofile/1" tag="button">Profile</router-link>' +
-        '<a href="#/storeprofile/' +
-        id +
-        '"><img src="' +
-        img +
-        '" width="40" height="40"></a>' +
-        "</div>" +
-        '<div style="float:right; padding-left: 10px; display: inline-block;">' +
-        '<b><a id="retailerSiteLink" href="#/storeprofile/' +
-        id +
-        '">' +
-        title +
-        "</a></b>" +
-        "<br/>" +
-        "<p>" +
-        subtitle +
-        "<br/>" +
-        tagsString +
-        "</div>" +
-        "</div>";
-      return contentString;
-    },
+    // getContentString(id, img, title, subtitle, tagsString) {
+    //   var contentString =
+    //     '<div id="infoWindowContent">' +
+    //     '<div style="float:left;display: inline-block;">' +
+    //     // '<router-link to="/storeprofile/1" tag="button">Profile</router-link>' +
+    //     '<a href="#/storeprofile/' +
+    //     id +
+    //     '"><img src="' +
+    //     img +
+    //     '" width="40" height="40"></a>' +
+    //     "</div>" +
+    //     '<div style="float:right; padding-left: 10px; display: inline-block;">' +
+    //     '<b><a id="retailerSiteLink" href="#/storeprofile/' +
+    //     id +
+    //     '">' +
+    //     title +
+    //     "</a></b>" +
+    //     "<br/>" +
+    //     "<p>" +
+    //     subtitle +
+    //     "<br/>" +
+    //     tagsString +
+    //     "</div>" +
+    //     "</div>";
+    //   return contentString;
+    // },
 
-    startMap: async function() {
-      var activeInfoWindows = [];
+    // startMap: async function() {
+    //   var activeInfoWindows = [];
 
-      // const loader = new Loader("AIzaSyAbBngkySn9wEK5O9EZ31jUaGKe6jsg56M");
-      // const google = await loader.load();
+    //   // const loader = new Loader("AIzaSyAbBngkySn9wEK5O9EZ31jUaGKe6jsg56M");
+    //   // const google = await loader.load();
 
-      const google = await getGoogleMapLoader();
+    //   const google = await getGoogleMapLoader();
 
-      // eslint-disable-next-line no-unused-vars
-      const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 51.9481, lng: 10.26517 },
-        zoom: 10,
-        streetViewControl: false,
-        mapTypeControl: false,
-        fullscreenControl: false,
-        rotateControl: false
-      });
-      //console.log(map);
-      // Marker Method: Add Marker for each data field + event-listeners
-      // eslint-disable-next-line no-unused-vars
-      this.markers.forEach(function(item, index) {
-        //console.log("@ googlemap");
-        //console.log(item);
-        var mapData = item.mapData;
-        var clicked = false;
-        var tagsString = item.profileData["tags"].join(", ");
-        var contentString =
-          '<div id="infoWindowContent">' +
-          '<div style="float:left;display: inline-block;">' +
-          // '<router-link to="/storeprofile/1" tag="button">Profile</router-link>' +
-          '<a href="#/storeprofile/' +
-          item._id +
-          '"><img src="' +
-          mapData["img"] +
-          '" width="40" height="40"></a>' +
-          "</div>" +
-          '<div style="float:right; padding-left: 10px; display: inline-block;">' +
-          '<b><a id="retailerSiteLink" href="#/storeprofile/' +
-          item._id +
-          '">' +
-          item.profileData["title"] +
-          "</a></b>" +
-          "<br/>" +
-          "<p>" +
-          item.profileData["subtitle"] +
-          "<br/>" +
-          tagsString +
-          "</div>" +
-          "</div>";
+    //   // eslint-disable-next-line no-unused-vars
+    //   const map = new google.maps.Map(document.getElementById("map"), {
+    //     center: { lat: 51.9481, lng: 10.26517 },
+    //     zoom: 10,
+    //     streetViewControl: false,
+    //     mapTypeControl: false,
+    //     fullscreenControl: false,
+    //     rotateControl: false
+    //   });
+    //   //console.log(map);
+    //   // Marker Method: Add Marker for each data field + event-listeners
+    //   // eslint-disable-next-line no-unused-vars
+    //   this.markers.forEach(function(item, index) {
+    //     //console.log("@ googlemap");
+    //     //console.log(item);
+    //     var mapData = item.mapData;
+    //     var clicked = false;
+    //     var tagsString = item.profileData["tags"].join(", ");
+    //     var contentString =
+    //       '<div id="infoWindowContent">' +
+    //       '<div style="float:left;display: inline-block;">' +
+    //       // '<router-link to="/storeprofile/1" tag="button">Profile</router-link>' +
+    //       '<a href="#/storeprofile/' +
+    //       item._id +
+    //       '"><img src="' +
+    //       mapData["img"] +
+    //       '" width="40" height="40"></a>' +
+    //       "</div>" +
+    //       '<div style="float:right; padding-left: 10px; display: inline-block;">' +
+    //       '<b><a id="retailerSiteLink" href="#/storeprofile/' +
+    //       item._id +
+    //       '">' +
+    //       item.profileData["title"] +
+    //       "</a></b>" +
+    //       "<br/>" +
+    //       "<p>" +
+    //       item.profileData["subtitle"] +
+    //       "<br/>" +
+    //       tagsString +
+    //       "</div>" +
+    //       "</div>";
 
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString,
-          maxWidth: 400
-        });
-        var marker = new google.maps.Marker({
-          position: mapData["location"],
-          map: map,
-          title: item.profileData["title"]
-        });
-        marker.addListener("click", function() {
-          if (clicked == false) {
-            infowindow.open(this.map, marker);
-            clicked = true;
-            activeInfoWindows.push(infowindow);
-          } else {
-            infowindow.close();
-            clicked = false;
-          }
-        });
-        marker.addListener("mouseover", function() {
-          if (clicked == false) {
-            infowindow.open(map, marker);
-          }
-        });
-        marker.addListener("mouseout", function() {
-          if (clicked == false) {
-            infowindow.close();
-          }
-        });
-        map.addListener("click", function() {
-          activeInfoWindows.forEach(function(window) {
-            window.close();
-          });
-          clicked = false;
-        });
-      });
-      //Set current location
-      this.getCurrentLocation(map);
-    },
-    getCurrentLocation: function(map) {
+    //     var infowindow = new google.maps.InfoWindow({
+    //       content: contentString,
+    //       maxWidth: 400
+    //     });
+    //     var marker = new google.maps.Marker({
+    //       position: mapData["location"],
+    //       map: map,
+    //       title: item.profileData["title"]
+    //     });
+    //     marker.addListener("click", function() {
+    //       if (clicked == false) {
+    //         infowindow.open(this.map, marker);
+    //         clicked = true;
+    //         activeInfoWindows.push(infowindow);
+    //       } else {
+    //         infowindow.close();
+    //         clicked = false;
+    //       }
+    //     });
+    //     marker.addListener("mouseover", function() {
+    //       if (clicked == false) {
+    //         infowindow.open(map, marker);
+    //       }
+    //     });
+    //     marker.addListener("mouseout", function() {
+    //       if (clicked == false) {
+    //         infowindow.close();
+    //       }
+    //     });
+    //     map.addListener("click", function() {
+    //       activeInfoWindows.forEach(function(window) {
+    //         window.close();
+    //       });
+    //       clicked = false;
+    //     });
+    //   });
+    //   //Set current location
+    //   this.setCurrentLocation(map);
+    // },
+
+    setCurrentLocation: function(map) {
       //Get HTML5 Geolocation
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -623,7 +669,7 @@ export default {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-            console.log(current_pos);
+            // console.log(current_pos);
             map.setCenter(current_pos);
           },
           function() {
@@ -635,13 +681,99 @@ export default {
       } else {
         // Browser doesn't support Geolocation
       }
+    },
+
+    // sets the boundries of the map according to the provided url values
+    setMapBoundries(map) {
+      const { min_lat, max_lat, min_lng, max_lng } = this.getUrlLatLngParams();
+      // const sw = new google.maps.LatLng(min_lat, min_lng);
+      const sw = {
+        lat: min_lat,
+        lng: min_lng
+      };
+      // const ne = new google.maps.LatLng(max_lat, max_lng);
+      const ne = {
+        lat: max_lat,
+        lng: max_lng
+      };
+
+      const LatLngBounds = new google.maps.LatLngBounds(sw, ne);
+      map.fitBounds(LatLngBounds);
+    },
+
+    // check if the provided values in the url are legit lat and lng values
+    checkBoundryQueryParams() {
+      const { min_lat, max_lat, min_lng, max_lng } = this.getUrlLatLngParams();
+      if (
+        min_lat > -90 &&
+        min_lat < 90 &&
+        max_lat > -90 &&
+        max_lat < 90 &&
+        min_lng > -180 &&
+        min_lng < 180 &&
+        max_lng > -180 &&
+        max_lng < 180
+      ) {
+        return true;
+      }
+      return false;
+    },
+
+    // returns the current url param values as float
+    getUrlLatLngParams() {
+      const min_lat = parseFloat(this.$route.query.min_lat);
+      const max_lat = parseFloat(this.$route.query.max_lat);
+      const min_lng = parseFloat(this.$route.query.min_lng);
+      const max_lng = parseFloat(this.$route.query.max_lng);
+      return { min_lat, max_lat, min_lng, max_lng };
+    },
+
+    // is called to update the url query params
+    updateBoundryQueryParams() {
+      const { min_lat, max_lat, min_lng, max_lng } = this.getUrlLatLngParams();
+      this.updateParam({ param: "min_lat", value: min_lat.toString() });
+      this.updateParam({ param: "max_lat", value: max_lat.toString() });
+      this.updateParam({ param: "min_lng", value: min_lng.toString() });
+      this.updateParam({ param: "max_lng", value: max_lng.toString() });
+    },
+
+    updateParam(objct) {
+      if (objct.value) {
+        // Value is not an empty string -> check of param was added before, if yes update it via remove and add
+        // if not, just add it
+        let paramPayload = {};
+        paramPayload[objct.param] = objct.value;
+        if (this.$route.query[objct.param]) {
+          this.removeQueryParam(objct.param);
+          this.addQueryParam(paramPayload);
+        } else {
+          this.addQueryParam(paramPayload);
+        }
+      } else {
+        // Value is an empty string -> remove param if it was added before
+        if (this.$route.query[objct.param]) {
+          this.removeQueryParam(objct.param);
+        }
+      }
+    },
+
+    addQueryParam(queryObject) {
+      this.$router.push({
+        query: Object.assign({}, this.$route.query, queryObject)
+      });
+    },
+
+    removeQueryParam(param) {
+      let query = Object.assign({}, this.$route.query);
+      delete query[param];
+      this.$router.replace({ query });
     }
   }
-  //var current_position_and_zoom = await this.getCurrentLocation(map)
+  //var current_position_and_zoom = await this.setCurrentLocation(map)
   //console.log(current_position_and_zoom)
   //center: current_position_and_zoom['current_pos'],
   //zoom: current_position_and_zoom['zoom'],
-  // getCurrentLocation2: function() {
+  // setCurrentLocation2: function() {
   //   //Get HTML5 Geolocation
   //   return new Promise((resolve, reject) => {
   //     if (navigator.geolocation) {

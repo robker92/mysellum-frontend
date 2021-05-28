@@ -32,12 +32,6 @@
             </v-col>
           </v-row>
         </v-col>
-        <!-- <v-col cols="12" lg="4" xl="3">
-          <p class="text-justify">
-            By {{ review.userName }} on
-            {{ review.datetime.substring(0, review.datetime.indexOf("T")) }}
-          </p>
-        </v-col> -->
         <v-col
           cols="12"
           xs="4"
@@ -79,9 +73,9 @@
 
 <script>
 //<v-btn @click="printClrs">Print Colors</v-btn>
-import { mapState } from "vuex";
-import { getMdColors } from "../helpers/index";
-import { storeService } from "../services";
+import { mapState, mapActions } from "vuex";
+import { getMdColors } from "../../helpers/index";
+import { reviewService } from "../../services";
 
 export default {
   name: "StoreProfileReviewListItem",
@@ -96,8 +90,9 @@ export default {
     };
   },
   computed: {
-    //...mapState("shoppingCart", ["productsInCart", "counter"]),
     ...mapState("account", ["user", "loggedIn"]),
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
     reviewDateTimeComputed: {
       get() {
         let dateCreated;
@@ -126,13 +121,6 @@ export default {
         return parseInt(this.review.rating);
       }
     }
-    // checkEmails() {
-    //   if (this.user.email === this.review.userEmail) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // }
   },
   methods: {
     printClrs() {
@@ -143,27 +131,34 @@ export default {
       console.log(this.user.email);
       console.log(this.review.userEmail);
     },
+
     deleteReview: async function() {
-      let data = {
+      const data = {
         storeId: this.$route.params.id,
         reviewId: this.review.reviewId
       };
       this.$emit("overlay-start");
       let response;
       try {
-        response = await storeService.deleteReview(data);
+        response = await reviewService.deleteReview(data);
       } catch (error) {
+        this.addErrorSnackbar(
+          "There was an unexpected error. Review was not deleted."
+        );
         this.$emit("overlay-end");
         return;
       }
       console.log(response);
-      let eventData = {
-        reviewId: this.review.reviewId,
+
+      this.$emit("remove-review", {
+        reviewId: response.reviewId,
         avgRating: response.avgRating
-      };
-      this.$emit("remove-review", eventData);
+      });
       this.$emit("overlay-end");
+      // this.addSuccessSnackbar("Review was successfully deleted.");
+      return;
     },
+
     editReview() {
       this.$emit("edit-review", this.review);
     }

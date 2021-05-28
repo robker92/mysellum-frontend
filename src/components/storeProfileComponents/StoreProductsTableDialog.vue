@@ -84,8 +84,7 @@
 
 <script>
 import { mapActions } from "vuex";
-
-import { storeService } from "../services";
+import { storeService } from "../../services";
 
 export default {
   name: "StoreProductsTableDialog",
@@ -152,13 +151,6 @@ export default {
     addProduct() {
       this.$emit("add-product");
     },
-    // saveEditDialog(product) {
-    //   console.log("saved");
-    //   console.log(product);
-    // },
-    // cancelEditDialog() {
-    //   console.log("canceled");
-    // },
     updateStock: async function(product) {
       var data = {
         storeId: this.$route.params.id,

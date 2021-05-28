@@ -422,8 +422,8 @@ export default {
       lastName: "Customer",
       birthdate: "01.02.2001",
       city: "Ingolstadt",
-      postcode: "85051",
-      addressLine1: "TestStreet 1"
+      postcode: "85049",
+      addressLine1: "Elias-Holl-Straße 54"
     }
   ]
 };

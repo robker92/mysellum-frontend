@@ -18,7 +18,9 @@ const storesClient = axios.create({
 async function getSingleStore(storeId) {
   let response;
   try {
-    response = await storesClient.get(`/single-store/${storeId}`);
+    // response = await storesClient.get(`/single-store/${storeId}`);
+    const url = `/${storeId}`;
+    response = await storesClient.get(url);
   } catch (error) {
     errorHandler(error, "getSingleStore");
     throw error;
@@ -39,9 +41,8 @@ async function getStoreProducts(data) {
     priceSuffix = "priceMin=" + data.priceMin + "&priceMax=" + data.priceMax;
   }
   console.log(`/store-products/${storeId}?${searchSuffix}${priceSuffix}`);
-  let response = await storesClient.get(
-    `/store-products/${storeId}?${searchSuffix}${priceSuffix}`
-  );
+  const url = `/${storeId}/products?${searchSuffix}${priceSuffix}`;
+  const response = await storesClient.get(url);
   return response.data.products;
 }
 
@@ -68,121 +69,110 @@ async function getFilteredStores2(filterObject) {
   return response.data;
 }
 
-async function filterSortSearch(data) {
-  //Build the url query
-  let urlQuery = "";
-  if (data.searchTerm.length > 0) {
-    urlQuery = urlQuery + "&searchTerm=" + data.searchTerm;
-  }
-  if (data.countries.length > 0) {
-    urlQuery = urlQuery + "&countries=" + JSON.stringify(data.countries);
-  }
-  if (data.states.length > 0) {
-    urlQuery = urlQuery + "&states=" + JSON.stringify(data.states);
-  }
-  if (data.cities.length > 0) {
-    urlQuery = urlQuery + "&cities=" + JSON.stringify(data.cities);
-  }
-  if (data.sort.length > 0) {
-    urlQuery = urlQuery + "&sort=" + data.sort;
-  }
-  urlQuery = urlQuery + "&pageSize=" + data.pageSize;
-  urlQuery = urlQuery + "&pageNum=" + data.pageNum;
-  urlQuery = urlQuery + "&pickup=" + data.pickup.toString();
-  urlQuery = urlQuery + "&delivery=" + data.delivery.toString();
+// async function filterSortSearch(data) {
+//   //Build the url query
+//   let urlQuery = "";
+//   if (data.searchTerm.length > 0) {
+//     urlQuery = urlQuery + "&searchTerm=" + data.searchTerm;
+//   }
+//   if (data.countries.length > 0) {
+//     urlQuery = urlQuery + "&countries=" + JSON.stringify(data.countries);
+//   }
+//   if (data.states.length > 0) {
+//     urlQuery = urlQuery + "&states=" + JSON.stringify(data.states);
+//   }
+//   if (data.cities.length > 0) {
+//     urlQuery = urlQuery + "&cities=" + JSON.stringify(data.cities);
+//   }
+//   if (data.sort.length > 0) {
+//     urlQuery = urlQuery + "&sort=" + data.sort;
+//   }
+//   urlQuery = urlQuery + "&pageSize=" + data.pageSize;
+//   urlQuery = urlQuery + "&pageNum=" + data.pageNum;
+//   urlQuery = urlQuery + "&pickup=" + data.pickup.toString();
+//   urlQuery = urlQuery + "&delivery=" + data.delivery.toString();
 
-  let response;
-  try {
-    response = await storesClient.get(`/search-delivery?${urlQuery}`);
-  } catch (error) {
-    errorHandler(error, "filterSortSearch");
-    return error;
-  }
-  console.log(response.data);
+//   let response;
+//   try {
+//     response = await storesClient.get(`/search-delivery?${urlQuery}`);
+//   } catch (error) {
+//     errorHandler(error, "filterSortSearch");
+//     return error;
+//   }
+//   console.log(response.data);
 
-  return response.data;
-}
+//   return response.data;
+// }
 
-async function getStoresByLocation(mapBoundaries) {
-  let response = await storesClient.get(
-    `/getStoresByLocation/${mapBoundaries.min_lat}/${mapBoundaries.max_lat}/${mapBoundaries.min_lng}/${mapBoundaries.max_lng}`
-  );
-  console.log(response.data);
+// async function getStoresByLocation(mapBoundaries, filterObject) {
+//   console.log(filterObject);
+//   let response = await storesClient.post(
+//     `/getStoresByLocation/${mapBoundaries.min_lat}/${mapBoundaries.max_lat}/${mapBoundaries.min_lng}/${mapBoundaries.max_lng}`,
+//     filterObject
+//   );
+//   console.log(response.data);
 
-  return response.data;
-}
+//   return response.data;
+// }
 
-async function addReview(data) {
-  let response;
-  try {
-    response = await storesClient.post(
-      `/addReview/${data.storeId}`,
-      {
-        rating: data.rating,
-        text: data.text
-      },
-      {
-        headers: authHeader()
-      }
-    );
-  } catch (error) {
-    errorHandler(error, "addReview");
-    return error;
-  }
-  console.log(response.data);
+// async function addReview(data) {
+//   let response;
+//   try {
+//     const url = `/${data.storeId}/reviews`;
+//     response = await storesClient.post(url, data, {
+//       headers: authHeader()
+//     });
+//   } catch (error) {
+//     errorHandler(error, "addReview");
+//     throw error;
+//   }
+//   console.log(response.data);
 
-  return response.data;
-}
+//   return response.data;
+// }
 
-async function editReview(data) {
-  let response;
-  try {
-    response = await storesClient.patch(
-      `/editReview/${data.storeId}/${data.reviewId}`,
-      {
-        rating: data.rating,
-        text: data.text
-      },
-      {
-        headers: authHeader()
-      }
-    );
-  } catch (error) {
-    errorHandler(error, "editReview");
-    return error;
-  }
-  console.log(response.data);
+// async function editReview(data) {
+//   let response;
+//   try {
+//     const url = `/${data.storeId}/reviews/${data.reviewId}`;
+//     response = await storesClient.patch(url, data, {
+//       headers: authHeader()
+//     });
+//   } catch (error) {
+//     errorHandler(error, "editReview");
+//     throw error;
+//   }
+//   console.log(response.data);
 
-  return response.data;
-}
+//   return response.data;
+// }
 
-async function deleteReview(data) {
-  let response;
-  try {
-    response = await storesClient.delete(
-      `/deleteReview/${data.storeId}/${data.reviewId}`,
-      {
-        headers: authHeader()
-      }
-    );
-  } catch (error) {
-    errorHandler(error, "editReview");
-    return error;
-  }
-  console.log(response.data);
+// async function deleteReview(data) {
+//   let response;
+//   try {
+//     const url = `/${data.storeId}/reviews/${data.reviewId}`;
+//     response = await storesClient.delete(url, {
+//       headers: authHeader()
+//     });
+//   } catch (error) {
+//     errorHandler(error, "editReview");
+//     throw error;
+//   }
+//   console.log(response.data);
 
-  return response.data;
-}
+//   return response.data;
+// }
 
 async function createStore(data) {
   let response;
   try {
-    response = await storesClient.post("/store", data, {
+    const url = ``;
+    response = await storesClient.post(url, data, {
       headers: authHeader()
     });
   } catch (error) {
     errorHandler(error, "editReview");
-    return error;
+    throw error;
   }
   console.log(response.data);
 
@@ -192,32 +182,33 @@ async function createStore(data) {
 async function editStore(data) {
   let response;
   try {
-    response = await storesClient.patch("/store/" + data.storeId, data, {
+    const url = `/${data.storeId}`;
+    response = await storesClient.patch(url, data, {
       headers: authHeader()
     });
   } catch (error) {
     errorHandler(error, "editStore");
-    return error;
+    throw error;
   }
 
   console.log(response.data);
   return response.data;
 }
 
-async function addStoreImage(data) {
-  let response;
-  try {
-    response = await storesClient.post("/addStoreImage/" + data.storeId, data, {
-      headers: authHeader()
-    });
-  } catch (error) {
-    errorHandler(error, "addStoreImage");
-    return error;
-  }
-  console.log(response.data);
+// async function addStoreImage(data) {
+//   let response;
+//   try {
+//     response = await storesClient.post("/addStoreImage/" + data.storeId, data, {
+//       headers: authHeader()
+//     });
+//   } catch (error) {
+//     errorHandler(error, "addStoreImage");
+//     return error;
+//   }
+//   console.log(response.data);
 
-  return response.data;
-}
+//   return response.data;
+// }
 
 // async function deleteStoreImage(data) {
 //     let response;
@@ -239,12 +230,13 @@ async function createProduct(data) {
   console.log(authHeader());
   let response;
   try {
-    response = await storesClient.post(`/product/${data.storeId}`, data, {
+    const url = `/${data.storeId}/products`;
+    response = await storesClient.post(url, data, {
       headers: authHeader()
     });
   } catch (error) {
     errorHandler(error, "createProduct");
-    return error;
+    throw error;
   }
   console.log(response.data);
 
@@ -255,16 +247,13 @@ async function editProduct(data) {
   console.log(data._id);
   let response;
   try {
-    response = await storesClient.patch(
-      `/product/${data.storeId}/${data._id}`,
-      data,
-      {
-        headers: authHeader()
-      }
-    );
+    const url = `/${data.storeId}/products/${data._id}`;
+    response = await storesClient.patch(url, data, {
+      headers: authHeader()
+    });
   } catch (error) {
     errorHandler(error, "editProduct");
-    return error;
+    throw error;
   }
   console.log(response.data);
 
@@ -275,15 +264,13 @@ async function deleteProduct(data) {
   console.log(data);
   let response;
   try {
-    response = await storesClient.delete(
-      `/product/${data.storeId}/${data.productId}`,
-      {
-        headers: authHeader()
-      }
-    );
+    const url = `/${data.storeId}/products/${data.productId}`;
+    response = await storesClient.delete(url, {
+      headers: authHeader()
+    });
   } catch (error) {
     errorHandler(error, "deleteProduct");
-    return error;
+    throw error;
   }
   console.log(response.data);
 
@@ -293,16 +280,13 @@ async function deleteProduct(data) {
 async function updateStockAmount(data) {
   let response;
   try {
-    response = await storesClient.patch(
-      `/product-stock/${data.storeId}/${data._id}`,
-      data,
-      {
-        headers: authHeader()
-      }
-    );
+    const url = `/${data.storeId}/products/${data._id}/stock-amount`;
+    response = await storesClient.patch(url, data, {
+      headers: authHeader()
+    });
   } catch (error) {
     errorHandler(error, "updateStockAmount");
-    return error;
+    throw error;
   }
   console.log(response.data);
 
@@ -321,7 +305,7 @@ async function getImageBuffer(file) {
     });
   } catch (error) {
     errorHandler(error, "getImageBuffer");
-    return error;
+    throw error;
   }
   console.log(response.data);
 
@@ -331,7 +315,8 @@ async function getImageBuffer(file) {
 async function getProductImage(storeId, productId) {
   let response;
   try {
-    response = await storesClient.get(`/product-image/${storeId}/${productId}`);
+    const url = `/${storeId}/products/${productId}/images`;
+    response = await storesClient.get(url);
   } catch (error) {
     errorHandler(error, "getProductImage");
     return error;
@@ -347,16 +332,16 @@ export const storeService = {
   getAllStores,
   getFilteredStores,
   getFilteredStores2,
-  getStoresByLocation,
-  filterSortSearch,
-  addReview,
+  // getStoresByLocation,
+  // filterSortSearch,
+  // addReview,
   createStore,
   editStore,
   createProduct,
   editProduct,
-  editReview,
-  deleteReview,
-  addStoreImage,
+  // editReview,
+  // deleteReview,
+  // addStoreImage,
   //deleteStoreImage,
   deleteProduct,
   updateStockAmount,

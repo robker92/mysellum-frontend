@@ -3,44 +3,6 @@
     <div class="text-left text-h4">
       Your Received Orders
     </div>
-    <!--    <v-card class="mx-auto" max-width="400" tile>
-      <v-virtual-scroll :items="orderList" :item-height="80" height="500">
-       
-        <template v-slot:default="{ item }">
-          <v-list>
-            <v-list-item-group v-model="selectedOrder" color="primary">
-              <v-list-item
-                three-line
-                @click="print"
-                v-for="(order, index) in orderList"
-                :key="index"
-              >
-                <v-list-item-content>
-                  <v-list-item-title class="text-left">{{
-                    item.totalSum
-                  }}</v-list-item-title>
-                  <v-list-item-subtitle class="text-left">
-                    Secondary line text Lorem ipsum
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle class="text-left">
-                    consectetur adipiscing elit.
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-                  <v-list-item-action-text>15 min</v-list-item-action-text>
-
-
-                  <v-icon color="yellow darken-3">
-                    mdi-star
-                  </v-icon>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </template>
-      </v-virtual-scroll>
-    </v-card> -->
 
     <!-- CARD FOR SEARCH AND SORT -->
     <v-row v-if="orderList.length > 0">
@@ -56,6 +18,8 @@
                 clear-icon="mdi-close-circle"
                 clearable
                 @click:clear="clearMessage"
+                @keyup.enter="searchOrder"
+                @click:append-outer="searchOrder"
                 dense
                 class="mr-3"
               ></v-text-field>
@@ -94,72 +58,69 @@
         </v-card>
 
         <!-- CARD FOR ORDER LIST -->
-        <v-card tile>
-          <v-list max-height="800" class="overflow-y-auto">
+        <v-card tile flat>
+          <v-list max-height="600" class="overflow-y-auto" shaped>
             <v-list-item-group v-model="selectedOrder" color="primary">
-              <v-list-item
-                three-line
-                v-for="(order, index) in orderList"
-                :key="index"
-              >
-                <v-list-item-content>
-                  <v-list-item-title class="text-left">
-                    Order: {{ order._id }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="text-left">
-                    Payment: {{ order.payment }}
-                  </v-list-item-subtitle>
-                  <v-list-item-subtitle class="text-left">
-                    Contact: {{ order.user.email }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+              <template v-for="(order, index) in orderList">
+                <v-list-item three-line class="my-1" :key="index">
+                  <v-list-item-content>
+                    <v-list-item-title class="text-left">
+                      {{ getStoreTitles(order.products) }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle class="text-left">
+                      {{ getDateFormatted(order.datetimeCreated) }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle class="text-left">
+                      {{ getTotalSumWithComma(order.totalSum)
+                      }}{{ getCurrencySymbol(order.currencyCode) }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
 
-                <v-list-item-action>
-                  <v-list-item-action-text>
-                    {{ getComputedDate(order.date) }}
-                  </v-list-item-action-text>
+                  <v-list-item-action>
+                    <v-list-item-action-text>
+                      {{ getComputedDate(order.date) }}
+                    </v-list-item-action-text>
 
-                  <!-- old: {{ getComputedDate(order.date) }} {{ order.date ? getComputedDate(order.date) : "" }}<v-icon color="grey lighten-1">
-                mdi-star-outline
-              </v-icon> -->
-                  <v-icon
-                    v-if="
-                      order.status.finished == true &&
-                        order.status.successfully == true
-                    "
-                    color="success"
-                  >
-                    mdi-checkbox-marked-circle
-                  </v-icon>
-                  <v-icon
-                    v-if="order.status.finished == false"
-                    color="yellow darken-3"
-                  >
-                    mdi-clock
-                  </v-icon>
-                  <v-icon
-                    v-if="
-                      order.status.finished == true &&
-                        order.status.successfully == false
-                    "
-                    color="error"
-                  >
-                    mdi-close-circle
-                  </v-icon>
-                  <!--  <v-icon color="yellow darken-3">
-                    mdi-clock-outline
-                  </v-icon>
-                  <v-icon color="success">
-                    mdi-checkbox-marked-circle-outline
-                  </v-icon>
-                  <v-icon color="error">
-                    mdi-close-circle-outline
-                  </v-icon> -->
-                </v-list-item-action>
-              </v-list-item>
+                    <v-icon
+                      v-if="
+                        order.status.finished === true &&
+                          order.status.successfully === true
+                      "
+                      color="success"
+                    >
+                      mdi-checkbox-marked-circle
+                    </v-icon>
+                    <v-icon
+                      v-if="order.status.finished === false"
+                      color="yellow darken-3"
+                    >
+                      mdi-clock
+                    </v-icon>
+                    <v-icon
+                      v-if="
+                        order.status.finished === true &&
+                          order.status.successfully === false
+                      "
+                      color="error"
+                    >
+                      mdi-close-circle
+                    </v-icon>
+                  </v-list-item-action>
+                </v-list-item>
+                <v-divider
+                  v-if="index < orderList.length - 1"
+                  :key="'divider' + index"
+                ></v-divider>
+              </template>
             </v-list-item-group>
           </v-list>
         </v-card>
+        <div v-if="loadingOrderData === false" class="text-center">
+          <v-pagination
+            v-model="currentPage"
+            :length="numOfPages"
+          ></v-pagination>
+        </div>
       </v-col>
 
       <!-- CARD FOR ORDER DETAIL VIEW -->
@@ -235,191 +196,85 @@
               </v-menu>
             </v-col>
           </v-row>
-          <!-- <v-card-text>
-            <v-card width="50%">
-              <v-row align-content="start" align="start">
-                <v-timeline align-top>
-                  <v-timeline-item
-                    small
-                    right
-                    class="text-left"
-                    color="green"
-                    fill-dot
-                    >Order Received</v-timeline-item
-                  >
-                  <v-timeline-item
-                    small
-                    right
-                    class="text-left"
-                    color="grey"
-                    fill-dot
-                  >
-                    Payment Received
-                  </v-timeline-item>
-                  <v-timeline-item
-                    small
-                    right
-                    class="text-left"
-                    color="grey"
-                    fill-dot
-                    >Items Packed</v-timeline-item
-                  >
-                  <v-timeline-item
-                    small
-                    right
-                    class="text-left"
-                    color="grey"
-                    fill-dot
-                    >Package Sent</v-timeline-item
-                  >
-                </v-timeline>
-              </v-row>
-            </v-card></v-card-text
-          > -->
 
           <v-card-text>
-            <!-- <div class="text--primary text-left my-2">
-              <b>Order Status:</b> <br />
-              <div class="success--text">Order Received</div>
-              <div class="success--text">Payment Pending</div>
-              <v-icon color="grey">
-                mdi-truck-delivery
-              </v-icon>
-              <v-icon>mdi-chevron-right</v-icon>
-
-              <v-icon color="success">mdi-check-bold</v-icon>
-            </div> -->
-            <div class="text--primary text-left my-2">
+            <div class="blue--text text--darken-2 text-left my-2">
               <b>View and Set Order Status:</b> <br />
             </div>
-            <!-- STATUSES FOR DELIVERY AND PICKUP
-            <v-row class="mb-2">
-              <v-col cols="12" lg="2" xl="2">
-                <v-card flat>
-                  <v-icon color="success" large>mdi-file-document</v-icon>
-                  <div class="success--text">Order Received</div>
-                </v-card>
-              </v-col>
-              <v-col cols="12" lg="1" xl="1">
-                <v-icon large>mdi-chevron-right</v-icon>
-              </v-col>
-              <v-col cols="12" lg="2" xl="2">
-                <v-card flat>
-                  <v-icon color="success" large>mdi-cash-multiple</v-icon>
-                  <div class="success--text">Payment Received</div>
-                </v-card>
-              </v-col>
-              <v-col cols="12" lg="1" xl="1">
-                <v-icon large>mdi-chevron-right</v-icon>
-              </v-col>
-              <v-col cols="12" lg="2" xl="2">
-                <v-hover v-slot="{ hover }">
-                  <v-card :elevation="hover ? 10 : 2" @click="print()">
-                    <v-icon color="grey" large>mdi-truck-delivery</v-icon>
-                    <div class="grey--text">Set Status: In Delivery</div>
-                  </v-card>
-                </v-hover>
-              </v-col>
-            </v-row>
-
-            <v-row class="mb-2">
-              <v-col cols="12" lg="2" xl="2">
-                <v-card flat>
-                  <v-icon color="success" large>mdi-file-document</v-icon>
-                  <div class="success--text">Order Received</div>
-                </v-card>
-              </v-col>
-              <v-col cols="12" lg="1" xl="1">
-                <v-icon large>mdi-chevron-right</v-icon>
-              </v-col>
-              <v-col cols="12" lg="2" xl="2">
-                <v-card flat>
-                  <v-icon color="success" large
-                    >mdi-package-variant-closed</v-icon
-                  >
-                  <div class="success--text">Package Ready For Pick-Up</div>
-                </v-card>
-              </v-col>
-              <v-col cols="12" lg="1" xl="1">
-                <v-icon large>mdi-chevron-right</v-icon>
-              </v-col>
-              <v-col cols="12" lg="2" xl="2">
-                <v-hover v-slot="{ hover }">
-                  <v-card :elevation="hover ? 10 : 2" @click="print()">
-                    <v-icon color="grey" large>mdi-handshake-outline</v-icon>
-                    <div class="grey--text">Set Status: Handover completed</div>
-                  </v-card>
-                </v-hover>
-              </v-col>
-            </v-row> -->
+            <!-- STATUSES FOR DELIVERY AND PICKUP -->
 
             <StoreOrderOverviewStatusTimeline
               :status="selectedOrderComputed.status"
-              :type="selectedOrderComputed.type"
+              :type="selectedOrderComputed.shippingType"
+              v-on:set-status="setOrderStatus"
             />
 
-            <div class="text--primary text-left mt-2">
-              <b>Line Items ({{ selectedOrderComputed.products.length }}):</b>
-            </div>
-            <v-data-table
-              :headers="tableHeaders"
-              :items="computedProductArray"
-              dense
-              disable-pagination
-              disable-sort
-              hide-default-footer
-              class="elevation-1"
+            <div
+              class="blue--text text--darken-2 font-weight-bold text-left mt-2"
             >
-              <template slot="body.append">
-                <tr class="text-left primary--text">
-                  <td><strong>Total Sum</strong></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td>{{ computedTotalSum }}</td>
-                </tr>
-              </template>
-              <!--  <template v-slot:footer>
-                <v-divider />
-                <div class="text--primary text-right my-3 mr-5">
-                  <strong> Total Sum:</strong> {{ computedTotalSum }}
-                </div>
-              </template> -->
-            </v-data-table>
-            <!--   <div class="text--primary text-left my-2">
-              <b>Total Sum:</b> <br />
-              {{ computedTotalSum }}
-            </div> -->
-            <div class="text--primary text-left my-2">
-              <b>Customer Contact:</b> <br />
+              Order Overview ({{ selectedOrderComputed.products.length }} Line
+              Items):
+            </div>
+
+            <StoreOrderOverviewProductTable
+              :products="this.computedProductArray"
+              :totalSum="selectedOrderComputed.totalSum"
+              :totalTax="selectedOrderComputed.totalTax"
+              :platformFee="selectedOrderComputed.platformFee"
+              :transferAmount="selectedOrderComputed.transferAmount"
+              :shippingCosts="selectedOrderComputed.shippingCosts"
+              :currencySymbol="
+                getCurrencySymbol(selectedOrderComputed.currencyCode)
+              "
+            />
+
+            <div
+              class="blue--text text--darken-2 font-weight-bold text-left my-2"
+            >
+              Customer Contact:
+            </div>
+            <div class="ml-3 black--text text-left my-2">
               {{ selectedOrderComputed.user.email }}
             </div>
-            <div class="text--primary text-left my-2">
-              <b>Shipping Address:</b> <br />
+
+            <div
+              class="blue--text text--darken-2 font-weight-bold text-left my-2"
+            >
+              Shipping Address:
+            </div>
+            <div class="ml-3 black--text text-left my-2">
               {{ getComputedAddress(selectedOrderComputed.shippingAddress) }}
             </div>
-            <div class="text--primary text-left my-2">
-              <b>Billing Address:</b> <br />
+
+            <div
+              class="blue--text text--darken-2 font-weight-bold text-left my-2"
+            >
+              Billing Address:
+            </div>
+            <div class="ml-3 black--text text-left my-2">
               {{ getComputedAddress(selectedOrderComputed.billingAddress) }}
             </div>
-            <div class="text--primary text-left my-2">
-              <b>Payment Method:</b> <br />
-              {{ selectedOrderComputed.payment }}
+
+            <div
+              class="blue--text text--darken-2 font-weight-bold text-left my-2"
+            >
+              Payment Received Via:
             </div>
-            <div class="text--primary text-left my-2">
-              <b>Action List:</b> <br />
+            <div class="ml-3 black--text text-left my-2">
+              {{ selectedOrderComputed.payment.method }}
+            </div>
+
+            <div
+              class="blue--text text--darken-2 font-weight-bold text-left my-2"
+            >
+              Action List:
+            </div>
+            <div class="ml-3 black--text text-left my-2">
               Set Status, Print Label, Mark returns
             </div>
           </v-card-text>
 
           <v-card-actions>
-            <!-- <v-btn>
-              <v-icon color="primary">
-                mdi-truck-delivery
-              </v-icon>
-              Print Post Label
-            </v-btn> -->
-
             <v-spacer></v-spacer>
             <v-btn
               @click="
@@ -448,29 +303,36 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      <!-- <v-card class="mx-auto" width="800" height="500" tile>
-    </v-card> -->
     </v-row>
     <div v-else>
-      We are sorry, you did not receive orders so far.
+      We are sorry, we could not fetch your oders. Please try again later.
     </div>
   </v-container>
 </template>
 
 <script>
 import { orderService } from "../services";
-import StoreOrderOverviewStatusTimeline from "../components/StoreOrderOverviewStatusTimeline";
-import { compareArrayAsc, compareArrayDesc } from "../helpers";
+import StoreOrderOverviewStatusTimeline from "../components/storeOrderOverviewComponents/StoreOrderOverviewStatusTimeline";
+import StoreOrderOverviewProductTable from "../components/storeOrderOverviewComponents/StoreOrderOverviewProductTable";
+import {
+  compareArrayAsc,
+  compareArrayDesc,
+  getCurrencySymbolHelper,
+  getDateFormatDDMMYYYY,
+  truncateString
+} from "../helpers";
 
 export default {
   name: "StoreOrderOverviewView",
 
   components: {
-    StoreOrderOverviewStatusTimeline: StoreOrderOverviewStatusTimeline
+    StoreOrderOverviewStatusTimeline: StoreOrderOverviewStatusTimeline,
+    StoreOrderOverviewProductTable: StoreOrderOverviewProductTable
   },
 
   data() {
     return {
+      loadingOrderData: true,
       orderList: [],
       searchTerm: "",
       selectedOrder: 0,
@@ -501,10 +363,17 @@ export default {
           icon: "mdi-sort-bool-descending-variant",
           tooltip: ""
         }
-      ]
+      ],
+      totalOrderCount: 0,
+      pageSize: 20,
+      currentPage: 1
     };
   },
-
+  watch: {
+    currentPage() {
+      this.searchFilterSort(false);
+    }
+  },
   computed: {
     selectedOrderComputed: {
       get() {
@@ -522,9 +391,9 @@ export default {
           let returnArray = [];
           let currentOrder = this.selectedOrderComputed;
           let currentProduct;
-          for (var i = 0; i < currentOrder.products.length; i++) {
-            currentProduct = currentOrder.products[i][0];
-            currentProduct.quantity = currentOrder.products[i][1];
+          for (let i = 0; i < currentOrder.products.length; i++) {
+            currentProduct = currentOrder.products[i].product;
+            currentProduct.quantity = currentOrder.products[i].amount;
 
             if (currentProduct.quantityValue) {
               currentProduct.quantityValueType =
@@ -543,7 +412,7 @@ export default {
             returnArray.push(currentProduct);
             currentProduct = {};
           }
-          console.log(returnArray);
+          // console.log(returnArray);
           return returnArray;
         } else {
           return [];
@@ -554,17 +423,8 @@ export default {
     computedDateTime: {
       get() {
         if (this.orderList.length > 0) {
-          var date = new Date(this.selectedOrderComputed.date);
-          return (
-            date.getDate().toString() +
-            "." +
-            date.getMonth().toString() +
-            "." +
-            date.getFullYear() +
-            "  " +
-            date.getHours().toString() +
-            ":" +
-            date.getMinutes().toString()
+          return this.getDateFormatted(
+            this.selectedOrderComputed.datetimeCreated
           );
         } else {
           return "";
@@ -588,31 +448,33 @@ export default {
           return -1;
         }
       }
+    },
+    numOfPages() {
+      return Math.ceil(this.totalOrderCount / parseInt(this.pageSize));
     }
-    // computedDate: {
-    //   get(orderDate) {
-    //     if (orderDate) {
-    //       let date = new Date(orderDate);
-    //       console.log(date.getMonth().toString() + "." + date.getFullYear());
-    //       return date.getMonth().toString() + "." + date.getFullYear();
-    //     } else {
-    //       return "";
-    //     }
-    //   }
-    // }
   },
 
   async mounted() {
-    const storeId = this.$route.params.id;
-    const response = await orderService.getStoresOrders(storeId);
-    console.log(response);
-    this.orderList = response.orders;
+    this.setStartUpQueryParams();
+
+    // const storeId = this.$route.params.id;
+    // const response = await orderService.getStoresOrders(storeId);
+    this.searchFilterSort();
+    this.loadingOrderData = false;
+    // console.log(response);
+    // this.orderList = response.orders;
   },
 
   methods: {
     print() {
       console.log(this.$i18n.locale);
     },
+
+    // numOfPages() {
+    //   const result = Math.ceil(this.totalOrderCount / parseInt(this.pageSize));
+    //   console.log(result);
+    //   return result;
+    // },
 
     getComputedDate(orderDate) {
       //console.log(orderDate);
@@ -627,53 +489,120 @@ export default {
     },
 
     sortListClicked(index) {
-      console.log(index);
       switch (index) {
         case 0:
-          this.orderList.sort(compareArrayDesc("date"));
+          this.orderList.sort(compareArrayDesc("datetimeCreated"));
           break;
         case 1:
-          this.orderList.sort(compareArrayAsc("date"));
+          this.orderList.sort(compareArrayAsc("datetimeCreated"));
           break;
         case 2:
-          this.orderList.sort(compareArrayDesc("orderId"));
+          this.orderList.sort(compareArrayDesc("_id"));
           break;
         case 3:
-          this.orderList.sort(compareArrayAsc("orderId"));
+          this.orderList.sort(compareArrayAsc("_id"));
           break;
       }
     },
 
-    // compareArrayElements(a, b, element) {
-    //   if (a[element] < b[element]) {
-    //     console.log("hi1");
-    //     return -1;
-    //   }
-    //   if (a[element] > b[element]) {
-    //     console.log("hi2");
-    //     return 1;
-    //   }
-    //   console.log("hi3");
-    //   return 0;
-    // },
+    async searchOrder() {
+      console.log(this.searchTerm);
+      const storeId = this.$route.params.id;
+      const result = await orderService.searchOrderByTerm(
+        this.searchTerm,
+        storeId
+      );
+      this.orderList = result;
+    },
 
-    // compareArrayDate(a, b) {
-    //   if (a.date > b.date) {
-    //     console.log("hi1");
-    //     return -1;
-    //   }
-    //   if (a.date < b.date) {
-    //     console.log("hi2");
-    //     return 1;
-    //   }
-    //   console.log("hi3");
-    //   return 0;
-    // },
+    getPayload() {
+      let payload = {
+        // searchTerm: this.searchTerm,
+        // sort: "",
+        // status: "",
+        pageSize: this.pageSize,
+        pageNum: this.currentPage
+      };
+      console.log(this.currentPage);
+      return payload;
+    },
 
-    // sortDateDescending() {
-    //   let sortedList = this.orderList.sort(this.compareArrayDate);
-    //   console.log(sortedList);
-    // },
+    async searchFilterSort(resetToPage1) {
+      let payload = this.getPayload();
+      if (resetToPage1 === true) {
+        payload.pageNum = 1;
+        this.currentPage = 1;
+      }
+      //console.log(this.getPayload());
+      // this.loadingStoreData = true;
+      let queryResult;
+      try {
+        queryResult = await orderService.getStoresOrders(payload);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      this.setQueryUrlParams();
+      this.orderList = queryResult.orders;
+      this.totalOrderCount = queryResult.totalCount;
+      // this.loadingStoreData = false;
+      //console.log(payload);
+      // this.filterChanged = false;
+    },
+
+    setStartUpQueryParams() {
+      // if (this.$route.query.searchTerm) {
+      //   this.searchTerm = this.$route.query.searchTerm;
+      // }
+      if (this.$route.query.pageNum) {
+        this.currentPage = parseInt(this.$route.query.pageNum);
+      }
+      if (this.$route.query.pageSize) {
+        this.currentPage = parseInt(this.$route.query.pageSize);
+      }
+    },
+    setQueryUrlParams() {
+      // this.updateParam(this.searchTerm, "sort");
+      // this.updateParam({ param: "searchTerm", value: this.searchTerm });
+      // this.updateParam({ param: "countries", value: this.selectedCountries });
+      // this.updateParam({ param: "states", value: this.selectedStates });
+      // this.updateParam({ param: "cities", value: this.selectedCities });
+      // this.updateParam({ param: "delivery", value: this.checkBoxDelivery });
+      // this.updateParam({ param: "pickup", value: this.checkBoxPickup });
+      this.updateParam({ param: "pageSize", value: this.pageSize });
+      this.updateParam({ param: "pageNum", value: this.currentPage });
+    },
+    updateParam(objct) {
+      // console.log(objct.value);
+      // console.log(objct.param);
+      if (objct.value) {
+        // Value is not an empty string -> check of param was added before, if yes update it via remove and add
+        // if not, just add it
+        let paramPayload = {};
+        paramPayload[objct.param] = objct.value;
+        if (this.$route.query[objct.param]) {
+          this.removeQueryParam(objct.param);
+          this.addQueryParam(paramPayload);
+        } else {
+          this.addQueryParam(paramPayload);
+        }
+      } else {
+        // Value is an empty string -> remove param if it was added before
+        if (this.$route.query[objct.param]) {
+          this.removeQueryParam(objct.param);
+        }
+      }
+    },
+    addQueryParam(queryObject) {
+      this.$router.push({
+        query: Object.assign({}, this.$route.query, queryObject)
+      });
+    },
+    removeQueryParam(param) {
+      let query = Object.assign({}, this.$route.query);
+      delete query[param];
+      this.$router.replace({ query });
+    },
 
     getComputedAddress(addressObject) {
       if (addressObject) {
@@ -692,41 +621,76 @@ export default {
         return "";
       }
     },
-    // getProductArray(products) {
-    //   if (products) {
-    //     let returnArray = [];
-    //     let currentProduct;
-    //     for (var i = 0; i < products.length; i++) {
-    //       currentProduct = products[i][0];
-    //       currentProduct.quantity = products[i][1];
-    //       currentProduct.totalSum =
-    //         currentProduct.price * currentProduct.quantity +
-    //         currentProduct.currencySymbol;
-    //       currentProduct.price =
-    //         currentProduct.price + currentProduct.currencySymbol;
 
-    //       returnArray.push(currentProduct);
-    //       currentProduct = {};
-    //     }
-    //     console.log(returnArray);
-    //     return returnArray;
-    //   } else {
-    //     return [];
-    //   }
-    // },
-    // getComputedPrice(price, currencySymbol) {
-    //   if (price && currencySymbol) {
-    //     return price + currencySymbol;
-    //   } else {
-    //     return "";
-    //   }
-    // },
+    getStoreTitles(productList) {
+      let titles = "";
+      for (const element of productList) {
+        titles = titles + element.product.title + ", ";
+      }
+      titles = titles.slice(0, -2);
+      titles = truncateString(titles, 100);
+      return titles;
+    },
+
+    getCurrencySymbol(currencyCode) {
+      return getCurrencySymbolHelper(currencyCode);
+    },
+
+    getTotalSumWithComma(totalSum) {
+      let returnTotalSum = totalSum.replace(".", ",");
+      return returnTotalSum;
+    },
+
+    getDateFormatted(date) {
+      return getDateFormatDDMMYYYY(date);
+    },
+
+    async setOrderStatus(data) {
+      const storeId = this.$route.params.id;
+      const payload = {
+        storeId: storeId,
+        orderId: this.orderList[this.selectedOrder]._id,
+        step: data.step,
+        type: data.type,
+        value: data.value,
+        trackingId: data.trackingId
+      };
+      console.log(this.orderList[this.selectedOrder]._id);
+      console.log(payload);
+      let response;
+      try {
+        response = await orderService.setStepStatus(payload);
+      } catch (error) {
+        console.log(error);
+        // TODO msg snackbar
+        return;
+      }
+
+      this.orderList[this.selectedOrder].status.steps.inDelivery = true;
+      if (response.statusFinished) {
+        this.orderList[this.selectedOrder].status.finished = true;
+      }
+      if (response.statusSuccessfully) {
+        this.orderList[this.selectedOrder].status.successfully = true;
+      }
+
+      return;
+    },
+
     clearMessage() {
       this.searchTerm = "";
-      //this.searchForTerm();
+      this.searchOrder();
     }
   }
 };
 </script>
 
-<style></style>
+<style>
+.v-data-table
+  /deep/
+  tbody
+  /deep/
+  tr:hover:not(.v-data-table__expanded__content) {
+  background: #ffffff !important;
+}
+</style>

@@ -1,128 +1,87 @@
 <template>
   <div class="mainDiv">
     <div v-if="loadingStore === false && loadingErrorStore === false">
-      <!-- <p>{{ $t("translation1") }}</p> -->
-      <!-- <v-speed-dial
-      v-if="checkForStoreOwner"
-      absolute
-      top
-      right
-      v-model="fab"
-      direction="bottom"
-      :open-on-hover="true"
-      transition="scale-transition"
-    >
-      <template v-slot:activator>
-        <v-btn v-model="fab" color="pink" dark fab small>
-          <v-icon v-if="fab">
-            mdi-close
-          </v-icon>
-          <v-icon v-else>
-            mdi-dots-vertical
-          </v-icon>
-        </v-btn>
-      </template>
-      <v-btn fab dark small color="orange">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn fab dark small color="red">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-      <v-btn color="pink" outlined @click="showEditStoreDialog = true">
-        <v-icon color="pink">mdi-pencil</v-icon>
-        Edit Store
-      </v-btn>
-    </v-speed-dial> -->
-      <StoreProfileActivationSteps
-        v-if="checkForStoreOwner"
-        :storeActivationSteps="demoActivationSteps"
-      />
+      <div v-if="checkForStoreOwner" class="text-left text-h5">
+        Administration:
+      </div>
 
-      <!-- <div v-if="checkForStoreOwner"> -->
       <div v-if="checkForStoreOwner" class="text-right">
         <v-btn color="pink" outlined dark @click="showEditStoreDialog = true">
           <v-icon left color="pink">mdi-pencil</v-icon>
           Edit Store
         </v-btn>
       </div>
-      <!--       <v-btn
-        v-if="editMode == false"
-        color="pink"
-        icon
-        outlined
-        @click="
-          editMode = true;
-          $vuetify.goTo(0);
-        "
-      >
-        <v-icon color="pink">mdi-pencil</v-icon>
-      </v-btn> -->
-      <!--       <v-btn
-        v-if="editMode == true"
-        color="indigo"
-        icon
-        outlined
-        @click="saveStoreChanges"
-      >
-        <v-icon color="indigo">mdi-content-save</v-icon>
-      </v-btn> -->
-      <!-- </div> -->
-      <!--  <div v-if="editMode">
-      <v-row v-if="profileData">
-        <v-col cols="12" sm="6" offset-sm="3">
-          <v-card>
-            <v-container fluid>
-              <v-row>
-                <v-col
-                  v-for="(imgSrc, index) in this.profileData.images"
-                  :key="index"
-                  class="d-flex child-flex"
-                  cols="4"
-                >
-                  <v-card flat tile class="d-flex">
-                    <v-img
-                      :src="imgSrc"
-                      height="150px"
-                      width="150px"
-                      class="grey lighten-2"
-                    >
-                      <v-btn
-                        icon
-                        outlined
-                        absolute
-                        top
-                        left
-                        small
-                        color="white"
-                        @click="deleteImage(index)"
-                      >
-                      
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                      <template v-slot:placeholder>
-                        <v-row
-                          class="fill-height ma-0"
-                          align="center"
-                          justify="center"
-                        >
-                          <v-progress-circular
-                            indeterminate
-                            color="grey lighten-5"
-                          ></v-progress-circular>
-                        </v-row>
-                      </template>
-                    </v-img>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-col>
+
+      <StoreProfileActivationSteps
+        v-if="checkForStoreOwner"
+        :storeActivationSteps="demoActivationSteps"
+        class="ml-2"
+      />
+
+      <v-divider v-if="checkForStoreOwner" class="my-2" />
+      <v-row>
+        <v-spacer />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+              color="cyan accent-4"
+              class="btnNoHover"
+              :ripple="false"
+            >
+              <v-icon>mdi-hand-heart</v-icon>
+            </v-btn>
+          </template>
+          <span>Offers self pickup</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+              :ripple="false"
+              color="cyan accent-4"
+              class="btnNoHover"
+            >
+              <v-icon>mdi-truck-delivery</v-icon>
+            </v-btn>
+          </template>
+          <span>Offers delivery</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" :ripple="false" @click="print">
+              <v-icon>mdi-heart</v-icon>
+            </v-btn>
+          </template>
+          <span>Add to favorites</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" :ripple="false" @click="print">
+              <v-icon>mdi-bookmark</v-icon>
+            </v-btn>
+          </template>
+          <span>Bookmark</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" :ripple="false" @click="print">
+              <v-icon>mdi-share-variant</v-icon>
+            </v-btn>
+          </template>
+          <span>Share</span>
+        </v-tooltip>
       </v-row>
-    </div>
-    <div v-else> -->
-      <!--style="width:500px;" 
-    style="border-style: solid; border: 2px solid black; border-radius: 6px;"-->
+
+      <!--  -->
       <v-row align="start" v-if="dataset">
         <v-col cols="12" xs="2" sm="2" md="1" lg="1" xl="1">
           <div
@@ -157,7 +116,6 @@
               cycle
               hide-delimiters
             >
-              <!--cycle @change="carouselImageChanged" eager-->
               <v-carousel-item
                 v-for="(img, i) in dataset.profileData.images"
                 :key="i"
@@ -175,22 +133,9 @@
                       ></v-progress-circular>
                     </v-row>
                   </template>
-                  <!--                 <v-container fill-height fluid pa-0 ma-0 pb-3>
-                  <v-layout fill-height align-start pb-4 mb-4>
-                    <v-flex xs12>
-                      <v-card color="white" flat class="pa-2">
-                        <span class="headline white--text" v-text="img.title">
-                        </span>
-                      </v-card>
-                    </v-flex>
-                  </v-layout>
-                </v-container> -->
                 </v-img>
               </v-carousel-item>
             </v-carousel>
-            <!-- <v-card-title>
-            {{ img.title }}
-          </v-card-title> -->
           </v-card>
         </v-col>
         <v-col cols="12" xs="5" sm="5" md="5" lg="6" xl="6" v-if="dataset">
@@ -209,12 +154,9 @@
             class="text-body-1 mt-4"
             v-html="dataset.profileData.description"
           />
-          <!--  {{ profileData.description }}
-        </div> -->
         </v-col>
       </v-row>
-      <!-- </div> 
-    <v-btn @click="printData">Print</v-btn>-->
+
       <EditStoreDialog
         v-if="checkForStoreOwner"
         v-model="showEditStoreDialog"
@@ -236,128 +178,6 @@
         v-on:overlay-end="endLoadingOverlay"
         v-on:update-stock="updateStockAmount"
       />
-      <!--  <v-divider /> -->
-      <!-- <div v-if="editMode" id="titleDiv">
-      <v-btn @click="showAddStoreImageDialog = true">Add Image</v-btn>
-      <AddStoreImageDialog
-        v-model="showAddStoreImageDialog"
-        v-on:add-store-image="addNewImageToArray"
-      />
-      <v-text-field
-        v-model="profileData.title"
-        :counter="100"
-        label="Store Title*"
-        required
-      />
-      <v-textarea
-        v-model="profileData.description"
-        :counter="1000"
-        label="Store Description*"
-        required
-      />
-      <v-combobox
-        v-model="tagsComboBox"
-        :items="tagsComboBoxItems"
-        label="Store Tags*"
-        multiple
-        chips
-        deletable-chips
-      />
-    </div>
-    <div v-else> -->
-      <!--     <div class="text-h4" v-if="profileData">{{ profileData.title }}</div>
-    <div class="text-body-1" v-if="profileData">
-      {{ profileData.description }}
-    </div>
-    <v-chip
-      outlined
-      class="ma-1"
-      color="primary"
-      v-for="(tag, index) in this.profileData.tags"
-      :key="index"
-      >{{ tag }}</v-chip
-    > -->
-      <!--  </div>
-
-    <v-container v-if="productList">
-      <StoreProfileListItem
-        v-for="prod in productList"
-        v-bind:key="prod.productId"
-        v-bind:product="prod"
-        v-bind:modifiable="checkForStoreOwner"
-        v-on:delete-product="removeProductFromArray"
-      />
-    </v-container>
-    <v-container v-if="productList">
-      <v-row>
-        <v-col
-          cols="12"
-          xs="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="2"
-          v-for="prod in productList"
-          v-bind:key="prod.productId"
-        >
-          <StoreProfileListItemNew
-            v-bind:product="prod"
-            v-bind:modifiable="checkForStoreOwner"
-            v-on:delete-product="removeProductFromArray"
-            v-on:edit-product="showProductDialogEdit"
-          />
-        </v-col>
-      </v-row>
-    </v-container> -->
-
-      <!-- <v-divider></v-divider>
-    Average Rating:
-    {{ this.avgRatingComputed }}
-    ({{ profileData.reviews ? profileData.reviews.length : 0 }})
-    <v-rating
-      v-model="avgRatingComputed"
-      background-color="orange lighten-3"
-      color="orange"
-      dense
-      half-increments
-      readonly
-    />
-    <v-btn
-      @click.stop="showReviewDialogNew"
-      v-show="!addButtonHidden"
-      small
-      dark
-      color="indigo"
-    >
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
-
-    <ReviewDialog
-      v-model="showReviewDialog"
-      :reviewToEdit="reviewToEdit"
-      v-on:add-new-review="addNewReviewToArray"
-      v-on:update-review="editExistingReview"
-      v-on:reviewToEdit-to-null="nullifyReviewToEdit"
-      v-on:change-reviewToEdit-rating="changeRatingReviewToEdit"
-      v-on:change-reviewToEdit-text="changeTextReviewToEdit"
-    />
-    <v-divider></v-divider>
-    <div v-if="profileData.reviews">
-      <StoreProfileReviewListItem
-        v-for="rvw in computedReviews"
-        v-bind:key="rvw.reviewId"
-        v-bind:review="rvw"
-        v-on:remove-review="removeReviewfromArray"
-        v-on:edit-review="showReviewDialogEdit"
-      />
-    </div>
-    <div v-if="profileData.reviews">
-      <v-pagination
-        v-model="currentPage"
-        :length="numOfPages"
-        v-if="profileData.reviews.length > reviewsPerPage"
-      />
-    </div> -->
 
       <ProductDialog
         v-model="showProductDialog"
@@ -377,12 +197,6 @@
             mdi-format-list-bulleted
           </v-icon>
         </v-tab>
-        <!--       <v-tab>
-        Description
-        <v-icon left>
-          mdi-text-box-search-outline
-        </v-icon>
-      </v-tab> -->
         <v-tab>
           Reviews
           <v-rating
@@ -460,27 +274,7 @@
                     </v-list>
                   </v-card>
                 </v-menu>
-                <!-- </v-col>
-            <v-col cols="12" md="2" lg="2" xl="2"> -->
-                <!--               <v-slider
-                v-model="priceSlider"
-                class="align-center"
-                :max="max"
-                :min="min"
-                hide-details
-              >
-                <template v-slot:append>
-                  <v-text-field
-                    v-model="priceSlider"
-                    class="mt-0 pt-0"
-                    hide-details
-                    single-line
-                    type="number"
-                    style="width: 60px"
-                  ></v-text-field>
-                </template>
-              </v-slider> -->
-                <v-card width="40%" class="ml-3">
+                <v-card width="40%" class="ml-3" height="63px">
                   <div class="text-body-2 text-left ml-1 mt-1">Price Range</div>
                   <v-range-slider
                     v-model="priceRange"
@@ -497,7 +291,7 @@
                         hide-details
                         single-line
                         type="number"
-                        style="width: 45px"
+                        style="width: 40px"
                         @change="$set(priceRange, 0, $event)"
                       ></v-text-field>
                     </template>
@@ -509,7 +303,7 @@
                         hide-details
                         single-line
                         type="number"
-                        style="width: 45px"
+                        style="width: 40px"
                         @change="$set(priceRange, 1, $event)"
                       ></v-text-field>
                     </template>
@@ -537,22 +331,8 @@
                     <v-icon left> mdi-table-cog </v-icon>Table View</v-btn
                   >
                 </v-col>
-                <!-- </v-col> -->
               </v-row>
             </v-container>
-            <!-- </v-card> -->
-            <!--           <v-row class="mb-3">
-            <v-btn
-              v-if="checkForStoreOwner"
-              @click.stop="showProductDialogNew"
-              color="pink"
-              dark
-              outlined
-              class="ml-3"
-            >
-              <v-icon left> mdi-plus </v-icon>Create Product</v-btn
-            >
-          </v-row> -->
             <div
               v-if="loadingProducts === false && loadingErrorProducts === false"
             >
@@ -563,7 +343,7 @@
                   sm="6"
                   md="3"
                   lg="3"
-                  xl="3"
+                  xl="2"
                   v-for="prod in computedProducts"
                   v-bind:key="prod._id"
                 >
@@ -599,24 +379,10 @@
             </div>
           </div>
         </v-tab-item>
-        <!--       <v-tab-item>
-
-        <v-card flat>
-          <v-card-text>
-            <p>
-              Sed aliquam ultrices mauris. Donec posuere vulputate arcu. Morbi
-              ac felis. Etiam feugiat lorem non metus. Sed a libero.
-            </p>
-          </v-card-text>
-        </v-card>
-      </v-tab-item> -->
         <v-tab-item v-if="dataset">
           <v-row class="my-5">
             <div>
               <div class="text-left text-body-1 font-weight-bold ml-5">
-                <!--  Average Rating:
-            {{ this.avgRatingComputed }}
-            ({{ profileData.reviews ? profileData.reviews.length : 0 }}) -->
                 {{
                   dataset.profileData.reviews
                     ? dataset.profileData.reviews.length
@@ -647,12 +413,6 @@
               Add Review
             </v-btn>
           </v-row>
-          <!--            absolute
-        reviewButtonDisabled
-        checkAddReviewButtonDisabled
-        reviewButtonDisabled
-            top
-            right -->
           <ReviewDialog
             v-model="showReviewDialog"
             :reviewToEdit="reviewToEdit"
@@ -664,7 +424,6 @@
             v-on:overlay-start="startLoadingOverlay"
             v-on:overlay-end="endLoadingOverlay"
           />
-          <!-- <v-divider></v-divider> -->
           <div v-if="dataset.profileData.reviews">
             <StoreProfileReviewListItem
               v-for="rvw in computedReviews"
@@ -676,6 +435,13 @@
               v-on:overlay-end="endLoadingOverlay"
             />
           </div>
+          <div
+            v-if="dataset.profileData.reviews.length === 0"
+            class="text-body-1 text-left"
+          >
+            There are no reviews for this store yet. Why don't you leave the
+            first one?
+          </div>
           <div v-if="dataset.profileData.reviews">
             <v-pagination
               v-model="currentPage"
@@ -686,9 +452,6 @@
         </v-tab-item>
       </v-tabs>
       <v-divider class="my-3" />
-      <!--  <div class="text-left text-">
-      Payment Methods:
-    </div> -->
       <v-card class="mx-auto mb-5" v-if="dataset" flat>
         <v-card-title>Payment Methods</v-card-title>
         <v-img src="../assets/payment-methods-logo.jpg" width="500px" />
@@ -744,37 +507,26 @@
 </template>
 
 <script>
-/*
-Aufbau:
-Bilder, Titel und Beschreibung, Liste mit Produkten, Reviews
-*/
-// import fakeBackendDataStore from "../fakeBackend/storeProfileStore1.json";
-// import fakeBackendDataProducts from "../fakeBackend/storeProfileProducts1.json";
-//import storeData from "../fakeBackend/retailerMapInfo.json";
-import { storeService } from "../services";
+// Store Profile
+import StoreProfileListItemNew from "../components/storeProfileComponents/StoreProfileListItemNew";
+import StoreProfileReviewListItem from "../components/storeProfileComponents/StoreProfileReviewListItem";
+import StoreProductsTableDialog from "../components/storeProfileComponents/StoreProductsTableDialog";
+import StoreProfileActivationSteps from "../components/storeProfileComponents/StoreProfileActivationSteps";
+import GoogleMapProfile from "../components/storeProfileComponents/GoogleMapProfile";
+import ProductDialog from "../components/storeProfileComponents/ProductDialog";
+import ReviewDialog from "../components/storeProfileComponents/ReviewDialog";
 
-//import StoreProfileListItem from "../components/StoreProfileListItem";
-import StoreProfileListItemNew from "../components/StoreProfileListItemNew";
-import StoreProfileReviewListItem from "../components/StoreProfileReviewListItem";
-import EditStoreDialog from "../components/EditStoreDialog";
-import ReviewDialog from "../components/ReviewDialog";
-import ProductDialog from "../components/ProductDialog";
-import StoreProductsTableDialog from "../components/StoreProductsTableDialog";
-import StoreProfileActivationSteps from "../components/StoreProfileActivationSteps";
+// Edit Store
+import EditStoreDialog from "../components/editStoreDialogComponents/EditStoreDialog";
 
-//import AddStoreImageDialog from "../components/AddStoreImageDialog";
-import GoogleMapProfile from "../components/GoogleMapProfile";
-
-//import axios from "axios";
-
+// Others
 import { compareArrayAsc, compareArrayDesc } from "../helpers";
-
+import { storeService } from "../services";
 import { mapState } from "vuex";
 
 export default {
   name: "StoreProfileView",
   components: {
-    //StoreProfileListItem: StoreProfileListItem,
     StoreProfileListItemNew: StoreProfileListItemNew,
     StoreProfileReviewListItem: StoreProfileReviewListItem,
     EditStoreDialog: EditStoreDialog,
@@ -782,14 +534,11 @@ export default {
     ProductDialog: ProductDialog,
     StoreProductsTableDialog: StoreProductsTableDialog,
     StoreProfileActivationSteps: StoreProfileActivationSteps,
-    //AddStoreImageDialog: AddStoreImageDialog,
     GoogleMapProfile: GoogleMapProfile
   },
 
   data() {
     return {
-      // profileData: storeData[0].profileData,
-      // productList: storeData[0].profileData.products,
       loadingStore: true,
       loadingProducts: true,
       loadingErrorStore: false,
@@ -1074,7 +823,7 @@ export default {
         });
         //console.log(max);Math.round(parseFloat(max.price))
         //console.log(Math.round(parseFloat(max.price)));
-        this.maxValue = Math.round(parseFloat(objct.priceFloat));
+        this.maxValue = Math.ceil(parseFloat(objct.priceFloat));
         this.priceRange[1] = this.maxValue;
         console.log(this.maxValue);
       }
@@ -1142,14 +891,14 @@ export default {
       this.avgRating = parseFloat(newReview.avgRating);
     },
     editExistingReview(updatedReview) {
-      var index = this.dataset.profileData.reviews.findIndex(
+      let index = this.dataset.profileData.reviews.findIndex(
         rv => rv.reviewId === updatedReview.review.reviewId
       );
       this.dataset.profileData.reviews.splice(index, 1, updatedReview.review);
       this.avgRating = parseFloat(updatedReview.avgRating);
     },
     removeReviewfromArray(eventData) {
-      var indexOfReview = this.dataset.profileData.reviews.findIndex(
+      let indexOfReview = this.dataset.profileData.reviews.findIndex(
         r => r.reviewId === eventData.reviewId
       );
       this.dataset.profileData.reviews.splice(indexOfReview, 1);

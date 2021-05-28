@@ -125,16 +125,17 @@ export default {
   },
 
   async mounted() {
-    let productId = this.product._id;
+    let result;
     try {
-      this.image = await storeService.getProductImage(
+      result = await storeService.getProductImage(
         this.product.storeId,
-        productId
+        this.product._id
       );
     } catch (error) {
       console.log(error);
       this.addErrorSnackbar("An unexpected error has occurred, we are sorry.");
     }
+    this.image = result.imgSrc;
   },
 
   computed: {
@@ -202,13 +203,6 @@ export default {
       "removeProductLoggedOut"
     ]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
-    // increaseAmountByOne() {
-    //   //this.amountTextField = this.amountTextField + 1;
-    //   this.putInCart(this.product);
-    // },
-    // decreaseAmountByOne() {
-    //   this.removeFromCart(this.product);
-    // },
     async putInCart() {
       //var product = this.product;
       //if user loggedin -> Database; if not -> Local storage
@@ -217,48 +211,13 @@ export default {
           product: this.product,
           quantity: 1
         });
-        //User is not logged in
-        //Check if shoppingCart in local storage already
-        // var products = [];
-        // var payload = [product, this.amountTextField];
-        // //Check if cart already created in local storage and create new one if not
-        // if (localStorage.getItem("cart") == null) {
-        //   products[0] = payload;
-        //   localStorage.setItem("cart", JSON.stringify(products));
-        // } else {
-        //   // Add to already existing cart
-        //   var currentCart = JSON.parse(localStorage.getItem("cart"));
-        //   //check if product already in cart
-        //   var found = false;
-        //   for (var i = 0; i < currentCart.length; i++) {
-        //     if (product.id == currentCart[i][0].id) {
-        //       //Product already in cart
-        //       found = true;
-        //       currentCart[i][1] =
-        //         currentCart[i][1] + parseInt(this.amountTextField);
-        //       localStorage.setItem("cart", JSON.stringify(currentCart));
-        //       break;
-        //     }
-        //   }
-        //   //Product not in cart
-        //   if (found == false) {
-        //     currentCart.push(payload);
-        //     localStorage.setItem("cart", JSON.stringify(currentCart));
-        //   }
-        //}
       } else {
         //Logged In routine
-        //try {
         this.addProduct({
           email: this.user.email,
           product: this.product,
           amount: 1
         });
-        //} catch (error) {
-        // if (checkAuthentication(error)) {
-        //   //this.addErrorSnackbar("Error while adding product.");
-        // }
-        //}
       }
     },
 
@@ -270,17 +229,11 @@ export default {
           quantity: value
         });
       } else {
-        //try {
         await this.removeProduct({
           email: this.user.email,
           product: product,
           amount: value
         });
-        // } catch (error) {
-        //   if (checkAuthentication(error)) {
-        //     this.addErrorSnackbar("Error while decreasing amount.");
-        //   }
-        // }
       }
     },
 

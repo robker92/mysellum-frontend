@@ -1,10 +1,7 @@
 <template>
   <div class="locale-changer">
-    <!-- <v-btn @click="print">Print</v-btn> -->
-
     <v-menu bottom left :nudge-bottom="13" offset-y max-width="250px">
       <template v-slot:activator="{ on, attrs }">
-        <!-- <country-flag :country="getCurrentLocale().flag" size="normal" /> style="width: 60px;"-->
         <v-btn
           v-bind="attrs"
           v-on="on"
@@ -118,7 +115,6 @@ export default {
           this.pushToRouter(chosenLocale);
         }
       }
-      //this.$emit("change-current-locale", this.chosenLocale);
     },
 
     getCurrentLocale() {

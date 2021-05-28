@@ -4,10 +4,10 @@
     <v-row>
       <v-text-field
         v-model="searchTerm"
-        :append-outer-icon="'mdi-send'"
+        :append-outer-icon="'mdi-magnify'"
         type="text"
         label="Search"
-        clear-icon="mdi-close-circle"
+        clear-icon="mdi-close"
         clearable
         outlined
         dense
@@ -15,8 +15,7 @@
         @click:append-outer="searchFilterSort(true)"
         @keyup.enter="searchFilterSort(true)"
       ></v-text-field>
-      <!-- @click:append-outer="addTermToTagArray('tags')"
-        @keyup.enter="addTermToTagArray('tags')" -->
+
       <!-- FILTER MENU -->
       <v-menu
         bottom
@@ -26,7 +25,7 @@
         :close-on-content-click="false"
       >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs" v-on="on" outlined color="primary" class="ml-3">
+          <v-btn v-bind="attrs" v-on="on" outlined color="primary" class="ml-6">
             <v-icon color="primary">mdi-filter-menu</v-icon>
           </v-btn>
         </template>
@@ -120,6 +119,7 @@
           </v-card-actions>
         </v-card>
       </v-menu>
+
       <!-- SORT MENU -->
       <v-menu bottom left :nudge-bottom="10" offset-y max-width="250px">
         <template v-slot:activator="{ on, attrs }">
@@ -150,9 +150,6 @@
         </v-card>
       </v-menu>
     </v-row>
-    <!--        @click:clear="clearMessage"
-      @click:append-outer="searchForTerm"
-      @keyup.enter="searchForTerm"-->
 
     <!-- FILTER ARRAY APPROACH  -->
     <v-row>
@@ -175,11 +172,6 @@
       </p>
     </div>
     <div v-if="loadingStoreData === false">
-      <!-- <div
-        v-for="(store, index) in storeData"
-        v-bind:key="index"
-        v-bind:store="store"
-      > -->
       <v-row>
         <v-col
           cols="12"
@@ -197,116 +189,24 @@
               style="width:300px;" -->
 
           <SearchStoreListItem :store="store" />
-          <!-- <v-hover v-slot:default="{ hover }">
-            <v-card
-              height="550px"
-              :class="{ 'on-hover': hover }"
-              :elevation="hover ? 16 : 2"
-            >
-              <v-carousel
-                cycle
-                show-arrows-on-hover
-                height="200px"
-                style="width:400px;"
-              >
-                <v-carousel-item
-                  v-for="(img, i) in store.profileData.images"
-                  :key="i"
-                  :to="{
-                    name: 'StoreProfile',
-                    params: { id: store._id, locale: $i18n.locale }
-                  }"
-                  ,
-                  eager
-                >
-                  <v-img :src="img.src" height="100%" eager>
-                    <template v-slot:placeholder>
-                      <v-row
-                        class="fill-height ma-0"
-                        align="center"
-                        justify="center"
-                      >
-                        <v-progress-circular
-                          indeterminate
-                          color="grey lighten-2"
-                        ></v-progress-circular>
-                      </v-row>
-                    </template>
-                  </v-img>
-                </v-carousel-item>
-              </v-carousel>
-
-              <router-link
-                :to="{
-                  name: 'StoreProfile',
-                  params: { id: store._id, locale: $i18n.locale }
-                }"
-                style="text-decoration: none; color: inherit;"
-              >
-                <v-card-title>{{ store.profileData.title }}</v-card-title>
-
-                <v-card-text>
-                  <v-row class="mx-2">{{ store.mapData.address.city }} </v-row>
-                  <v-row align="center" class="mx-1">
-                    <v-rating
-                      :value="Math.round(store.profileData.avgRating * 10) / 10"
-                      background-color="amber lighten-3"
-                      dense
-                      color="amber"
-                      small
-                      :readonly="true"
-                    />
-                    <div class="grey--text ml-4">
-                      {{ Math.round(store.profileData.avgRating * 10) / 10 }}
-                      ({{
-                        store.profileData.reviews
-                          ? store.profileData.reviews.length
-                          : ""
-                      }})
-                    </div>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12">
-                      <div v-if="storeData">
-                        <v-chip-group column>
-                          <v-chip
-                            outlined
-                            class="ma-1"
-                            color="primary"
-                            v-for="(tag, index) in store.profileData.tags"
-                            :key="index"
-                            :to="{
-                              name: 'StoreProfile',
-                              params: { id: store._id, locale: $i18n.locale }
-                            }"
-                            >{{ tag }}</v-chip
-                          >
-                        </v-chip-group>
-                      </div>
-                    </v-col>
-                  </v-row>
-                  <v-divider class="mx-1 mb-3"></v-divider>
-                  <v-row>{{
-                    getCutDescription(store.profileData.description)
-                  }}</v-row>
-                </v-card-text>
-              </router-link>
-            </v-card>
-          </v-hover> -->
-          <!-- </router-link> v-if="totalStoreCount > parseInt(selectedPageSize)"-->
         </v-col>
       </v-row>
-      <v-row align="center">
+      <v-row align="baseline">
         <v-spacer />
-        <div style="width:150px">
-          <v-select
-            :items="pageSizes"
-            v-model="selectedPageSize"
-            label="Stores per page"
-            outlined
-            dense
-          ></v-select>
-        </div>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <div style="width:100px; height:15px;" v-bind="attrs" v-on="on">
+              <v-select
+                :items="pageSizes"
+                v-model="selectedPageSize"
+                label=""
+                outlined
+                dense
+              ></v-select>
+            </div>
+          </template>
+          <span>Stores per Page</span>
+        </v-tooltip>
         <v-pagination v-model="currentPage" :length="numOfPages" class="py-5" />
         <v-spacer />
       </v-row>
@@ -336,8 +236,8 @@
 </template>
 
 <script>
-import SearchStoreListItem from "../components/SearchStoreListItem";
-import { storeService } from "../services";
+import SearchStoreListItem from "../components/searchComponents/SearchStoreListItem";
+import { storeService, searchService } from "../services";
 
 export default {
   name: "SearchDeliveryView",
@@ -398,20 +298,14 @@ export default {
     },
     currentPage() {
       this.searchFilterSort(false);
-      // let result = await storeService.filterSortSearch(this.getPayload());
-      // this.storeData = result.stores;
-      // this.totalStoreCount = result.totalCount;
     },
     selectedPageSize() {
       this.searchFilterSort(true);
     }
   },
   async mounted() {
-    this.searchFilterSort(true);
-    // this.loadingStoreData = true;
-    // let result = await storeService.filterSortSearch(this.getPayload());
-    // this.storeData = result.stores;
-    // this.totalStoreCount = result.totalCount;
+    this.setStartUpQueryParams();
+    this.searchFilterSort(false);
   },
 
   computed: {
@@ -425,31 +319,9 @@ export default {
     numOfPages() {
       return Math.ceil(this.totalStoreCount / parseInt(this.selectedPageSize));
     }
-    // computedStores() {
-    //   return this.storeData.slice(this.sliceStart, this.sliceEnd);
-    // },
-    // sliceStart() {
-    //   return (this.currentPage - 1) * parseInt(this.selectedPageSize);
-    // },
-    // sliceEnd() {
-    //   return this.sliceStart + parseInt(this.selectedPageSize);
-    // }
-
-    // avgRatingFloatValue: {
-    //   get() {
-    //     //this function will determine what is displayed in the input
-    //     return parseFloat(this.store.profileData.avgRating);
-    //   }
-    // }
   },
 
   methods: {
-    // getAvgRating(store) {
-    //   return parseFloat(store.profileData.avgRating);
-    // },
-    // getCutDescription(description) {
-    //   return description.substr(0, 100) + "\u2026";
-    // },
     getPayload() {
       let payload = {
         searchTerm: this.searchTerm,
@@ -462,21 +334,13 @@ export default {
         pageSize: parseInt(this.selectedPageSize),
         pageNum: this.currentPage
       };
+      console.log(this.currentPage);
       return payload;
     },
+
     async searchFilterSort(resetToPage1) {
-      // let payload = {
-      //   searchTerm: this.searchTerm,
-      //   countries: this.selectedCountries,
-      //   states: this.selectedStates,
-      //   cities: this.selectedCities,
-      //   sort: "",
-      //   pickup: this.checkBoxPickup,
-      //   delivery: this.checkBoxDelivery,
-      //   pageSize: parseInt(this.selectedPageSize),
-      //   pageNum: this.currentPage
-      // };
       let payload = this.getPayload();
+      console.log(payload);
       if (resetToPage1 === true) {
         payload.pageNum = 1;
         this.currentPage = 1;
@@ -485,36 +349,102 @@ export default {
       this.loadingStoreData = true;
       let queryResult;
       try {
-        queryResult = await storeService.filterSortSearch(payload);
+        queryResult = await searchService.filterSortSearch(payload);
       } catch (error) {
         console.log(error);
         return;
       }
+      this.setQueryUrlParams();
       this.storeData = queryResult.stores;
       this.totalStoreCount = queryResult.totalCount;
       this.loadingStoreData = false;
       //console.log(payload);
       this.filterChanged = false;
+
+      let result;
+      try {
+        result = await searchService.searchTest(payload);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      console.log(result);
     },
-    // searchForTerm: async function() {
-    //   var result;
-    //   console.log(this.searchTerm);
-    //   if (this.searchTerm !== "" && this.searchTerm !== null) {
-    //     result = await storeService.getFilteredStores(this.searchTerm);
-    //     // this.testIdArray = result.idArray;
-    //     // this.dataset = result.stores;
-    //   } else if (this.searchTerm === "" || this.searchTerm === null) {
-    //     result = await storeService.getAllStores();
-    //   }
-    //   this.storeData = result.stores;
-    //   if (this.searchTerm !== "") {
-    //     this.filterArray.push(["searchTerm", this.searchTerm]);
-    //   }
-    //   this.searchTerm = "";
-    // },
-    // addCountriesToFilterArray() {
-    //   //this.filterArray.push([type, this.searchTerm]);
-    // },
+
+    setQueryUrlParams() {
+      // this.updateParam(this.searchTerm, "sort");
+      this.updateParam({ param: "searchTerm", value: this.searchTerm });
+      this.updateParam({ param: "countries", value: this.selectedCountries });
+      this.updateParam({ param: "states", value: this.selectedStates });
+      this.updateParam({ param: "cities", value: this.selectedCities });
+      this.updateParam({ param: "delivery", value: this.checkBoxDelivery });
+      this.updateParam({ param: "pickup", value: this.checkBoxPickup });
+      this.updateParam({ param: "pageSize", value: this.selectedPageSize });
+      this.updateParam({ param: "pageNum", value: this.currentPage });
+    },
+
+    updateParam(objct) {
+      if (objct.value) {
+        // Value is not an empty string -> check of param was added before, if yes update it via remove and add
+        // if not, just add it
+        let paramPayload = {};
+        paramPayload[objct.param] = objct.value;
+        if (this.$route.query[objct.param]) {
+          this.removeQueryParam(objct.param);
+          this.addQueryParam(paramPayload);
+        } else {
+          this.addQueryParam(paramPayload);
+        }
+      } else {
+        // Value is an empty string -> remove param if it was added before
+        if (this.$route.query[objct.param]) {
+          this.removeQueryParam(objct.param);
+        }
+      }
+    },
+
+    setStartUpQueryParams() {
+      if (this.$route.query.searchTerm) {
+        this.searchTerm = this.$route.query.searchTerm;
+      }
+      if (this.$route.query.countries) {
+        // check if countries is an array, if not then we need to add the value as an array
+        if (!Array.isArray(this.$route.query.countries)) {
+          this.selectedCountries = [this.$route.query.countries];
+        } else {
+          this.selectedCountries = this.$route.query.countries;
+        }
+      }
+      if (this.$route.query.states) {
+        // check if states is an array, if not then we need to add the value as an array
+        if (!Array.isArray(this.$route.query.states)) {
+          this.selectedStates = [this.$route.query.states];
+        } else {
+          this.selectedStates = this.$route.query.states;
+        }
+      }
+      if (this.$route.query.cities) {
+        // check if states is an array, if not then we need to add the value as an array
+        if (!Array.isArray(this.$route.query.cities)) {
+          this.selectedCities = [this.$route.query.cities];
+        } else {
+          this.selectedCities = this.$route.query.cities;
+        }
+      }
+      if (this.$route.query.delivery) {
+        this.checkBoxDelivery = this.$route.query.delivery;
+      }
+      if (this.$route.query.pickup) {
+        this.checkBoxPickup = this.$route.query.pickup;
+      }
+      if (this.$route.query.pageSize) {
+        this.selectedPageSize = this.$route.query.pageSize;
+      }
+      if (this.$route.query.pageNum) {
+        this.currentPage = parseInt(this.$route.query.pageNum);
+      }
+    },
+
     addTermToTagArray(type) {
       if (this.searchTerm !== "") {
         this.filterArray.push([type, this.searchTerm]);
@@ -527,6 +457,7 @@ export default {
         this.getFilteredStores();
       }
     },
+
     removeFromTagArray(tag) {
       var index = this.filterArray.indexOf(tag);
       console.log(index);
@@ -543,29 +474,25 @@ export default {
         this.filterObject[type].splice(index, 1);
       }
       console.log(this.filterObject);
-      //delete this.filterObject[type];
-      //this.searchForTerm();
       this.getFilteredStores();
     },
-    // getFilteredStores: async function() {
-    //   //var result = await storeService.getFilteredStores(this.filterArray);
-    //   console.log("at function in view");
-    //   let result = await storeService.getFilteredStores2(this.filterObject);
-    //   this.storeData = result.stores;
-    // },
+
     clearMessage() {
       this.searchTerm = "";
       this.searchFilterSort();
-      //this.searchForTerm();
+    },
+
+    addQueryParam(queryObject) {
+      this.$router.push({
+        query: Object.assign({}, this.$route.query, queryObject)
+      });
+    },
+
+    removeQueryParam(param) {
+      let query = Object.assign({}, this.$route.query);
+      delete query[param];
+      this.$router.replace({ query });
     }
-    // deleteFilterTag(tag) {
-    //   console.log(tag);
-    //   var index = this.filterArray.indexOf(tag);
-    //   if (index > -1) {
-    //     this.filterArray.splice(index, 1);
-    //   }
-    //   this.searchForTerm();
-    // }
   }
 };
 </script>

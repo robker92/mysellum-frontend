@@ -6,18 +6,10 @@ import createPersistedState from "vuex-persistedstate";
 //   isCompression: false
 // });
 
-import {
-  alert
-} from "./alert.module";
-import {
-  snackbar
-} from "./snackbar.module";
-import {
-  account
-} from "./account.module";
-import {
-  order
-} from "./order.module";
+import { alert } from "./alert.module";
+import { snackbar } from "./snackbar.module";
+import { account } from "./account.module";
+import { order } from "./order.module";
 // import {
 //   stores
 // } from "./stores.module";

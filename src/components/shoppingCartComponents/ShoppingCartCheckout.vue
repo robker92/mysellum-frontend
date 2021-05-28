@@ -13,13 +13,6 @@
           <div class="text-h6 text-left font-weight-medium mb-4">
             Shipping Address
           </div>
-          <!-- <AddressInput
-      :propAddressLine1="shippingAddressLine1"
-      :propPostcode="shippingPostcode"
-      :propCity="shippingCity"
-      v-on:change-addressLine1="printTest"
-    /> 
-          <v-container>-->
           <v-row>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
@@ -98,26 +91,14 @@
               />
             </v-col>
           </v-row>
-          <!-- </v-container> -->
         </v-card>
       </v-col>
-      <!--       <v-radio-group v-model="radioGroupAddress" @change="checkValidation()">
-        <v-radio
-          :label="`Same address for billing`"
-          value="sameBillingAddress"
-        />
-        <v-radio
-          :label="`Different billing address`"
-          value="differentBillingAddress"
-        />
-      </v-radio-group> -->
       <v-col cols="12" lg="6">
         <div v-if="radioGroupAddress == 'differentBillingAddress'">
           <v-card flat>
             <div class="text-h6 text-left font-weight-medium mb-4">
               Billing Address
             </div>
-            <!-- <v-container> -->
             <v-row>
               <v-col cols="12" sm="6" md="6">
                 <v-text-field
@@ -267,43 +248,9 @@
         </v-card>
       </v-col>
     </v-row>
-    <!-- <div>
-      <router-link
-        v-if="buttonIsDisabled == false"
-        :to="{ name: 'FinalOverview' }"
-      >
-        <v-btn
-          class="bottomright"
-          dark
-          color="indigo"
-          @click.stop="writeOrderInfoToState"
-          :disabled="false"
-          >Final Overview</v-btn
-        >
-      </router-link>
-
-      <v-btn v-else class="bottomright" color="indigo" :disabled="true"
-        >Final Overview</v-btn
-      >
-    </div> -->
     <v-btn @click="print">Print Data</v-btn>
     <v-btn @click="fill">Fill Data</v-btn>
     <v-btn @click="writeOrderInfoToState()">save</v-btn>
-    <!-- <v-timeline>
-      <v-timeline-item fill-dot small left class="text-right">
-        <router-link
-          :to="{ name: 'ShoppingCart' }"
-          style="text-decoration: none; color: inherit;"
-          >Your Shopping Cart</router-link
-        ></v-timeline-item
-      >
-      <v-timeline-item fill-dot small class="text-right font-weight-bold">
-        Checkout
-      </v-timeline-item>
-      <v-timeline-item fill-dot small color="grey" left class="text-right"
-        >Final Overview</v-timeline-item
-      >
-    </v-timeline> -->
   </v-container>
 </template>
 
@@ -517,18 +464,18 @@ export default {
     ...mapActions("order", ["saveOrderDataToState"]),
 
     fill() {
-      this.shippingFirstName = "TestName1";
-      this.shippingLastName = "TestName2";
-      this.shippingAddressLine1 = "Teststreet1 1";
-      this.shippingPostcode = "12345";
-      this.shippingCity = "TestCity1";
+      this.shippingFirstName = "Test";
+      this.shippingLastName = "Customer";
+      this.shippingAddressLine1 = "Elias-Holl-Straße 54";
+      this.shippingPostcode = "85049";
+      this.shippingCity = "Ingolstadt";
 
       //Billing Address
-      this.billingFirstName = "TestName3";
-      this.billingLastName = "TestName4";
-      this.billingAddressLine1 = "Teststreet2 1";
-      this.billingPostcode = "12345";
-      this.billingCity = "TestCity2";
+      this.billingFirstName = "Test";
+      this.billingLastName = "Customer";
+      this.billingAddressLine1 = "Elias-Holl-Straße 54";
+      this.billingPostcode = "85049";
+      this.billingCity = "Ingolstadt";
     },
     print() {
       console.log(this.radioGroupAddress);
@@ -551,13 +498,14 @@ export default {
     },
 
     writeOrderInfoToState() {
-      var orderData = {
+      let orderData = {
         shippingAddress: {
           firstName: this.shippingFirstName,
           lastName: this.shippingLastName,
           addressLine1: this.shippingAddressLine1,
           city: this.shippingCity,
-          postcode: this.shippingPostcode
+          postcode: this.shippingPostcode,
+          country: "DE"
         },
         payment: this.radioGroupPayment
       };
@@ -569,7 +517,8 @@ export default {
           lastName: this.billingFirstName,
           addressLine1: this.billingAddressLine1,
           city: this.billingCity,
-          postcode: this.billingPostcode
+          postcode: this.billingPostcode,
+          country: "DE"
         };
       }
 

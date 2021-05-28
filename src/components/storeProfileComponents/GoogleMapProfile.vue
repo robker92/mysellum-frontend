@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { mapOptions, getMarkerIconURL } from "../helpers";
+import { mapOptions, getMarkerIconURL } from "../../helpers";
 // eslint-disable-next-line no-unused-vars
 //import { Loader } from "google-maps";
 

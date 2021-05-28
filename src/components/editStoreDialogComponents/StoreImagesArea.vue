@@ -104,8 +104,7 @@
 <script>
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
-
-import AddStoreImageDialog from "../AddStoreImageDialog";
+import AddStoreImageDialog from "./AddStoreImageDialog";
 import { StoreImagesAreaMode } from "./StoreImagesAreaMode";
 
 export default {

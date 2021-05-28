@@ -110,13 +110,6 @@
                   />
                 </v-col>
               </v-row>
-
-              <!-- HELP DIALOG <template v-slot:item="{ item }">
-                    <v-icon>mdi-{{ item.value }}</v-icon>
-                    <div class="ml-3">
-                    {{ item.text }}
-                    </div>
-                </template> -->
             </v-container>
           </v-card>
         </v-tab-item>
@@ -328,14 +321,6 @@ export default {
       storeSubtitle: "",
       storeDescription: "",
 
-      // iconList: [
-      //   "fish",
-      //   "barn",
-      //   "bottle-wine",
-      //   "glass-mug-variant",
-      //   "glass-mug"
-      // ],
-
       //Notifications
       notificationOrderReceive: false,
       notificationOrderReturn: false,
@@ -464,11 +449,6 @@ export default {
         return;
       }
       this.$emit("edit-store", payload);
-      // setTimeout(() => {
-      //   this.overlay = false;
-      //   //this.$emit("overlay-end");
-      //   console.log("Hello");
-      // }, 3000);
       this.overlay = false;
       //this.$emit("overlay-end");
       this.addSuccessSnackbar("Store successfully edited!");

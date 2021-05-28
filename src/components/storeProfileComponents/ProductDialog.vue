@@ -6,15 +6,7 @@
     @keyup.enter="submitProduct()"
     @click:outside="cancel"
   >
-    <!--  <div style="background:transparent;color:transparent">
-      <v-btn color="pink" fab dark small>
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </div> -->
     <v-card>
-      <!--  <v-btn color="pink" fab dark small absolute top right>
-        <v-icon>mdi-close</v-icon>
-      </v-btn> -->
       <v-card-title>
         <span class="addProductHeadline">Create Product</span>
       </v-card-title>
@@ -67,14 +59,6 @@
               />
             </v-col>
             <v-col>
-              <!-- <v-text-field
-                v-model="image"
-                label="Image"
-                required
-                :error-messages="imageErrors"
-                @input="$v.image.$touch()"
-                @blur="$v.image.$touch()"
-              /> -->
               <v-file-input
                 prepend-icon="mdi-camera"
                 v-model="image"
@@ -115,30 +99,33 @@
               />
             </v-col>
           </v-row>
+          <v-row>
+            <v-col>
+              <v-radio-group v-model="radioGroup" mandatory>
+                <v-radio label="Delivery only" value="delivery"></v-radio>
+                <v-radio label="Pickup only" value="pickup"></v-radio>
+                <v-radio
+                  label="Pickup and delivery"
+                  value="pickupAndDelivery"
+                ></v-radio>
+              </v-radio-group>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="indigo" text @click="cancel">Close</v-btn>
-        <v-btn color="indigo" text @click="printData">Print</v-btn>
-        <v-btn color="indigo" text @click="fill">Fill</v-btn>
+        <v-btn color="primary" text @click="cancel">Close</v-btn>
+        <v-btn color="primary" text @click="printData">Print</v-btn>
+        <v-btn color="primary" text @click="fill">Fill</v-btn>
         <v-spacer />
         <v-btn
-          color="indigo"
+          color="primary"
           right
           dark
           @click="submitProduct"
           :disabled="buttonIsDisabled"
           >Save</v-btn
         >
-        <!--  <v-btn
-          v-else
-          color="indigo"
-          right
-          dark
-          @click="submitProduct"
-          :disabled="buttonIsDisabled"
-          >Edit</v-btn
-        > -->
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -151,7 +138,7 @@ import { validationMixin } from "vuelidate";
 
 import { mapActions } from "vuex";
 
-import { storeService } from "../services";
+import { storeService } from "../../services";
 
 const file_size_validation = file => {
   if (!file) {
@@ -188,7 +175,24 @@ export default {
     price: { required },
     image: { required, file_size_validation },
     quantityType: { required },
-    quantityValue: { required }
+    quantityValue: { required },
+    delivery2: { required },
+    isDelivery: {
+      delivery: val => val === true
+    },
+    isPickup: {
+      pickup: val => val === true
+    },
+    checkboxDelivery: {
+      checked(val) {
+        return val;
+      }
+    },
+    checkboxPickup: {
+      checked(val) {
+        return val;
+      }
+    }
   },
 
   data() {
@@ -204,7 +208,8 @@ export default {
       imageDetails: {},
       quantityType: "Kilograms",
       quantityTypeItems: ["Kilograms", "Grams", "Pieces"],
-      quantityValue: ""
+      quantityValue: "",
+      radioGroup: "delivery"
     };
   },
 
@@ -224,6 +229,8 @@ export default {
           name: newVal.imageDetails.name
         };
         //this.image = newVal.imgSrc;
+        this.delivery = newVal.delivery;
+        this.pickup = newVal.pickup;
         this.quantityType = newVal.quantityType;
         this.quantityValue = newVal.quantityValue;
       }
@@ -315,6 +322,18 @@ export default {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
     submitProduct: async function() {
+      let pickup = false;
+      let delivery = false;
+      if (this.radioGroup === "pickupAndDelivery") {
+        pickup = true;
+        delivery = true;
+      }
+      if (this.radioGroup === "delivery") {
+        delivery = true;
+      }
+      if (this.radioGroup === "pickup") {
+        pickup = true;
+      }
       //console.log(this.image);
       let payload = {
         storeId: this.$route.params.id,
@@ -328,6 +347,8 @@ export default {
         //datetime: new Date(),
         quantityType: this.quantityType,
         quantityValue: this.quantityValue,
+        delivery: delivery,
+        pickup: pickup,
         stockAmount: 1
       };
 
@@ -409,6 +430,7 @@ export default {
       this.quantityType = "Kilograms";
       this.quantityValue = "";
       this.imageBuffer = "";
+      this.radioGroup = "delivery";
       this.$emit("productToEdit-to-null");
       this.show = false;
     },

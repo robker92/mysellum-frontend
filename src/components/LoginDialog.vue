@@ -107,6 +107,7 @@ export default {
         this.$emit("input", value);
       }
     },
+
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
@@ -116,6 +117,7 @@ export default {
         errors.push(this.$t("loginDialog.emailFieldRequiredError"));
       return errors;
     },
+
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;

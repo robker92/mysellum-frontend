@@ -1,49 +1,11 @@
 <template>
   <div id="cartViewDiv">
+    <v-overlay v-model="overlay">
+      <v-progress-circular indeterminate size="128"></v-progress-circular>
+    </v-overlay>
     <LoginDialog v-model="showLoginDialog" />
+
     <v-container v-if="this.shoppingCart">
-      <!--  <ShoppingCartListItem
-        v-for="(prod, index) in this.user.shoppingCart"
-        v-bind:key="index"
-        v-bind:product="prod[0]"
-        v-bind:amount="prod[1]"
-        :modifiable="true"
-      />
-      <v-divider />
-      <v-row no-gutters height="60px">
-        <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
-          <p>Shipping costs:</p>
-        </v-col>
-        <v-col cols="12" sm="1">
-          <p>0.00€</p>
-        </v-col>
-      </v-row>
-
-      <v-row no-gutters height="60px">
-        <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
-          <p>Total costs:</p>
-        </v-col>
-        <v-col cols="12" sm="1">
-          <p>{{ computedTotalSum }}€</p>
-        </v-col>
-      </v-row>
-
-      <v-timeline>
-        <v-timeline-item fill-dot small left class="text-right font-weight-bold"
-          >Your Shopping Cart</v-timeline-item
-        >
-        <v-timeline-item fill-dot small color="grey" class="text-right">
-          Checkout
-        </v-timeline-item>
-        <v-timeline-item fill-dot small color="grey" left class="text-right"
-          >Final Overview</v-timeline-item
-        >
-      </v-timeline>
-
-      <router-link :to="{ name: 'Checkout' }">
-        <v-btn class="bottomright" dark color="indigo">Checkout</v-btn>
-      </router-link> -->
-
       <v-stepper v-model="e1">
         <v-stepper-header>
           <v-stepper-step :complete="e1 > 1" step="1" editable>
@@ -70,7 +32,6 @@
                 <div class="text-h5 text-left font-weight-medium mb-5">
                   Your Shopping Cart
                 </div>
-                <!-- text-h4 text-sm-h4 text-md-h4 text-lg-h3 text-xl-h3 -->
                 <div
                   v-if="this.shoppingCart.length == 0"
                   class="text-left text-body-1 mb-5"
@@ -200,16 +161,6 @@
                   :computedTotalSum="computedTotalSum"
                 />
 
-                <!-- Smart Buttons -->
-                <!-- <v-card width="250px" class="mt-3">
-                  <v-container>
-                    <PaypalSmartButton
-                      :orderData="{}"
-                      v-on:paypal-order-flow-finished="orderCreated"
-                    />
-                  </v-container>
-                </v-card> -->
-
                 <v-card-actions class="mt-3">
                   <v-spacer />
                   <v-btn text @click="e1 = e1 - 1">
@@ -220,11 +171,17 @@
                   </v-btn>
 
                   <!-- Smart Buttons -->
-                  <v-card width="250px" class="mt-3">
+                  <v-card
+                    width="250px"
+                    class="mt-3"
+                    v-if="this.shoppingCart.length > 0"
+                  >
                     <v-container>
                       <PaypalSmartButton
-                        :data="getPaypalCreateOrderData()"
-                        v-on:paypal-order-flow-finished="orderCreated"
+                        :orderData="getPaypalCreateOrderData()"
+                        v-on:paypal-order-successful="paypalOrderCreated"
+                        v-on:overlay-start="setOverlay(true)"
+                        v-on:overlay-end="setOverlay(false)"
                       />
                     </v-container>
                   </v-card>
@@ -239,12 +196,6 @@
 </template>
 
 <script>
-/*
-      <div
-        id="divider"
-        style="background-color:#441468; height: 1px; width:20%; float: right; "
-      ></div>
-*/
 import { calculateTotalCartSum, shoppingCartMerge } from "../helpers";
 import { mapState, mapActions } from "vuex";
 import ShoppingCartListItem from "../components/shoppingCartComponents/ShoppingCartListItem";
@@ -277,6 +228,8 @@ export default {
 
       showLoginDialog: false,
 
+      overlay: false,
+
       orderData2: {
         description: "Buy thing",
         amount: {
@@ -287,11 +240,12 @@ export default {
       //step3CompletePurchaseDisabled: true
     };
   },
+
   mounted() {
     console.log(this.shoppingCart);
   },
+
   computed: {
-    //console.log(this.user.shoppingCart);
     ...mapState("order", ["orderData"]),
     ...mapState("account", [
       "user",
@@ -300,21 +254,8 @@ export default {
       "loadedCart",
       "productCounter"
     ]),
-    // shoppingCartComputed: {
-    //   get() {
-    //     return this.shoppingCart;
-    //   }
-    // },
     computedTotalSum: {
       get() {
-        // var sum = 0.0;
-        // for (var i = 0; i < this.user.shoppingCart.length; i++) {
-        //   sum =
-        //     sum +
-        //     parseFloat(this.user.shoppingCart[i][0].price) *
-        //       this.user.shoppingCart[i][1];
-        // }
-        // return sum.toFixed(2);
         return calculateTotalCartSum(this.shoppingCart);
       }
     }
@@ -328,10 +269,15 @@ export default {
       "emptyLoadedCart",
       "emptyShoppingCart"
     ]),
-    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+    ...mapActions("snackbar", [
+      "addSuccessSnackbar",
+      "addInfoSnackbar",
+      "addErrorSnackbar"
+    ]),
 
     goToStep2() {
       if (this.loggedIn === false) {
+        this.addInfoSnackbar("You need to login before you can continue.");
         this.showLoginDialog = true;
         return;
       }
@@ -433,22 +379,26 @@ export default {
       this.emptyLoadedCart();
       this.addSuccessSnackbar("Merge was aborted!");
     },
-    orderCreated() {
-      console.log("hi");
+
+    paypalOrderCreated() {
+      // empty shopping cart
+      this.emptyShoppingCart();
+      this.$router.push({ name: "SuccessfulOrder" });
     },
+
     getPaypalCreateOrderData() {
       const data = {
-        // userEmail: this.user.email,
         products: this.shoppingCart,
+        billingAddress: this.orderData.billingAddress,
         shippingAddress: this.orderData.shippingAddress,
-        // totalSum: calculateTotalCartSum(this.shoppingCart),
         currencyCode: "EUR"
       };
       return data;
+    },
+
+    setOverlay(value) {
+      this.overlay = value;
     }
-    // enableCompletePurchaseStep3() {
-    //   this.step3CompletePurchaseDisabled = false;
-    // }
   }
 };
 </script>

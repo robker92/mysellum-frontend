@@ -5,8 +5,9 @@ import Root from "./Root.vue";
 
 import Home from "../views/Home.vue";
 import About from "../views/About.vue";
+import FAQ from "../views/FAQ.vue";
 import StoreProfile from "../views/StoreProfile.vue";
-import Search from "../views/Search.vue";
+// import Search from "../archive/Search.vue";
 import SearchDelivery from "../views/SearchDelivery.vue";
 import SearchPickup from "../views/SearchPickup.vue";
 import ShoppingCart from "../views/ShoppingCart.vue";
@@ -15,18 +16,16 @@ import StoreOrderOverview from "../views/StoreOrderOverview.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import PasswordReset from "../views/PasswordReset.vue";
 import RegistrationVerification from "../views/RegistrationVerification.vue";
+import CustomerContact from "../views/CustomerContact.vue";
 
-import {
-  i18n
-} from "../main.js";
+import { i18n } from "../main.js";
 
-import {
-  getCookie
-} from "../helpers";
+import { getCookie } from "../helpers";
 
 Vue.use(VueRouter);
 
-const routes = [{
+const routes = [
+  {
     path: "/:locale",
     component: Root,
     beforeEnter(to, from, next) {
@@ -57,10 +56,16 @@ const routes = [{
           console.log(error);
         });
     },
-    children: [{
+    children: [
+      {
         path: "",
         name: "Home",
         component: Home
+      },
+      {
+        path: "faq",
+        name: "FAQ",
+        component: FAQ
       },
       {
         path: "about",
@@ -77,11 +82,11 @@ const routes = [{
         name: "StoreProfile",
         component: StoreProfile
       },
-      {
-        path: "search",
-        name: "Search",
-        component: Search
-      },
+      // {
+      //   path: "search",
+      //   name: "Search",
+      //   component: Search
+      // },
       {
         path: "search-delivery",
         name: "SearchDelivery",
@@ -121,6 +126,11 @@ const routes = [{
         path: "registration-verification/:verificationToken?",
         name: "RegistrationVerification",
         component: RegistrationVerification
+      },
+      {
+        path: "customer-contact",
+        name: "CustomerContact",
+        component: CustomerContact
       }
       // otherwise redirect to homeRegistrationConfirmation
       // {
@@ -148,11 +158,16 @@ router.beforeEach((to, from, next) => {
   //const publicPages = [`/${locale}`, `/${locale}/storeprofile`]; //insert all public pages
   const publicPages = [
     "Home",
+    "FAQ",
+    "About",
     "ForgotPassword",
     "PasswordReset",
+    "SearchDelivery",
+    "SearchPickup",
     "StoreProfile",
     "ShoppingCart",
-    "RegistrationVerification"
+    "RegistrationVerification",
+    "CustomerContact"
   ];
   //const authRequired = !publicPages.includes(to.path);
   const authRequired = !publicPages.includes(to.name);

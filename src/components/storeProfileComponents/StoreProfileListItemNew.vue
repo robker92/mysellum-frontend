@@ -34,51 +34,12 @@
         </v-btn>
       </v-speed-dial>
 
-      <!-- <v-navigation-drawer stateless permanent floating right>
-      <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-navigation-drawer> -->
-      <!-- <template>
-      <v-layout column top left absolute>
-        <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-          <v-icon>mdi-delete</v-icon>
-        </v-btn>
-      </v-layout>
-    </template> -->
-
-      <!-- <v-container absolute top right> class="fab-container"
-      <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn fab dark small color="red" @click.stop="deleteProduct()">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-container>width="250px" -->
-
       <v-img height="150px" :src="product.imgSrc" class="rounded-t"></v-img>
 
       <v-card-title>
         <div>
           {{ product.title }}
         </div>
-        <!--       <div class="text-right">
-        <v-rating
-          background-color="orange lighten-3"
-          :value="4"
-          color="orange"
-          dense
-          size="14"
-          half-increments
-          readonly
-        />
-      </div> -->
       </v-card-title>
 
       <!-- v-model="avgRatingComputed"-->
@@ -86,10 +47,6 @@
         <div class="text-left text-body-1 text-justify">
           {{ descriptionComputed }}
         </div>
-        <!-- <v-divider class="mx-2"></v-divider> -->
-        <!-- <v-card-title class="text-right"
-      >{{ product.price }} {{ product.currencySymbol }}</v-card-title
-    > -->
         <div class="text-right black--text text-body-1 font-weight-bold">
           {{ product.price }}{{ product.currencySymbol }}
         </div>
@@ -101,127 +58,6 @@
             {{ stockStatusLabel }}
           </div>
         </div>
-        <!--       <div class="text-right warning--text text-body-2">
-        only few left
-      </div>
-      <div class="text-right error--text text-body-2">
-        out of stock
-      </div> -->
-        <!-- <v-row>
-        <v-col cols="12" lg="2">
-          <v-btn
-            class="mx-2"
-            fab
-            dark
-            x-small
-            color="indigo"
-            @click.stop="decreaseAmountByOne()"
-          >
-            <v-icon dark>mdi-minus</v-icon>
-          </v-btn></v-col
-        >
-        <v-col cols="12" lg="2"> {{ this.amountTextField }} </v-col>
-        <v-col cols="12" lg="2">
-          <v-btn
-            class="mx-2"
-            fab
-            dark
-            x-small
-            color="indigo"
-            @click.stop="increaseAmountByOne()"
-          >
-            <v-icon dark>mdi-plus</v-icon>
-          </v-btn></v-col
-        >
-        <v-col lg="1">
-          <v-btn small @click.stop="putInCart(product)">Add to bag</v-btn>
-        </v-col>
-      </v-row> class="mx-2"-->
-
-        <!--     <v-row>
-      <v-col cols="12" lg="2">
-        <v-btn
-          fab
-          dark
-          x-small
-          color="indigo"
-          @click.stop="decreaseAmountByOne()"
-        >
-          <v-icon dark>mdi-minus</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col cols="12" lg="2">
-        {{ this.amountTextField }}
-      </v-col>
-      <v-col cols="12" lg="2">
-        <v-btn
-          fab
-          dark
-          x-small
-          color="indigo"
-          @click.stop="increaseAmountByOne()"
-        >
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
-      </v-col>
-      <v-col cols="12" lg="2">
-        <v-btn small @click.stop="putInCart(product)">To bag</v-btn>
-      </v-col>
-    </v-row> -->
-        <!-- <v-card v-if="modifiable == false" flat>
-        <v-row align="center" class="mt-3" justify="center">
-          <v-btn
-            class="ml-3 mr-2"
-            width="45"
-            dark
-            small
-            color="indigo"
-            @click.stop="decreaseAmountByOne()"
-          >
-            <v-icon dark>mdi-minus</v-icon>
-          </v-btn>
-          <div class="mx-2 text-body-1 font-weight-bold" width="40px">
-            {{ this.amountTextField }}
-          </div>
-          <v-btn
-            class="ml-3 mr-2"
-            width="45"
-            dark
-            small
-            color="indigo"
-            @click.stop="increaseAmountByOne()"
-          >
-            <v-icon dark>mdi-plus</v-icon>
-          </v-btn>
-          <v-spacer />
-          <v-btn
-            class="mr-3"
-            width="45"
-            small
-            @click.stop="putInCart(product)"
-            color="pink"
-            dark
-          >
-            <v-icon>mdi-cart-plus</v-icon>
-          </v-btn>
-        </v-row>
-      </v-card> -->
-        <!--       <v-card v-if="modifiable == false" flat class="mt-5">
-        <v-select :items="quantityItems" label="Quantity" dense>
-          <template v-slot:append-outer>
-            <v-btn
-              class="mr-3"
-              small
-              fab
-              @click.stop="putInCart(product)"
-              color="pink"
-              dark
-            >
-              <v-icon>mdi-cart-plus</v-icon>
-            </v-btn>
-          </template>
-        </v-select>
-      </v-card> "cardDisabled === false ? productQuantity : 0"-->
         <v-card v-if="modifiable === false" flat class="mt-5">
           <v-row class="mt-3" no-gutters>
             <v-col cols="12" xs="5" sm="9" md="9" lg="9" xl="9">
@@ -257,110 +93,6 @@
           <div class="text-left black--text text-body-1 mt-3">
             In Stock: <b>{{ product.stockAmount || 0 }}</b> units
           </div>
-          <!-- <v-row>
-          <v-btn
-            class=""
-            width="40"
-            x-small
-            dark
-            color="blue-grey darken-1"
-            @click.stop="increaseStock(1)"
-          >
-            +1
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            width="40"
-            dark
-            x-small
-            color="grey darken-3"
-            @click.stop="increaseStock(5)"
-          >
-            +5
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            width="40"
-            dark
-            x-small
-            color="green lighten-1"
-            @click.stop="increaseStock(10)"
-          >
-            +10
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            width="40"
-            dark
-            x-small
-            color="green lighten-1"
-            @click.stop="increaseStock(50)"
-          >
-            +50
-          </v-btn>
-          <v-btn
-            class="ml-1"
-            width="40"
-            dark
-            x-small
-            color="green lighten-1"
-            @click.stop="increaseStock(100)"
-          >
-            +100
-          </v-btn>
-        </v-row>
-        <v-row>
-          <v-btn
-            class="mt-1"
-            width="40"
-            dark
-            x-small
-            color="blue-grey lighten-2"
-            @click.stop="decreaseStock(1)"
-          >
-            -1
-          </v-btn>
-          <v-btn
-            class="ml-1 mt-1"
-            width="40"
-            dark
-            x-small
-            color="grey darken-1"
-            @click.stop="decreaseStock(5)"
-          >
-            -5
-          </v-btn>
-          <v-btn
-            class="ml-1 mt-1"
-            width="40"
-            dark
-            x-small
-            color="red lighten-1"
-            @click.stop="decreaseStock(10)"
-          >
-            -10
-          </v-btn>
-          <v-btn
-            class="ml-1 mt-1"
-            width="40"
-            dark
-            x-small
-            color="red lighten-1"
-            @click.stop="decreaseStock(50)"
-          >
-            -50
-          </v-btn>
-          <v-btn
-            class="ml-1 mt-1"
-            width="40"
-            dark
-            x-small
-            color="red lighten-1"
-            @click.stop="decreaseStock(100)"
-          >
-            -100
-          </v-btn>
-        </v-row> -->
           <div>
             <v-text-field
               v-model="stockAmount"
@@ -399,16 +131,10 @@
 </template>
 
 <script>
-/*
-
-*/
 import { mapState, mapActions } from "vuex";
-import { storeService } from "../services";
-//import { addProductLoggedOut } from "../helpers";
-
-//import { required, maxLength } from "vuelidate/lib/validators";
+import { storeService } from "../../services";
 import { validationMixin } from "vuelidate";
-import ProductAvailabilityNotificationDialog from "../components/ProductAvailabilityNotificationDialog";
+import ProductAvailabilityNotificationDialog from "./ProductAvailabilityNotificationDialog";
 
 //Custom validation
 function quantityNotInStock(value) {
@@ -591,47 +317,13 @@ export default {
           quantity: parseInt(this.productQuantity),
           currentCart: this.shoppingCart
         });
-        //User is not logged in
-        //Check if shoppingCart in local storage already
-        // let payload = [product, parseInt(this.productQuantity)];
-        // //Check if cart already created in local storage and create new one if not
-        // if (localStorage.getItem("cart") == null) {
-        //   let products = [];
-        //   products[0] = payload;
-        //   localStorage.setItem("cart", JSON.stringify(products));
-        // } else {
-        //   // Add to already existing cart
-        //   let currentCart = JSON.parse(localStorage.getItem("cart"));
-        //   //let currentCart2 = vuexObjct.account.shoppingCart;
-        //   //check if product already in cart
-        //   let found = false;
-        //   for (let i = 0; i < currentCart.length; i++) {
-        //     if (product.id === currentCart[i][0].id) {
-        //       //Product already in cart
-        //       found = true;
-        //       currentCart[i][1] =
-        //         currentCart[i][1] + parseInt(this.productQuantity);
-        //       localStorage.setItem("cart", JSON.stringify(currentCart));
-        //       break;
-        //     }
-        //   }
-        //   //Product not in cart
-        //   if (found == false) {
-        //     currentCart.push(payload);
-        //     localStorage.setItem("cart", JSON.stringify(currentCart));
-        //   }
-        // }
       } else {
         //Logged In routine
-        //try {
         this.addProduct({
           email: this.user.email,
           product: product,
           amount: this.productQuantity
         });
-        // } catch (error) {
-        //   this.addErrorSnackbar("Error while adding product.");
-        // }
       }
     },
 
@@ -671,11 +363,13 @@ export default {
         await storeService.updateStockAmount(data);
       } catch (error) {
         this.$emit("overlay-end");
+        this.addErrorSnackbar("Stock update was not successful.");
         return;
       }
       //console.log(response);
       this.$emit("update-stock", this.product._id, this.stockAmount);
       this.$emit("overlay-end");
+      this.addSuccessSnackbar("Stock update was successful.");
       this.stockAmount = "";
     },
     print() {

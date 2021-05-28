@@ -38,7 +38,7 @@
         }"
         style="text-decoration: none; color: inherit;"
       >
-         <v-row align="center" class="ml-1 mt-2"> 
+        <v-row align="center" class="ml-1 mt-2">
           <v-rating
             :value="Math.round(store.profileData.avgRating * 10) / 10"
             background-color="amber lighten-3"
@@ -53,10 +53,11 @@
               store.profileData.reviews ? store.profileData.reviews.length : ""
             }})
           </div>
-         
-       </v-row>
+        </v-row>
 
-        <div class="text-left text-body-2 mt-2 ml-1">{{ store.profileData.title }}</div>
+        <div class="text-left text-body-2 mt-2 ml-1">
+          {{ store.profileData.title }}
+        </div>
 
         <v-chip-group column>
           <v-chip
@@ -93,7 +94,6 @@ module.exports = {
 </script>
 
 <style>
-
 /* .v-btn .v-btn__content .v-icon {
   size: 2px !important;
 }

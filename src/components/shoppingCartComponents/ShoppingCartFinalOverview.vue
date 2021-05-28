@@ -33,67 +33,6 @@
       </v-row>
     </v-card>
 
-    <!-- <v-sheet color="gray darken-2" :elevation="elevation" class="my-5">
-      <div class="text-h6 text-left font-weight-medium ma-4">
-        Shipping Address
-      </div>
-      <div class="mb-3">
-        <v-row>
-          <v-col cols="12" xl="2">
-            Name:
-          </v-col>
-          <v-col cols="12" xl="2">
-            {{ this.orderData.shippingAddress.firstName }},
-            {{ this.orderData.shippingAddress.lastName }}
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" xl="2">
-            Address:
-          </v-col>
-          <v-col cols="12" xl="2">
-            {{ this.orderData.shippingAddress.addressLine1 }},
-            {{ this.orderData.shippingAddress.postcode }}
-            {{ this.orderData.shippingAddress.city }}</v-col
-          >
-        </v-row>
-      </div>
-    </v-sheet>
-
-    <v-sheet color="gray darken-2" :elevation="elevation" class="my-5">
-      <div class="text-h6 text-left font-weight-medium ma-4">
-        Billing Address
-      </div>
-      <v-row>
-        <v-col cols="12" xl="2">
-          Name:
-        </v-col>
-        <v-col cols="12" xl="2">
-          {{ this.orderData.billingAddress.firstName }},
-          {{ this.orderData.billingAddress.lastName }}
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" xl="2">
-          Address:
-        </v-col>
-        <v-col cols="12" xl="2">
-          <div>
-            {{ this.orderData.billingAddress.addressLine1 }},
-            {{ this.orderData.billingAddress.postcode }}
-            {{ this.orderData.billingAddress.city }}
-          </div></v-col
-        >
-      </v-row>
-    </v-sheet>
-
-    <v-sheet color="gray darken-2" :elevation="elevation" class="my-5">
-      <div class="text-h6 text-left font-weight-medium ma-4">
-        Payment
-      </div>
-      <p>{{ this.orderData.payment }}</p>
-    </v-sheet> -->
-
     <v-row class="mt-3">
       <v-col cols="12" sm="6" lg="4" xl="4">
         <v-card v-if="this.orderData.shippingAddress">
@@ -181,30 +120,6 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <!-- <v-timeline>
-      <v-timeline-item fill-dot small left class="text-right">
-        <router-link
-          :to="{ name: 'ShoppingCart' }"
-          style="text-decoration: none; color: inherit;"
-          >Your Shopping Cart</router-link
-        ></v-timeline-item
-      >
-      <v-timeline-item fill-dot small class="text-right">
-        <router-link
-          :to="{ name: 'Checkout' }"
-          style="text-decoration: none; color: inherit;"
-          >Checkout</router-link
-        >
-      </v-timeline-item>
-      <v-timeline-item fill-dot small left class="text-right  font-weight-bold"
-        >Final Overview</v-timeline-item
-      >
-    </v-timeline> -->
-
-    <!-- <v-btn class="bottomright" dark color="indigo" @click.stop="createOrder"
-      >Complete Purchase</v-btn
-    > -->
   </div>
 </template>
 
@@ -234,28 +149,7 @@ export default {
     ...mapState("account", ["user", "loggedIn", "shoppingCart"])
   },
 
-  methods: {
-    // createOrder: async function() {
-    //   var data = {
-    //     user: {
-    //       email: this.user.email
-    //     },
-    //     date: new Date(),
-    //     shippingAddress: this.orderData.shippingAddress,
-    //     billingAddress: this.orderData.billingAddress,
-    //     products: this.user.shoppingCart,
-    //     payment: this.orderData.payment,
-    //     totalSum: calculateTotalCartSum(this.user.shoppingCart)
-    //   };
-    //   var response = await orderService.createOrder(data);
-    //   console.log(response);
-    //   if (response.status == 200) {
-    //     //Delete Shopping Cart
-    //     //Delete Order State Info
-    //     this.$router.push({ name: "SuccessfulOrder" });
-    //   }
-    // }
-  }
+  methods: {}
 };
 </script>
 

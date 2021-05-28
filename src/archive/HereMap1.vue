@@ -10,12 +10,12 @@
 <script>
 /*global H*/
 export default {
-  name: 'HereMap',
+  name: "HereMap",
   data() {
     return {
       map: {},
       platform: {}
-    }
+    };
   },
   props: {
     appId: String,
@@ -32,7 +32,7 @@ export default {
       //headers: { 'Access-Control-Allow-Origin': 'localhost:8080' },
       //useHTTPS: true,
       //useCIT: true
-    })
+    });
   },
   mounted() {
     this.map = new H.Map(
@@ -42,9 +42,9 @@ export default {
         zoom: 10,
         center: { lng: this.lng, lat: this.lat }
       }
-    )
+    );
   }
-}
+};
 </script>
 
 <style scoped></style>

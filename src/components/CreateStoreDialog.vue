@@ -8,10 +8,10 @@
     <v-card flat v-if="show === true">
       <v-card-title>
         <span class="dialogHeadline">
-          Create a Store
+          Create your Store
         </span>
         <v-spacer />
-        <v-btn icon @click="closeDialog">
+        <v-btn icon @click="cancel">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -66,14 +66,19 @@
               </v-container>
             </v-card>
 
-            <v-btn color="primary" @click="e6 = 2" :disabled="continue1Disabled"
-              >Continue</v-btn
+            <v-btn
+              color="primary"
+              @click="e6 = 2"
+              :disabled="continue1Disabled"
+              class="mt-3"
             >
-            <v-btn text @click="printInputs">Print</v-btn>
+              Continue
+            </v-btn>
+            <!-- <v-btn text @click="printInputs">Print</v-btn> -->
           </v-stepper-content>
 
           <v-stepper-step :complete="e6 > 2" step="2" :editable="e6 > 2">
-            Enter the Address
+            Address
           </v-stepper-step>
 
           <v-stepper-content step="2">
@@ -147,27 +152,43 @@
             <v-btn color="primary" @click="e6 = 3" :disabled="continue2Disabled"
               >Continue</v-btn
             >
-            <v-btn text @click="printInputs">Print</v-btn>
+            <!-- <v-btn text @click="printInputs">Print</v-btn> -->
           </v-stepper-content>
 
           <v-stepper-step :complete="e6 > 3" step="3" :editable="e6 > 3">
-            Upload your Images
+            Images
           </v-stepper-step>
 
           <v-stepper-content step="3">
             <StoreImagesArea
               :mode="this.StoreImagesAreaMode.CREATE"
               v-on:set-store-images-array="setStoreImagesArray"
-              v-on:disable-continue-button-3="disableContinueButton3"
-              v-on:enable-continue-button-3="enableContinueButton3"
+              v-on:disable-continue-button-3="disableSubmitButton"
+              v-on:enable-continue-button-3="enableSubmitButton"
             />
-            <v-btn color="primary" @click="e6 = 4" :disabled="continue3Disabled"
-              >Continue</v-btn
+            <!-- v-on:disable-continue-button-3="disableContinueButton3"
+              v-on:enable-continue-button-3="enableContinueButton3" -->
+            <v-btn
+              color="primary"
+              @click="e6 = 4"
+              :disabled="continue3Disabled"
             >
-            <v-btn text @click="printInputs">Print</v-btn>
+              Continue
+            </v-btn>
+
+            <v-btn
+              color="primary"
+              :disabled="submitButtonDisabled"
+              @click="submitCreation"
+              class="mt-3"
+            >
+              Create Store
+            </v-btn>
+
+            <!-- <v-btn text @click="printInputs">Print</v-btn> -->
           </v-stepper-content>
 
-          <v-stepper-step :complete="e6 > 4" step="4" :editable="e6 > 4">
+          <!-- <v-stepper-step :complete="e6 > 4" step="4" :editable="e6 > 4">
             Payment Methods
           </v-stepper-step>
 
@@ -185,7 +206,7 @@
           <v-stepper-content step="5">
             <v-btn color="primary" @click="submitCreation">Create</v-btn>
             <v-btn text @click="printInputs">Print</v-btn>
-          </v-stepper-content>
+          </v-stepper-content> -->
         </v-stepper>
       </v-card-text>
     </v-card>
@@ -251,6 +272,7 @@ export default {
       editedHtmlText: "", //Variable for saved html text -> will be saved as store description in the end
       storeImages: [],
       continue3Disabled: true,
+      submitButtonDisabled: true,
       StoreImagesAreaMode: StoreImagesAreaMode,
       imagesTextField: "",
       tagsComboBoxModel: [],
@@ -416,7 +438,8 @@ export default {
       let storeId;
       try {
         const response = await storeService.createStore(payload);
-        storeId = response.storeId;
+        storeId = response.store._id;
+        console.log(response);
       } catch (error) {
         console.log(error);
         return;
@@ -425,15 +448,19 @@ export default {
 
       this.setOwnedStoreId(storeId);
       this.addSuccessSnackbar("Store successfully created!");
-      this.show = false;
-      this.cancel;
+      this.cancel();
     },
 
     cancel() {
-      this.show = false;
-    },
+      this.storeTitle = "";
+      this.storeSubtitle = "";
+      this.storeDescription = "";
+      this.storeImages = [];
+      this.addressLine1 = "";
+      this.postcode = "";
+      this.city = "";
+      this.mapIcon = "";
 
-    closeDialog() {
       this.show = false;
     },
 
@@ -457,6 +484,12 @@ export default {
 
     disableContinueButton3() {
       this.continue3Disabled = true;
+    },
+    disableSubmitButton() {
+      this.submitButtonDisabled = true;
+    },
+    enableSubmitButton() {
+      this.submitButtonDisabled = false;
     },
     enableContinueButton3() {
       this.continue3Disabled = false;

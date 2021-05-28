@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import GoogleMapLoader from './GoogleMapLoader'
+import GoogleMapLoader from "./GoogleMapLoader";
 //import { mapSettings } from '@/constants/mapSettings'
 
 export default {
@@ -24,8 +24,8 @@ export default {
       return {
         zoom: 4,
         center: { lat: 0, lng: 0 }
-      }
+      };
     }
   }
-}
+};
 </script>

@@ -3,6 +3,10 @@
     <v-card>
       <v-toolbar flat color="primary" dark>
         <v-toolbar-title>Edit Your Store</v-toolbar-title>
+        <v-spacer />
+        <v-btn icon @click="cancel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-toolbar>
       <v-tabs>
         <v-tab>
@@ -399,7 +403,7 @@
                       <v-img
                         max-height="70"
                         max-width="90"
-                        src="../assets/paypal/de-pp-logo-100px.png"
+                        :src="paypalImageURL"
                       ></v-img>
                       <div class="ml-3">
                         Sign-up to Paypal
@@ -474,22 +478,20 @@
 </template>
 
 <script>
-//<v-btn text @click="e6 = e6 - 1">Cancel</v-btn>
-//<small>Summarize if needed</small>
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
 import AddStoreImageDialog from "./AddStoreImageDialog";
-import EditStoreDialogDescriptionTextArea from "./editStoreDialogComponents/DescriptionTextArea";
-import ShowHelpDialog from "./ShowHelpDialog";
+import EditStoreDialogDescriptionTextArea from "./DescriptionTextArea";
+import ShowHelpDialog from "../ShowHelpDialog";
 
 import { mapState, mapActions } from "vuex";
 
-import { storeService } from "../services";
+import { storeService } from "../../services";
 
 // eslint-disable-next-line no-unused-vars
 
-import { mapIconList } from "../helpers";
+import { mapIconList } from "../../helpers";
 //console.log(mapIconList);
 
 export default {
@@ -537,46 +539,6 @@ export default {
   },
 
   watch: {
-    // profileData: function(newVal) {
-    //   console.log("at editdialog");
-    //   if (newVal != null) {
-    //     console.log("at editdialog");
-    //     console.log(newVal);
-    //     this.storeTitle = newVal.title;
-    //     this.storeSubtitle = "";
-    //     this.storeDescription = newVal.description;
-    //     this.tagsComboBoxModel = newVal.tags;
-    //     this.storeImages = [...newVal.images];
-    //     this.editedHtmlText = newVal.description;
-    //   }
-    // },
-    // mapData: function(newVal) {
-    //   console.log("at editdialog");
-    //   if (newVal) {
-    //     console.log("at editdialog");
-    //     console.log(newVal);
-    //     this.addressLine1 = newVal.address.addressLine1;
-    //     this.postcode = newVal.address.postalCode;
-    //     this.city = newVal.address.city;
-    //     this.mapIcon = newVal.mapIcon || "";
-    //     this.lat = newVal.location.lat;
-    //     this.lng = newVal.location.lng;
-    //   }
-    // },
-    // mapData: {
-    //   handler: function(newVal) {
-    //     // watch it
-    //     console.log("mapdata changed");
-    //     this.addressLine1 = newVal.address.addressLine1;
-    //     this.postcode = newVal.address.postalCode;
-    //     this.city = newVal.address.city;
-    //     this.mapIcon = newVal.mapIcon || "";
-    //     this.lat = newVal.location.lat;
-    //     this.lng = newVal.location.lng;
-    //   },
-    //   deep: true
-    // },
-
     //Watch show status to initialize data
     show() {
       this.initializeData();
@@ -585,8 +547,12 @@ export default {
 
   data() {
     return {
+      paypalImageURL: "../../assets/paypal/de-pp-logo-100px.png",
+
       showAddStoreImageDialog: false,
       overlay: false,
+
+      dataChanged: false,
 
       //Store Profile
       storeTitle: "",
@@ -618,13 +584,6 @@ export default {
       //chosenIcon: "",
       mapIcon: "",
       mapIconList: mapIconList,
-      // iconList: [
-      //   "fish",
-      //   "barn",
-      //   "bottle-wine",
-      //   "glass-mug-variant",
-      //   "glass-mug"
-      // ],
 
       //Notifications
       notificationOrderReceive: false,
@@ -660,18 +619,6 @@ export default {
     profileDataWatcher() {
       return this.profileData;
     },
-    // numberCharactersInEditor: {
-    //   get() {
-    //     if (this.show == true) {
-    //       return new DOMParser().parseFromString(
-    //         this.editedHtmlText,
-    //         "text/html"
-    //       ).body.innerText.length;
-    //     } else {
-    //       return 0;
-    //     }
-    //   }
-    // },
 
     storeTitleErrors() {
       const errors = [];
@@ -909,15 +856,6 @@ export default {
       console.log(this.storeImages);
     },
 
-    // setFormat(command) {
-    //   document.execCommand(command, false, "");
-    // },
-
-    // onInput(e) {
-    //   this.editedHtmlText = e.target.innerHTML;
-    //   this.$v.storeDescription.$touch();
-    // },
-
     getImgSortArrLeftDisabled(index) {
       if (index === 0) {
         return true;
@@ -953,39 +891,6 @@ export default {
       arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
       return arr; // for testing
     },
-
-    // fontSizeFunction(type) {
-    //   var selection = window.getSelection();
-    //   var currentFontSize = window
-    //     .getComputedStyle(selection.anchorNode.parentElement, null)
-    //     .getPropertyValue("font-size");
-    //   console.log(currentFontSize);
-    //   var newFontSize;
-    //   if (type == "addition") {
-    //     newFontSize = this.fontSizeTranslation(currentFontSize) + 1;
-    //   } else if (type == "subtraction") {
-    //     newFontSize = this.fontSizeTranslation(currentFontSize) - 1;
-    //   }
-    //   document.execCommand("fontSize", false, newFontSize);
-    // },
-
-    // fontSizeTranslation(pxSize) {
-    //   if (pxSize == "10px") {
-    //     return 1;
-    //   } else if (pxSize == "13px") {
-    //     return 2;
-    //   } else if (pxSize == "16px") {
-    //     return 3;
-    //   } else if (pxSize == "18px") {
-    //     return 4;
-    //   } else if (pxSize == "24px") {
-    //     return 5;
-    //   } else if (pxSize == "32px") {
-    //     return 6;
-    //   } else if (pxSize == "48px") {
-    //     return 7;
-    //   }
-    // },
 
     changeDescriptionText(newDescription) {
       this.editedHtmlText = newDescription;

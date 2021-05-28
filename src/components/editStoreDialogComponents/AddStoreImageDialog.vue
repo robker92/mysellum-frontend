@@ -51,8 +51,7 @@
 </template>
 
 <script>
-//import { mapState } from "vuex";
-import { storeService } from "../services";
+import { storeService } from "../../services";
 import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 

@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import mapboxgl from 'mapbox-gl'
-console.dir(mapboxgl)
-require('../../node_modules/mapbox-gl/dist/mapbox-gl.css')
+import mapboxgl from "mapbox-gl";
+console.dir(mapboxgl);
+require("../../node_modules/mapbox-gl/dist/mapbox-gl.css");
 export default {
   data() {
-    return {}
+    return {};
   },
   props: {
     appId: String,
@@ -20,7 +20,7 @@ export default {
     apikey: String
   },
   mounted() {
-    this.createMap()
+    this.createMap();
   },
   //mounted: function() {
   //let map = this.map()
@@ -182,26 +182,26 @@ export default {
   methods: {
     createMap() {
       mapboxgl.accessToken =
-        'pk.eyJ1Ijoicm9iLWtlciIsImEiOiJjazczZ2VoMjUwOGpkM2VwZnl2Ymc1djJ3In0.EYa3NxgMVQ36EoDzr4zJXA'
+        "pk.eyJ1Ijoicm9iLWtlciIsImEiOiJjazczZ2VoMjUwOGpkM2VwZnl2Ymc1djJ3In0.EYa3NxgMVQ36EoDzr4zJXA";
 
       // init the map
       this.map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
         minzoom: 1.3,
         center: [-74.0073, 40.7124], // Manhattan
         zoom: 6
-      })
+      });
 
       //this.map.addControl(new mapboxgl.Navigation())
     }
   }
-}
+};
 </script>
 
 <style>
 .mapboxgl-popup {
   max-width: 400px;
-  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 </style>

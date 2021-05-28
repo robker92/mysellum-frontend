@@ -14,6 +14,16 @@ const paypalClient = axios.create({
   withCredentials: true
 });
 
+async function fetchMerchantIds(data) {
+  const response = await paypalClient.post(`/fetch-merchant-ids`, data, {
+    headers: authHeader()
+  });
+  console.log(response.data);
+
+  // throw new Error("This is an example error");
+  return response.data.merchantIds;
+}
+
 async function createPaypalOrder(data) {
   const response = await paypalClient.post(`/create-order`, data, {
     headers: authHeader()
@@ -38,4 +48,8 @@ async function capturePaypalOrder(data) {
   return response.data;
 }
 
-export const paypalService = { createPaypalOrder, capturePaypalOrder };
+export const paypalService = {
+  fetchMerchantIds,
+  createPaypalOrder,
+  capturePaypalOrder
+};

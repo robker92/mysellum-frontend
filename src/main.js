@@ -7,9 +7,7 @@ import vuetify from "./plugins/vuetify";
 import VueI18n from "vue-i18n";
 import CountryFlag from "vue-country-flag";
 import messages from "./locale";
-import {
-  getBrowserLocale
-} from "./helpers";
+import { getBrowserLocale } from "./helpers";
 import supportedLanguages from "./locale/supportedLanguages.json";
 
 //to use worker threads

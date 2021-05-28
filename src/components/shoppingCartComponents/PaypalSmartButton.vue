@@ -3,34 +3,47 @@
 </template>
 
 <script>
+import { arrayRemoveDuplicates } from "../../helpers";
 import { mapActions } from "vuex";
 import { paypalService } from "../../services";
 
 export default {
   data() {
-    return {
-      order: {
-        description: "Buy thing",
-        amount: {
-          currency_code: "USD",
-          value: 1000
-        }
-      }
-    };
+    return {};
   },
 
   props: {
-    data: Object
+    orderData: Object
   },
 
-  mounted: function() {
+  mounted: async function() {
+    // https://developer.paypal.com/docs/checkout/reference/customize-sdk/
     const script = document.createElement("script");
     const clientId =
       "AZ4Ot1_cYotHmBv5ljIROuwrazfyUOkvSR2hDVfCrAaB1wTpkkaTzi9C7dIp08HTX6lEVMdOZ4l4FZrc";
-    const merchantId = "UW8X6XK7RGLP8"; //
-    // const merchantId = "sb-wqpm05264764@business.example.com";
-    // &vault=true&commit=false
-    script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=${merchantId}&currency=EUR&intent=capture`;
+    console.log(this.orderData.products);
+    const storeIds = arrayRemoveDuplicates(
+      this.getStoreIdsFromShoppingCart(this.orderData.products)
+    );
+    console.log(storeIds);
+    const merchantIds = await paypalService.fetchMerchantIds({
+      storeIds: storeIds
+    });
+    console.log(merchantIds);
+    if (merchantIds.length === 1) {
+      // products of exactly one store in cart
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=${merchantIds[0]}&currency=EUR&intent=capture`;
+    } else {
+      console.log("multiple stores");
+      // products of more than one store in cart
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=*&currency=EUR&intent=capture`;
+      const merchaneIdString = this.getMerchantIdString(merchantIds);
+      script.setAttribute("data-merchant-id", merchaneIdString);
+    }
+
+    // script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=*&currency=EUR&intent=capture`;
+    // script.setAttribute("data-merchant-id", "UW8X6XK7RGLP8,5FHJ5NA2X94VG");
+    // console.log(script);
     script.addEventListener("load", this.setLoaded);
     document.body.appendChild(script);
   },
@@ -45,52 +58,88 @@ export default {
       window.paypal
         .Buttons({
           createOrder: async () => {
-            console.log(paypalService);
-            let response;
-            try {
-              response = await paypalService.createPaypalOrder(this.data);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
+            this.$emit("overlay-start");
+            // let response;
+            // try {
+            let response = await paypalService.createPaypalOrder(
+              this.orderData
+            );
+            // } catch (error) {
+            //   console.log(error);
+            //   this.$emit("overlay-end");
+            //   return;
+            // }
             return response.id;
           },
 
           onApprove: async (data, actions) => {
-            console.log("approve");
-            console.log(data.orderID);
+            // console.log("approve");
+            // console.log(data.orderID);
 
             try {
               await paypalService.capturePaypalOrder({
                 orderId: data.orderID,
-                ordeData: this.data
+                orderData: this.orderData
               });
             } catch (error) {
               //console.log(error.response);
               // if the funding source fails, we restart the process to that the customer can choose another one
               if (
-                error.response?.data?.details[0]?.issue ===
-                "INSTRUMENT_DECLINED"
+                error.response.data.details &&
+                error.response.data.details[0].issue === "INSTRUMENT_DECLINED"
               ) {
                 this.addErrorSnackbar(
                   "Unfortunately there was an issue with your chosen funding source, please choose another one."
                 );
                 return actions.restart();
               }
-              this.addErrorSnackbar("Error while creating your order.");
-              return;
+              throw error;
+              // this.addErrorSnackbar("Error while creating your order.");
+              // this.$emit("overlay-end");
+              // return;
             }
             console.log("Paypal Order successfully captured!");
+            this.$emit("paypal-order-successful");
+            this.$emit("overlay-end");
+            return;
+          },
+
+          onCancel: data => {
+            console.log(data);
+            // Show a cancel page, or return to cart
+            this.$emit("overlay-end");
+          },
+
+          onError: error => {
+            console.log("at error handler");
+            console.log(error);
+
+            this.addErrorSnackbar("Error while creating your order.");
+            this.$emit("overlay-end");
             return;
           }
-
-          // onError: err => {
-          //   console.log("at error handler");
-          //   console.log(err);
-          //   //emit error message
-          // }
         })
         .render(this.$refs.paypal);
+    },
+
+    getMerchantIdString(uniqueStoreIds) {
+      let merchantIdString = "";
+      for (const storeId of uniqueStoreIds) {
+        merchantIdString = merchantIdString + storeId + ",";
+      }
+      merchantIdString = merchantIdString.substring(
+        0,
+        merchantIdString.length - 1
+      );
+      return merchantIdString;
+    },
+
+    getStoreIdsFromShoppingCart(list) {
+      let storeIds = [];
+      for (const element of list) {
+        storeIds.push(element[0].storeId);
+      }
+      return storeIds;
     }
   }
 };

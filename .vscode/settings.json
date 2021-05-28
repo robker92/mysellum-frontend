@@ -1,0 +1,15 @@
+{
+    "i18n-ally.localesPaths": "src/locale",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/99a2597a-ebb3-47fd-b0f5-91ceafdc06ec/resourceGroups/prjct/providers/Microsoft.Web/sites/prjct-frontend",
+    "appService.deploySubpath": ".",
+    "azureFunctions.deploySubpath": "api",
+    "azureFunctions.postDeployTask": "npm install",
+    "azureFunctions.projectLanguage": "JavaScript",
+    "azureFunctions.projectRuntime": "~3",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "npm prune"
+}

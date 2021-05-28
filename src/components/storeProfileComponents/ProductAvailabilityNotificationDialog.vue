@@ -69,10 +69,8 @@
 <script>
 //
 // eslint-disable-next-line no-unused-vars
-import { userService, notifService } from "../services";
-
+import { userService, notifService } from "../../services";
 import { mapState } from "vuex";
-
 import { required, email } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 //
@@ -154,7 +152,7 @@ export default {
         this.emailSendingSuccess = false;
         return;
       }
-      this.emailSendingSuccess = true;  
+      this.emailSendingSuccess = true;
       this.emailSendingError = false;
     },
     close() {

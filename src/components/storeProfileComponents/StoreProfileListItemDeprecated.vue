@@ -67,7 +67,7 @@
 
 */
 import { mapState, mapActions } from "vuex";
-import { storeService } from "../services";
+import { storeService } from "../../services";
 
 export default {
   name: "StoreProfileListItem",
