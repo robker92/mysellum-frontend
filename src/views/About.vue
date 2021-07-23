@@ -2,11 +2,8 @@
   <v-container>
     <div class="text-h3">
       Du bist nur drei Schritte von deinem lokalen kulinarischen Erlebnis
-      entfernt. Ob frisches FLeishc, frischer Fisch oder doch nur frische Eier
-      vom Bauern? Auf Mysellum findest du alles was das Herz begehrt. Go2sellum
-      Robert Kerscher ist der Gründer dieser Platform. Er ist ein toller Typ,
-      sieht super aus und sehr intelligent. Er hat die Website ganz allein
-      programmiert. Chapeau!
+      entfernt. Ob frisches Fleisch, frischer Fisch oder doch frische Eier vom
+      Bauern?
     </div>
     <v-row align="center" class="mt-5">
       <v-col cols="12" offset-lg="2" lg="4">
@@ -84,9 +81,15 @@
     <!-- <GoogleMap v-if="mapData" v-bind:markers="mapData" /> -->
     <Testimonials />
     <v-divider class="my-4" />
-    <Reasons type="buy" />
+    <div class="text-h6">
+      Why buy?
+    </div>
+    <Reasons type="buy" class="mt-3" />
     <v-divider class="my-4" />
-    <Reasons type="sell" />
+    <div class="text-h6">
+      Why sell?
+    </div>
+    <Reasons type="sell" class="mt-3" />
     <v-divider class="my-4" />
   </v-container>
 </template>
@@ -97,68 +100,59 @@ import Testimonials from "../components/Testimonials.vue";
 import Reasons from "../components/Reasons.vue";
 import fakeBackendData from "../fakeBackend/retailerMapInfo.json";
 
-import axios from "axios";
-
 export default {
   name: "AboutView",
   components: {
-    //GoogleMap
     Testimonials: Testimonials,
-    Reasons: Reasons
+    Reasons: Reasons,
   },
   data() {
     return {
       markers: fakeBackendData,
       mapData: null,
-      dataset: null
+      dataset: null,
     };
   },
+
   mounted() {
-    axios
-      //.get("http://localhost:3000/stores/5edfa27995ec324a216ea1c0")
-      .get("http://localhost:3000/stores")
-      .then(response => {
-        console.log(response.data);
-        this.dataset = response.data;
-        this.mapData = response.data;
-        //this.productList = response.data.profileData
-      });
+    // this.$vuetify.goTo(0);
   },
+
   methods: {
-    loadMarkerData() {
-      var data = [
-        {
-          location: { lat: 48.137336, lng: 11.575062 },
-          title: "Munich Plantage 1",
-          subtitle: "We are a small family business",
-          offerings: "Eggs, Milk, Cheese",
-          img: ""
-        },
-        {
-          location: { lat: 48.763943, lng: 11.424562 },
-          title: "Ingolstadt",
-          subtitle: "This is Munich",
-          offerings: "",
-          img: ""
-        },
-        {
-          location: { lat: 49.450801, lng: 11.077765 },
-          title: "Nuremberg",
-          subtitle: "This is Munich",
-          offerings: "",
-          img: ""
-        },
-        {
-          location: { lat: 52.520402, lng: 13.408364 },
-          title: "Berlin",
-          subtitle: "This is Munich",
-          offerings: "",
-          img: ""
-        }
-      ];
-      return data;
-    }
-  }
+    // loadMarkerData() {
+    //   var data = [
+    //     {
+    //       location: { lat: 48.137336, lng: 11.575062 },
+    //       title: "Munich Plantage 1",
+    //       subtitle: "We are a small family business",
+    //       offerings: "Eggs, Milk, Cheese",
+    //       img: "",
+    //     },
+    //     {
+    //       location: { lat: 48.763943, lng: 11.424562 },
+    //       title: "Ingolstadt",
+    //       subtitle: "This is Munich",
+    //       offerings: "",
+    //       img: "",
+    //     },
+    //     {
+    //       location: { lat: 49.450801, lng: 11.077765 },
+    //       title: "Nuremberg",
+    //       subtitle: "This is Munich",
+    //       offerings: "",
+    //       img: "",
+    //     },
+    //     {
+    //       location: { lat: 52.520402, lng: 13.408364 },
+    //       title: "Berlin",
+    //       subtitle: "This is Munich",
+    //       offerings: "",
+    //       img: "",
+    //     },
+    //   ];
+    //   return data;
+    // },
+  },
 };
 </script>
 

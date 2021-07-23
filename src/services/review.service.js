@@ -1,33 +1,20 @@
-/* eslint-disable prettier/prettier */
-import axios from "axios";
+import { baseClient } from "./client";
 import { authHeader, errorHandler } from "../helpers";
 
 export const reviewService = { addReview, editReview, deleteReview };
 
-const reviewBaseURL = "http://127.0.0.1:3000/stores";
-
-const reviewClient = axios.create({
-  baseURL: reviewBaseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  timeout: 20000,
-  withCredentials: true
-});
-
 async function addReview(data) {
   let response;
   try {
-    const url = `/${data.storeId}/reviews`;
-    response = await reviewClient.post(
+    const url = `/stores/${data.storeId}/reviews`;
+    response = await baseClient.post(
       url,
       {
         rating: data.rating,
-        text: data.text
+        text: data.text,
       },
       {
-        headers: authHeader()
+        headers: authHeader(),
       }
     );
   } catch (error) {
@@ -42,15 +29,15 @@ async function addReview(data) {
 async function editReview(data) {
   let response;
   try {
-    const url = `/${data.storeId}/reviews/${data.reviewId}`;
-    response = await reviewClient.patch(
+    const url = `/stores/${data.storeId}/reviews/${data.reviewId}`;
+    response = await baseClient.patch(
       url,
       {
         rating: data.rating,
-        text: data.text
+        text: data.text,
       },
       {
-        headers: authHeader()
+        headers: authHeader(),
       }
     );
   } catch (error) {
@@ -65,9 +52,9 @@ async function editReview(data) {
 async function deleteReview(data) {
   let response;
   try {
-    const url = `/${data.storeId}/reviews/${data.reviewId}`;
-    response = await reviewClient.delete(url, {
-      headers: authHeader()
+    const url = `/stores/${data.storeId}/reviews/${data.reviewId}`;
+    response = await baseClient.delete(url, {
+      headers: authHeader(),
     });
   } catch (error) {
     errorHandler(error, "deleteReview");

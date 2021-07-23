@@ -7,3 +7,5 @@ export * from "./paypal.service";
 export * from "./customerContact.service";
 export * from "./search.service";
 export * from "./review.service";
+export * from "./product.service";
+export * from "./shipping.service";

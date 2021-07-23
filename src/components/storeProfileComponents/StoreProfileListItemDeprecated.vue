@@ -67,7 +67,7 @@
 
 */
 import { mapState, mapActions } from "vuex";
-import { storeService } from "../../services";
+import { productService } from "../../services";
 
 export default {
   name: "StoreProfileListItem",
@@ -140,7 +140,7 @@ export default {
         storeId: this.$route.params.id,
         productId: this.product.productId
       };
-      var response = await storeService.deleteProduct(data);
+      var response = await productService.deleteProduct(data);
       console.log(response);
       this.$emit("delete-product", this.product.productId);
     }

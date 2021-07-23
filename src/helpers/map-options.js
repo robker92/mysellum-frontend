@@ -4,63 +4,63 @@ export const mapOptions = [
     elementType: "geometry",
     stylers: [
       {
-        color: "#ffffff"
-      }
-    ]
+        color: "#ffffff",
+      },
+    ],
   },
   {
     featureType: "road.arterial",
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#757575"
-      }
-    ]
+        color: "#757575",
+      },
+    ],
   },
   {
     featureType: "road.highway",
     elementType: "geometry",
     stylers: [
       {
-        color: "#dadada"
-      }
-    ]
+        color: "#dadada",
+      },
+    ],
   },
   {
     featureType: "road.highway",
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#616161"
-      }
-    ]
+        color: "#616161",
+      },
+    ],
   },
   {
     featureType: "road.local",
     elementType: "labels.text.fill",
     stylers: [
       {
-        color: "#9e9e9e"
-      }
-    ]
+        color: "#9e9e9e",
+      },
+    ],
   },
   {
     featureType: "transit.line",
     elementType: "geometry",
     stylers: [
       {
-        color: "#dadada"
-      }
-    ]
+        color: "#dadada",
+      },
+    ],
   },
   {
     elementType: "labels.icon",
     stylers: [
       {
-        visibility: "off"
-      }
-    ]
-  }
+        visibility: "off",
+      },
+    ],
+  },
   // {
   //     elementType: "labels.text.fill",
   //     stylers: [{
@@ -80,46 +80,50 @@ export const mapIconList = [
   {
     //text: will be displayed to the user; value: mdi icon value
     text: "fish",
-    value: "fish"
+    value: "fish",
   },
   {
     text: "barn",
-    value: "barn"
+    value: "barn",
   },
   {
     text: "wine bottle",
-    value: "bottle-wine"
+    value: "bottle-wine",
   },
   {
     text: "mug glass variant",
-    value: "glass-mug-variant"
+    value: "glass-mug-variant",
   },
-  {
-    text: "mug glass",
-    value: "glass-mug"
-  },
+  // {
+  //   text: "mug glass",
+  //   value: "glass-mug",
+  // },
   {
     text: "cow",
-    value: "cow"
-  }
+    value: "cow",
+  },
 ];
 
-import markerFishIcon from "../assets/markers/fish.png";
+import markerIconFish from "../assets/markers/fish.png";
+import markerIconBarn from "../assets/markers/barn.png";
+import markerIconWine from "../assets/markers/bottle-wine.png";
+import markerIconMug from "../assets/markers/glass-mug-variant.png";
+import markerIconCow from "../assets/markers/cow.png";
 
 //URLs for the icons
 export function getMarkerIconURL(marker) {
   switch (marker) {
     case "fish":
-      return markerFishIcon;
+      return markerIconFish;
     case "barn":
-      return markerFishIcon;
+      return markerIconBarn;
     case "bottle-wine":
-      return markerFishIcon;
+      return markerIconWine;
     case "glass-mug-variant":
-      return markerFishIcon;
-    case "glass-mug":
-      return markerFishIcon;
+      return markerIconMug;
+    // case "glass-mug":
+    //   return markerIconMug;
     case "cow":
-      return markerFishIcon;
+      return markerIconCow;
   }
 }

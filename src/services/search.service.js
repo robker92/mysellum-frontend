@@ -1,53 +1,17 @@
-/* eslint-disable prettier/prettier */
-import axios from "axios";
-
+import { baseClient } from "./client";
 import { authHeader, errorHandler } from "../helpers";
 
 export const searchService = {
   filterSortSearch,
   getStoresByLocation,
-  searchTest
 };
-
-const searchBaseURL = "http://127.0.0.1:3000/search";
-const searchClient = axios.create({
-  baseURL: searchBaseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  timeout: 20000,
-  withCredentials: true
-});
-
-async function searchTest(data) {
-  const urlQuery = buildUrlQuery(data);
-  const testData = {
-    test: 1
-  };
-  let response;
-  try {
-    response = await (
-      await fetch(`/api/searchDelivery?${urlQuery}`, {
-        method: "POST",
-        body: JSON.stringify(testData)
-      })
-    ).json();
-
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-  return response;
-}
 
 async function filterSortSearch(data) {
   const urlQuery = buildUrlQuery(data);
 
   let response;
   try {
-    response = await searchClient.get(`/search-delivery?${urlQuery}`);
+    response = await baseClient.get(`/search/search-delivery?${urlQuery}`);
   } catch (error) {
     errorHandler(error, "filterSortSearch");
     return error;
@@ -62,8 +26,8 @@ async function getStoresByLocation(mapBoundaries, data) {
 
   let response;
   try {
-    response = await searchClient.post(
-      `/getStoresByLocation/${mapBoundaries.min_lat}/${mapBoundaries.max_lat}/${mapBoundaries.min_lng}/${mapBoundaries.max_lng}?${urlQuery}`,
+    response = await baseClient.post(
+      `/search/getStoresByLocation/${mapBoundaries.min_lat}/${mapBoundaries.max_lat}/${mapBoundaries.min_lng}/${mapBoundaries.max_lng}?${urlQuery}`,
       data
     );
   } catch (error) {

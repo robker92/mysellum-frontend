@@ -9,14 +9,14 @@ import { mapOptions, getMarkerIconURL } from "../../helpers";
 
 export default {
   name: "GoogleMapProfile",
+  props: {
+    mapData: Object,
+  },
   data() {
     return {};
   },
-  props: {
-    mapData: Object
-  },
   async mounted() {
-    console.log(this.mapData.location);
+    // console.log(this.mapData.location);
     this.startMap();
   },
 
@@ -36,26 +36,26 @@ export default {
         {
           center: {
             lat: this.mapData.location.lat,
-            lng: this.mapData.location.lng
+            lng: this.mapData.location.lng,
           },
           zoom: 13,
           streetViewControl: false,
           mapTypeControl: false,
           fullscreenControl: false,
           rotateControl: false,
-          options: { styles: mapOptions }
+          options: { styles: mapOptions },
           //zoomControl: false,
           //gestureHandling: "none"
         }
       );
 
       let iconURL = getMarkerIconURL(this.mapData.mapIcon);
-      console.log(iconURL);
+      // console.log(iconURL);
       let icon = {
         //url: markerFishIcon, // url
         url: iconURL,
         // eslint-disable-next-line no-undef
-        scaledSize: new google.maps.Size(50, 50) // scaled size
+        scaledSize: new google.maps.Size(50, 50), // scaled size
         //origin: new this.google2.maps.Point(0, 0), // origin
         //anchor: new this.google2.maps.Point(0, 0) // anchor
       };
@@ -67,10 +67,10 @@ export default {
         icon: iconURL !== undefined ? icon : null,
         //animation: googleMapLoaderProfile.maps.Animation.DROP,
         title: "storeMarker",
-        clickable: false
+        clickable: false,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

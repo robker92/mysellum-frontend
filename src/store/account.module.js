@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 import { userService } from "../services";
 import {
@@ -6,7 +5,7 @@ import {
   addProductLoggedOutHelper,
   removeProductLoggedOutHelper,
   checkAuthentication,
-  errorHandler
+  errorHandler,
 } from "../helpers";
 import { getCookie } from "../helpers/auth-header";
 import { i18n } from "../main";
@@ -17,29 +16,33 @@ import { i18n } from "../main";
 // const productCounter = JSON.parse(localStorage.getItem("vuex"));
 const vuexObjct = JSON.parse(localStorage.getItem("vuex"));
 const loggedIn = getCookie("authToken");
-
+console.log(`user logged in: ${loggedIn ? true : false}`);
 const state = loggedIn
   ? {
       loggedIn: true,
       user: vuexObjct.account.user,
       shoppingCart: vuexObjct.account.shoppingCart,
       loadedCart: vuexObjct.account.loadedCart,
-      productCounter: vuexObjct.account.productCounter
+      productCounter: vuexObjct.account.productCounter,
+      shippingCosts: vuexObjct.account.shippingCosts,
+      favoriteStores: vuexObjct.account.favoriteStores,
     }
   : {
       loggedIn: false,
       user: {},
       shoppingCart: [],
       loadedCart: [],
-      productCounter: 0
+      productCounter: 0,
+      shippingCosts: 0,
+      favoriteStores: [],
     };
 
 const getters = {
-  loginInfo: state => {
+  loginInfo: (state) => {
     console.log("@getter");
     console.log(state.user);
     return state.loggedIn;
-  }
+  },
 };
 
 const actions = {
@@ -48,14 +51,16 @@ const actions = {
     return new Promise((resolve, reject) => {
       userService
         .login(credentials)
-        .then(data => {
+        .then((data) => {
           commit("loginSuccess", {
             user: data.user,
-            shoppingCart: data.shoppingCart
+            shoppingCart: data.shoppingCart,
+            shippingCosts: data.shippingCosts,
+            favoriteStores: data.favoriteStores,
           });
           resolve(data.message);
         })
-        .catch(error => {
+        .catch((error) => {
           commit("loginFailure", error);
           reject(error);
         });
@@ -71,14 +76,16 @@ const actions = {
     return new Promise((resolve, reject) => {
       userService
         .verifyRegistration(token)
-        .then(result => {
+        .then((data) => {
           commit("registerSuccess", {
-            user: result.user,
-            shoppingCart: result.shoppingCart
+            user: data.user,
+            shoppingCart: data.shoppingCart,
+            shippingCosts: data.shippingCosts,
+            favoriteStores: data.favoriteStores,
           });
-          resolve(result);
+          resolve(data);
         })
-        .catch(error => {
+        .catch((error) => {
           commit("registerFailure", error);
           reject(error);
         });
@@ -88,10 +95,13 @@ const actions = {
   addProduct({ commit, dispatch }, data) {
     userService
       .addToShoppingCart(data)
-      .then(shoppingCart => {
-        commit("addProductSuccess", shoppingCart);
+      .then((data) => {
+        commit("addProductSuccess", {
+          shoppingCart: data.shoppingCart,
+          shippingCosts: data.shippingCosts,
+        });
       })
-      .catch(error => {
+      .catch((error) => {
         errorHandler(error, "addProduct");
         commit("addProductFailure", error);
       });
@@ -100,10 +110,13 @@ const actions = {
   removeProduct({ commit }, data) {
     userService
       .removeFromShoppingCart(data)
-      .then(shoppingCart => {
-        commit("removeProductSuccess", shoppingCart);
+      .then((data) => {
+        commit("removeProductSuccess", {
+          shoppingCart: data.shoppingCart,
+          shippingCosts: data.shippingCosts,
+        });
       })
-      .catch(error => {
+      .catch((error) => {
         errorHandler(error, "removeProduct");
         commit("removeProductFailure", error);
       });
@@ -114,8 +127,11 @@ const actions = {
       data.product,
       data.quantity,
       state.shoppingCart
-    ).then(updatedCart => {
-      commit("addProductSuccess", updatedCart);
+    ).then((data) => {
+      commit("addProductSuccess", {
+        shoppingCart: data.shoppingCart,
+        shippingCosts: data.shippingCosts,
+      });
     });
   },
   removeProductLoggedOut({ commit, state }, data) {
@@ -123,8 +139,11 @@ const actions = {
       data.product,
       data.quantity,
       state.shoppingCart
-    ).then(updatedCart => {
-      commit("addProductSuccess", updatedCart);
+    ).then((data) => {
+      commit("addProductSuccess", {
+        shoppingCart: data.shoppingCart,
+        shippingCosts: data.shippingCosts,
+      });
     });
   },
 
@@ -133,13 +152,13 @@ const actions = {
       userService
         .updateShoppingCart({
           email: data.email,
-          cart: data.cart
+          cart: data.cart,
         })
         .then(() => {
           commit("updateCartSuccess", data.cart);
           resolve(data.cart);
         })
-        .catch(error => {
+        .catch((error) => {
           commit("updateCartFailure", error);
           reject(error);
         });
@@ -156,7 +175,35 @@ const actions = {
 
   setOwnedStoreId({ dispatch, commit, state }, storeId) {
     commit("setOwnedStoreIdSuccess", storeId);
-  }
+  },
+
+  addStoreToFavorites({ commit, state }, storeId) {
+    return new Promise((resolve, reject) => {
+      userService
+        .addStoreToFavorites(storeId)
+        .then((storeId) => {
+          commit("addStoreToFavoritesSuccess", storeId);
+          resolve(storeId);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+
+  removeStoreFromFavorites({ commit, state }, storeId) {
+    return new Promise((resolve, reject) => {
+      userService
+        .removeStoreFromFavorites(storeId)
+        .then((storeId) => {
+          commit("removeStoreFromFavoritesSuccess", storeId);
+          resolve(storeId);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
 };
 
 function calculateProductCounter(state) {
@@ -173,21 +220,25 @@ function calculateProductCounter(state) {
 }
 
 const mutations = {
-  loginSuccess(state, response) {
+  loginSuccess(state, data) {
     state.loggedIn = true;
-    state.user = response.user;
+    state.user = data.user;
     if (state.shoppingCart.length > 0) {
-      state.loadedCart = response.shoppingCart;
+      state.loadedCart = data.shoppingCart;
     } else {
-      state.shoppingCart = response.shoppingCart;
+      state.shoppingCart = data.shoppingCart;
     }
-    //concatenate shopping carts
+    state.shippingCosts = data.shippingCosts;
+    state.favoriteStores = data.favoriteStores;
+    // concatenate shopping carts
     calculateProductCounter(state);
   },
 
   loginFailure(state) {
     state.loggedIn = false;
     state.user = {};
+    state.productCounter = 0;
+    state.shippingCosts = 0;
   },
 
   logout(state) {
@@ -196,18 +247,17 @@ const mutations = {
     state.shoppingCart = [];
     state.loadedCart = [];
     state.productCounter = 0;
+    state.shippingCosts = 0;
+    state.favoriteStores = [];
   },
 
-  registerRequest(state, user) {
-    state.registering = true;
-    state.user = {};
-  },
-
-  registerSuccess(state, response) {
+  registerSuccess(state, data) {
     // state.status = {};
     state.loggedIn = true;
-    state.user = response.user;
-    state.shoppingCart = response.shoppingCart;
+    state.user = data.user;
+    state.shoppingCart = data.shoppingCart;
+    state.shippingCosts = data.shippingCosts;
+    state.favoriteStores = data.favoriteStores;
   },
 
   registerFailure(state, error) {
@@ -216,30 +266,25 @@ const mutations = {
     state.user = {};
   },
 
-  addProductSuccess(state, shoppingCart) {
-    state.shoppingCart = shoppingCart;
+  addProductSuccess(state, data) {
+    console.log(data);
+    state.shoppingCart = data.shoppingCart;
+    state.shippingCosts = data.shippingCosts;
     calculateProductCounter(state);
   },
 
-  addProductFailure(state) {},
-
-  deleteProductSuccess(state, shoppingCart) {
-    state.shoppingCart = shoppingCart;
+  removeProductSuccess(state, data) {
+    state.shoppingCart = data.shoppingCart;
+    state.shippingCosts = data.shippingCosts;
     calculateProductCounter(state);
   },
 
-  removeProductSuccess(state, shoppingCart) {
-    state.shoppingCart = shoppingCart;
-    calculateProductCounter(state);
-  },
-
-  updateCartSuccess(state, shoppingCart) {
-    state.shoppingCart = shoppingCart;
+  updateCartSuccess(state, data) {
+    state.shoppingCart = data.shoppingCart;
+    state.shippingCosts = data.shippingCosts;
     //state.loadedCart = [];
     calculateProductCounter(state);
   },
-
-  updateCartFailure(state) {},
 
   emptyLoadedCartSuccess(state) {
     state.loadedCart = [];
@@ -248,12 +293,26 @@ const mutations = {
   emptyShoppingCartSuccess(state) {
     state.shoppingCart = [];
     state.productCounter = 0;
+    state.shippingCosts = 0;
   },
 
   setOwnedStoreIdSuccess(state, storeId) {
     console.log(storeId);
     state.user.ownedStoreId = storeId;
-  }
+  },
+
+  // Favorites
+  addStoreToFavoritesSuccess(state, storeId) {
+    state.favoriteStores.push(storeId);
+  },
+
+  addStoreToFavoritesFailure() {},
+
+  removeStoreFromFavoritesSuccess(state, storeId) {
+    state.favoriteStores.splice(state.favoriteStores.indexOf(storeId), 1);
+  },
+
+  removeStoreFromFavoritesFailure() {},
 };
 
 export const account = {
@@ -261,5 +320,5 @@ export const account = {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

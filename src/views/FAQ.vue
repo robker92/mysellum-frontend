@@ -26,7 +26,7 @@ export default {
         {
           question: "Test Question 0",
           answer:
-            "This is an test answer. This is an test answer. This is an test answer. This is an test answer. This is an test answer. This is an test answer. This is an test answer."
+            "This is an test answer. This is an test answer. This is an test answer. This is an test answer. This is an test answer. This is an test answer. This is an test answer.",
         },
         { question: "Test Question 1", answer: "This is an test answer." },
         { question: "Test Question 2", answer: "This is an test answer." },
@@ -35,13 +35,16 @@ export default {
         { question: "Test Question 5", answer: "This is an test answer." },
         { question: "Test Question 6", answer: "This is an test answer." },
         { question: "Test Question 7", answer: "This is an test answer." },
-        { question: "Test Question 8", answer: "This is an test answer." }
-      ]
+        { question: "Test Question 8", answer: "This is an test answer." },
+      ],
     };
   },
-  watch: {},
   computed: {},
-  methods: {}
+  watch: {},
+  mounted() {
+    // this.$vuetify.goTo(0);
+  },
+  methods: {},
 };
 </script>
 

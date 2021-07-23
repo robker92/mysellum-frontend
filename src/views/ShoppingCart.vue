@@ -41,15 +41,37 @@
                   </v-alert>
                 </div>
 
-                <ShoppingCartListItem
-                  v-else
-                  v-for="(prod, index) in this.shoppingCart"
-                  v-bind:key="index"
-                  v-bind:product="prod[0]"
-                  v-bind:amount="prod[1]"
-                  :modifiable="true"
-                  class="my-3"
-                />
+                <v-row no-gutters height="60px" align="center">
+                  <v-col sm="7"> </v-col>
+                  <v-col sm="1">
+                    <div class="text-center font-weight-bold">
+                      Quantity
+                    </div>
+                  </v-col>
+                  <v-col sm="2"> </v-col>
+                  <v-col sm="1">
+                    <div class="text-center font-weight-bold">
+                      Price
+                    </div>
+                  </v-col>
+                  <v-col sm="1">
+                    <div class="text-center font-weight-bold">
+                      Total
+                    </div>
+                  </v-col>
+                </v-row>
+
+                <div v-if="this.shoppingCart.length > 0">
+                  <ShoppingCartListItem
+                    v-for="(prod, index) in this.shoppingCart"
+                    :key="index"
+                    :product="prod[0]"
+                    :amount="prod[1]"
+                    :modifiable="true"
+                    class="my-3"
+                  />
+                </div>
+
                 <div v-if="this.loadedCart.length > 0">
                   <v-divider />
                   <div class="text-left text-h5 my-3">
@@ -77,9 +99,9 @@
                   </v-alert>
                   <ShoppingCartListItem
                     v-for="(prod, index) in this.loadedCart"
-                    v-bind:key="index"
-                    v-bind:product="prod[0]"
-                    v-bind:amount="prod[1]"
+                    :key="index"
+                    :product="prod[0]"
+                    :amount="prod[1]"
                     :modifiable="false"
                     class="my-3"
                   />
@@ -91,7 +113,9 @@
                     <div class="text-left text-body-1">Shipping costs:</div>
                   </v-col>
                   <v-col cols="12" sm="1">
-                    <div class="text-right text-body-1">0.00€</div>
+                    <div class="text-right text-body-1">
+                      {{ shippingCosts }}€
+                    </div>
                   </v-col>
                 </v-row>
 
@@ -110,13 +134,13 @@
                   <v-spacer />
                   <v-btn
                     color="primary"
-                    @click="goToStep2"
                     :disabled="
                       this.shoppingCart.length > 0 &&
                       this.loadedCart.length === 0
                         ? false
                         : true
                     "
+                    @click="goToStep2"
                   >
                     To Checkout
                   </v-btn>
@@ -128,21 +152,18 @@
           <v-stepper-content step="2">
             <v-card flat>
               <v-container>
-                <div class="text-h5 text-left font-weight-medium mb-4">
-                  Checkout - Adresses and Payment
-                </div>
                 <ShoppingCartCheckout
-                  v-on:step2-continue-button="continueButtonStep2"
+                  @step2-continue-button="continueButtonStep2"
                 />
                 <v-card-actions class="mt-3">
-                  <v-spacer />
                   <v-btn text @click="e1 = e1 - 1">
                     Back
                   </v-btn>
+                  <v-spacer />
                   <v-btn
                     color="primary"
-                    @click="goToStep3"
                     :disabled="step2ContinueDisabled"
+                    @click="goToStep3"
                   >
                     To final Overview
                   </v-btn>
@@ -158,30 +179,31 @@
                   Final Overview
                 </div>
                 <ShoppingCartFinalOverview
-                  :computedTotalSum="computedTotalSum"
+                  :computed-total-sum="computedTotalSum"
+                  :shipping-costs="shippingCosts"
                 />
 
                 <v-card-actions class="mt-3">
-                  <v-spacer />
                   <v-btn text @click="e1 = e1 - 1">
                     back
                   </v-btn>
-                  <v-btn color="primary" @click="createOrder">
+                  <v-spacer />
+                  <!-- <v-btn color="primary" @click="createOrder">
                     Complete Purchase
-                  </v-btn>
+                  </v-btn> -->
 
                   <!-- Smart Buttons -->
                   <v-card
+                    v-if="shoppingCart.length > 0"
                     width="250px"
                     class="mt-3"
-                    v-if="this.shoppingCart.length > 0"
                   >
-                    <v-container>
+                    <v-container v-if="loggedIn === true">
                       <PaypalSmartButton
-                        :orderData="getPaypalCreateOrderData()"
-                        v-on:paypal-order-successful="paypalOrderCreated"
-                        v-on:overlay-start="setOverlay(true)"
-                        v-on:overlay-end="setOverlay(false)"
+                        :order-data="getPaypalCreateOrderData()"
+                        @paypal-order-successful="paypalOrderCreated"
+                        @overlay-start="setOverlay(true)"
+                        @overlay-end="setOverlay(false)"
                       />
                     </v-container>
                   </v-card>
@@ -203,7 +225,7 @@ import ShoppingCartCheckout from "../components/shoppingCartComponents/ShoppingC
 import ShoppingCartFinalOverview from "../components/shoppingCartComponents/ShoppingCartFinalOverview";
 import LoginDialog from "../components/LoginDialog";
 
-import { orderService } from "../services";
+import { orderService, shippingService } from "../services";
 
 import PaypalSmartButton from "../components/shoppingCartComponents/PaypalSmartButton.vue";
 
@@ -215,12 +237,13 @@ export default {
     ShoppingCartCheckout,
     ShoppingCartFinalOverview,
     LoginDialog,
-    PaypalSmartButton
+    PaypalSmartButton,
   },
 
   data() {
     return {
       mapData: null,
+      // shippingCosts: 0,
       e1: 1,
       step2Editable: false,
       step3Editable: false,
@@ -230,18 +253,18 @@ export default {
 
       overlay: false,
 
-      orderData2: {
-        description: "Buy thing",
-        amount: {
-          currency_code: "USD",
-          value: 1000
-        }
-      }
+      // orderData2: {
+      //   description: "Buy thing",
+      //   amount: {
+      //     currency_code: "USD",
+      //     value: 1000,
+      //   },
+      // },
       //step3CompletePurchaseDisabled: true
     };
   },
 
-  mounted() {
+  async mounted() {
     console.log(this.shoppingCart);
   },
 
@@ -251,14 +274,18 @@ export default {
       "user",
       "loggedIn",
       "shoppingCart",
+      "shippingCosts",
       "loadedCart",
-      "productCounter"
+      "productCounter",
     ]),
     computedTotalSum: {
       get() {
-        return calculateTotalCartSum(this.shoppingCart);
-      }
-    }
+        return (
+          parseFloat(calculateTotalCartSum(this.shoppingCart)) +
+          parseFloat(this.shippingCosts)
+        ).toFixed(2);
+      },
+    },
   },
 
   methods: {
@@ -267,12 +294,12 @@ export default {
       "undoMerge",
       "updateCart",
       "emptyLoadedCart",
-      "emptyShoppingCart"
+      "emptyShoppingCart",
     ]),
     ...mapActions("snackbar", [
       "addSuccessSnackbar",
       "addInfoSnackbar",
-      "addErrorSnackbar"
+      "addErrorSnackbar",
     ]),
 
     goToStep2() {
@@ -296,7 +323,7 @@ export default {
 
     removeProductFromArray(productId) {
       var indexOfProduct = this.profileData.products.findIndex(
-        r => r.productId === productId
+        (r) => r.productId === productId
       );
       this.profileData.products.splice(indexOfProduct, 1);
     },
@@ -306,7 +333,7 @@ export default {
       console.log(this.orderData);
       var data = {
         user: {
-          email: this.user.email
+          email: this.user.email,
         },
         date: new Date(),
         // type: "pickUp",
@@ -318,8 +345,8 @@ export default {
           steps: {
             orderReceived: 1,
             paymentReceived: 0,
-            inDelivery: 0
-          }
+            inDelivery: 0,
+          },
         },
         shippingAddress: this.orderData.shippingAddress,
         billingAddress: this.orderData.billingAddress,
@@ -327,7 +354,7 @@ export default {
         payment: this.orderData.payment,
         totalSum: calculateTotalCartSum(this.shoppingCart),
         currency: "EUR",
-        currencySymbol: "€"
+        currencySymbol: "€",
       };
       try {
         await orderService.createOrder(data);
@@ -370,7 +397,7 @@ export default {
       try {
         await this.updateCart({
           email: this.user.email,
-          cart: this.shoppingCart
+          cart: this.shoppingCart,
         });
       } catch (error) {
         this.addErrorSnackbar("Error while merge abort.");
@@ -391,15 +418,15 @@ export default {
         products: this.shoppingCart,
         billingAddress: this.orderData.billingAddress,
         shippingAddress: this.orderData.shippingAddress,
-        currencyCode: "EUR"
+        currencyCode: "EUR",
       };
       return data;
     },
 
     setOverlay(value) {
       this.overlay = value;
-    }
-  }
+    },
+  },
 };
 </script>
 

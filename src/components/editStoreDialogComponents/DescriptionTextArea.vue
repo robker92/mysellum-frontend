@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ma-1" color="grey lighten-4">
+  <v-card class="ma-3">
     <v-container>
       <div class="text-caption text-left grey--text text--darken-1 mx-0">
         Store Description*
@@ -74,13 +74,13 @@
         ref="editor"
         class="editor pa-0"
         contenteditable
-        v-html="storeDescription"
-        @input="onInput"
         autocorrection="off"
         autocomplete="off"
         onkeypress="setTimeout(function() { var height = document.getElementById('editor').scrollHeight; console.log(height); if(height > 350){document.getElementById('editor').style.height = height+'px';}}, 0)"
         onpaste="setTimeout(function() { var height = document.getElementById('editor').scrollHeight; console.log(height); if(height > 350){document.getElementById('editor').style.height = height+'px';}}, 0)"
         tabindex="100"
+        @input="onInput"
+        v-html="storeDescription"
       />
       <div class="text-caption text-right">
         <div
@@ -109,8 +109,18 @@ import { validationMixin } from "vuelidate";
 export default {
   name: "EditStoreDialogDescriptionTextArea",
 
+  mixins: [validationMixin],
+
   props: {
-    storeDescriptionInput: String
+    storeDescriptionInput: String,
+  },
+  data() {
+    return {
+      editedHtmlText: "", // Var to save the changed description
+      storeDescription: "", // Var which holds the init description value
+      storeDescriptionMin: 100,
+      storeDescriptionMax: 1000,
+    };
   },
   watch: {
     storeDescriptionInput: {
@@ -120,26 +130,16 @@ export default {
           this.storeDescription = newVal;
           this.editedHtmlText = newVal;
         }
-      }
-    }
+      },
+    },
   },
-  data() {
-    return {
-      editedHtmlText: "", // Var to save the changed description
-      storeDescription: "", // Var which holds the init description value
-      storeDescriptionMin: 100,
-      storeDescriptionMax: 1000
-    };
-  },
-
-  mixins: [validationMixin],
 
   validations: {
     storeDescription: {
       required,
       minLength: minLength(100),
-      maxLength: maxLength(1000)
-    }
+      maxLength: maxLength(1000),
+    },
   },
 
   computed: {
@@ -151,7 +151,7 @@ export default {
         // } else {
         //   return 0;
         // }
-      }
+      },
     },
     storeDescriptionErrors() {
       const errors = [];
@@ -178,7 +178,7 @@ export default {
         this.$emit("description-valid");
       }
       return errors;
-    }
+    },
   },
 
   methods: {
@@ -224,8 +224,8 @@ export default {
       } else if (pxSize == "48px") {
         return 7;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

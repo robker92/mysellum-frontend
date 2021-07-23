@@ -1,25 +1,18 @@
 <template>
-  <div>
-    <v-container v-if="alreadySent === false">
+  <v-container>
+    <div v-if="alreadySent === false">
       <div class="text-left text-h5">
         {{ this.$t("forgotPassword.headline") }}
       </div>
-      <v-alert
-        border="left"
-        type="info"
-        outlined
-        max-width="60%"
-        class="mt-5"
-        dense
-      >
+      <v-alert border="left" type="info" outlined class="mt-5" dense>
         {{ this.$t("forgotPassword.infoAlert") }}
       </v-alert>
 
-      <v-card class="mt-5" max-width="60%">
+      <v-card class="mt-5 text-center">
         <v-container>
           <v-text-field
-            prepend-icon="mdi-email"
             v-model="email"
+            prepend-icon="mdi-email"
             :error-messages="emailErrors"
             :label="$t('loginDialog.emailField') + '*'"
             required
@@ -49,11 +42,11 @@
               />
             </template>
             <v-date-picker
-              locale="de-de"
               v-model="birthDate"
+              locale="de-de"
               no-title
-              @input="birthDateMenu = false"
               first-day-of-week="1"
+              @input="birthDateMenu = false"
             ></v-date-picker>
           </v-menu>
 
@@ -63,24 +56,24 @@
               color="primary"
               dark
               right
-              @click="sendResetEmail"
               :disabled="buttonIsDisabled"
+              @click="sendResetEmail"
             >
               {{ this.$t("forgotPassword.sendMailButtonLabel") }}
             </v-btn>
           </v-card-actions>
         </v-container>
       </v-card>
-    </v-container>
-    <v-container v-else>
+    </div>
+    <div v-else>
       <div text-body-1>
         {{ this.$t("forgotPassword.successfullySentBody") }}
       </div>
-    </v-container>
+    </div>
     <v-overlay v-model="overlay">
       <v-progress-circular indeterminate size="80"></v-progress-circular>
     </v-overlay>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -96,7 +89,17 @@ export default {
 
   validations: {
     email: { required, email },
-    birthDate: { required }
+    birthDate: { required },
+  },
+
+  data() {
+    return {
+      email: "",
+      birthDate: null,
+      birthDateMenu: false,
+      alreadySent: false,
+      overlay: false,
+    };
   },
 
   computed: {
@@ -136,17 +139,7 @@ export default {
           this.birthDate.substring(0, 4)
         );
       }
-    }
-  },
-
-  data() {
-    return {
-      email: "",
-      birthDate: null,
-      birthDateMenu: false,
-      alreadySent: false,
-      overlay: false
-    };
+    },
   },
 
   mounted() {
@@ -159,7 +152,7 @@ export default {
     async sendResetEmail() {
       let payload = {
         email: this.email,
-        birthdate: this.birthDateFormat
+        birthdate: this.birthDateFormat,
       };
       this.overlay = true;
       try {
@@ -179,8 +172,8 @@ export default {
         //this.addErrorSnackbar("Error while sending the password reset mail!");
       }
       this.overlay = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

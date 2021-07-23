@@ -4,7 +4,6 @@
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           v-bind="attrs"
-          v-on="on"
           width="60px"
           color="primary"
           dark
@@ -12,6 +11,7 @@
           tile
           elevation="0"
           class="rounded-xl"
+          v-on="on"
         >
           <v-icon color="primary">mdi-earth</v-icon>
           <v-icon color="primary">mdi-chevron-down</v-icon>
@@ -26,8 +26,8 @@
             <v-list-item
               v-for="(item, index) in supportedLanguages"
               :key="index"
-              @click="changeLocale2(item)"
               link
+              @click="changeLocale2(item)"
             >
               <v-list-item-icon>
                 <country-flag :country="item.flag" />
@@ -93,10 +93,10 @@ export default {
           .then(msgs => {
             i18n.setLocaleMessage(chosenLocale, msgs.default || msgs); //add Messages from new language file
             i18n.locale = chosenLocale; // set locale
-            if (chosenLocale !== this.$router.currentRoute.params.locale) {
-              //if Route contains other locale -> push to router
-              this.pushToRouter(chosenLocale);
-            }
+            // if (chosenLocale !== this.$router.currentRoute.params.locale) {
+            //   //if Route contains other locale -> push to router
+            //   this.pushToRouter(chosenLocale);
+            // }
           })
           .catch(error => {
             //Chosen language not yet included -> Fallback: En
@@ -104,16 +104,16 @@ export default {
             console.log(error);
             chosenLocale = "en";
             i18n.locale = chosenLocale; // set en locale
-            if (chosenLocale !== this.$router.currentRoute.params.locale) {
-              //if Route contains other locale -> push to router
-              this.pushToRouter(chosenLocale);
-            }
+            // if (chosenLocale !== this.$router.currentRoute.params.locale) {
+            //   //if Route contains other locale -> push to router
+            //   this.pushToRouter(chosenLocale);
+            // }
           });
       } else {
         i18n.locale = chosenLocale;
-        if (chosenLocale !== this.$router.currentRoute.params.locale) {
-          this.pushToRouter(chosenLocale);
-        }
+        // if (chosenLocale !== this.$router.currentRoute.params.locale) {
+        //   this.pushToRouter(chosenLocale);
+        // }
       }
     },
 

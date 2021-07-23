@@ -10,19 +10,19 @@
           cycle
           :show-arrows-on-hover="store.profileData.images.length > 1"
           :show-arrows="store.profileData.images.length > 1"
+          :hide-delimiters="store.profileData.images.length < 2"
           height="200px"
           style="width:400px;"
-          :hide-delimiters="store.profileData.images.length < 2"
         >
+          <!-- :to="{
+              name: 'StoreProfile',
+              params: { id: store._id },
+            }" -->
           <v-carousel-item
             v-for="(img, i) in store.profileData.images"
             :key="i"
-            :to="{
-              name: 'StoreProfile',
-              params: { id: store._id, locale: $i18n.locale }
-            }"
-            ,
             eager
+            @click="goToStore()"
           >
             <v-img :src="img.src" height="100%" eager>
               <template v-slot:placeholder>
@@ -33,6 +33,44 @@
                   ></v-progress-circular>
                 </v-row>
               </template>
+              <v-row class="mt-2 mr-2">
+                <v-spacer />
+                <v-tooltip
+                  v-if="!checkFavoriteStore || loggedIn === false"
+                  bottom
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      v-bind="attrs"
+                      :ripple="false"
+                      v-on="on"
+                      @click.stop="addFavorites()"
+                    >
+                      <v-icon color="pink">mdi-heart-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Add to favorites</span>
+                </v-tooltip>
+
+                <v-tooltip
+                  v-if="checkFavoriteStore && loggedIn === true"
+                  bottom
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      v-bind="attrs"
+                      :ripple="false"
+                      v-on="on"
+                      @click.stop="removeFavorites()"
+                    >
+                      <v-icon color="pink">mdi-heart</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Remove from favorites</span>
+                </v-tooltip>
+              </v-row>
             </v-img>
           </v-carousel-item>
         </v-carousel>
@@ -40,7 +78,7 @@
         <router-link
           :to="{
             name: 'StoreProfile',
-            params: { id: store._id, locale: $i18n.locale }
+            params: { id: store._id, locale: $i18n.locale },
           }"
           style="text-decoration: none; color: inherit;"
         >
@@ -73,15 +111,15 @@
                 <div v-if="store">
                   <v-chip-group column>
                     <v-chip
+                      v-for="(tag, index) in store.profileData.tags"
+                      :key="index"
                       small
                       outlined
                       class="ma-1"
                       color="primary"
-                      v-for="(tag, index) in store.profileData.tags"
-                      :key="index"
                       :to="{
                         name: 'StoreProfile',
-                        params: { id: store._id, locale: $i18n.locale }
+                        params: { id: store._id },
                       }"
                       >{{ tag }}</v-chip
                     >
@@ -89,46 +127,42 @@
                 </div>
               </v-col>
             </v-row>
-            <!-- <v-row align-content="center">
-              <v-icon>mdi-truck-delivery</v-icon>
-              <v-icon>mdi-hand-heart</v-icon>
-            </v-row> -->
-            <!-- <v-divider class="mx-1 mb-3"></v-divider>
-            <v-row>{{
-              getCutDescription(store.profileData.description)
-            }}</v-row> -->
           </v-card-text>
         </router-link>
 
         <v-card-actions>
-          <v-tooltip bottom>
+          <v-tooltip v-if="store.pickup" bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
+              <v-chip
                 v-bind="attrs"
+                class="ma-0 mr-2 primary"
+                outlined
+                :to="{
+                  name: 'StoreProfile',
+                  params: { id: store._id },
+                }"
                 v-on="on"
-                color="cyan accent-4"
-                :ripple="false"
-                class="btnNoHover"
               >
-                <v-icon>mdi-hand-heart</v-icon>
-              </v-btn>
+                <v-icon color="primary">mdi-hand-heart</v-icon>
+              </v-chip>
             </template>
             <span>Offers self pickup</span>
           </v-tooltip>
 
-          <v-tooltip bottom>
+          <v-tooltip v-if="store.delivery" bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
+              <v-chip
                 v-bind="attrs"
+                class="ma-0 primary"
+                :to="{
+                  name: 'StoreProfile',
+                  params: { id: store._id },
+                }"
+                outlined
                 v-on="on"
-                :ripple="false"
-                color="cyan accent-4"
-                class="btnNoHover"
               >
-                <v-icon>mdi-truck-delivery</v-icon>
-              </v-btn>
+                <v-icon color="primary">mdi-truck-delivery</v-icon>
+              </v-chip>
             </template>
             <span>Offers delivery</span>
           </v-tooltip>
@@ -137,47 +171,37 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
+              <v-chip
+                v-if="getStoreOpened(store)"
                 v-bind="attrs"
+                class="ma-0"
+                color="green"
+                text-color="white"
+                :to="{
+                  name: 'StoreProfile',
+                  params: { id: store._id },
+                }"
                 v-on="on"
-                :ripple="false"
-                @click="print"
               >
-                <v-icon>mdi-heart-outline</v-icon>
-              </v-btn>
-            </template>
-            <span>Add to favorites</span>
-          </v-tooltip>
-
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
+                Opened
+              </v-chip>
+              <v-chip
+                v-else
                 v-bind="attrs"
+                class="ma-0"
+                :to="{
+                  name: 'StoreProfile',
+                  params: { id: store._id },
+                }"
                 v-on="on"
-                :ripple="false"
-                @click="print"
               >
-                <v-icon>mdi-bookmark-outline</v-icon>
-              </v-btn>
+                Closed
+              </v-chip>
             </template>
-            <span>Bookmark</span>
-          </v-tooltip>
-
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-                :ripple="false"
-                @click="print"
-              >
-                <v-icon>mdi-share-variant</v-icon>
-              </v-btn>
-            </template>
-            <span>Share</span>
+            <span v-if="getStoreOpened(store)"
+              >This store is currently opened</span
+            >
+            <span v-else>This store is currently closed</span>
           </v-tooltip>
         </v-card-actions>
       </v-card>
@@ -186,17 +210,91 @@
 </template>
 
 <script>
+import { checkIfStoreOpened } from "../../helpers";
+import { mapState, mapActions } from "vuex";
+
 export default {
   name: "SearchStoreListItem",
   props: {
     store: Object,
-    elevated: Boolean
+    elevated: Boolean,
+    view: String,
   },
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapState("account", ["user", "loggedIn", "favoriteStores"]),
+    checkFavoriteStore() {
+      if (
+        this.loggedIn === true &&
+        this.favoriteStores.includes(this.store._id)
+      ) {
+        return true;
+      }
+      return false;
+    },
+  },
   methods: {
+    ...mapActions("snackbar", [
+      "addSuccessSnackbar",
+      "addErrorSnackbar",
+      "addInfoSnackbar",
+    ]),
+    ...mapActions("account", [
+      "addStoreToFavorites",
+      "removeStoreFromFavorites",
+    ]),
+
+    async removeFavorites() {
+      if (this.loggedIn === false) {
+        this.addInfoSnackbar(
+          "Please login to remove this store from your favorites."
+        );
+        return;
+      }
+      try {
+        await this.removeStoreFromFavorites(this.store._id);
+      } catch (error) {
+        // console.log(error);
+        this.addErrorSnackbar("Error while removing store from favorites.");
+        return;
+      }
+      this.addSuccessSnackbar("Store was removed from favorites.");
+      if (this.view === "FavoriteStores") {
+        this.$emit("reload-stores");
+      }
+      return;
+    },
+
+    async addFavorites() {
+      if (this.loggedIn === false) {
+        this.addInfoSnackbar(
+          "Please login to add this store to your favorites."
+        );
+        return;
+      }
+      try {
+        await this.addStoreToFavorites(this.store._id);
+      } catch (error) {
+        // console.log(error);
+        this.addErrorSnackbar("Error while adding store to favorites.");
+        return;
+      }
+      this.addSuccessSnackbar("Store was added to favorites.");
+      if (this.view === "FavoriteStores") {
+        this.$emit("reload-stores");
+      }
+      return;
+    },
+
+    goToStore() {
+      this.$router.push({
+        name: "StoreProfile",
+        params: { id: this.store._id },
+      });
+    },
+
     print() {
       console.log(this.store);
     },
@@ -205,8 +303,12 @@ export default {
     },
     getAvgRating(store) {
       return parseFloat(store.profileData.avgRating);
-    }
-  }
+    },
+    getStoreOpened(store) {
+      const check = checkIfStoreOpened(store.openingHours);
+      return check.opened;
+    },
+  },
 };
 </script>
 

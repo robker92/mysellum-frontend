@@ -13,7 +13,7 @@
         <v-container fluid class="ma-0 pa-0">
           <v-row>
             <v-col>
-              {{ this.rating }}
+              <!-- {{ this.rating }} -->
               <v-rating
                 v-model="rating"
                 background-color="orange lighten-3"
@@ -27,9 +27,9 @@
                 :counter="1000"
                 label="Review Text"
                 :error-messages="reviewTextErrors"
+                required
                 @input="$v.reviewText.$touch()"
                 @blur="$v.reviewText.$touch()"
-                required
               />
             </v-col>
           </v-row>
@@ -40,8 +40,8 @@
         <v-btn color="indigo" text @click="cancel">Close</v-btn>
         <v-btn
           color="primary"
-          @click="submitReview"
           :disabled="buttonIsDisabled"
+          @click="submitReview"
           >Submit</v-btn
         >
       </v-card-actions>
@@ -65,21 +65,21 @@ export default {
     reviewText: {
       required,
       minLength: minLength(20),
-      maxLength: maxLength(1000)
-    }
+      maxLength: maxLength(1000),
+    },
+  },
+
+  props: {
+    value: Boolean,
+    reviewToEdit: Object,
   },
 
   data() {
     return {
       dialog: false,
       reviewText: "",
-      rating: 0
+      rating: 0,
     };
-  },
-
-  props: {
-    value: Boolean,
-    reviewToEdit: Object
   },
 
   watch: {
@@ -88,7 +88,7 @@ export default {
         this.rating = newVal.rating;
         this.reviewText = newVal.text;
       }
-    }
+    },
   },
 
   computed: {
@@ -99,7 +99,7 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
+      },
     },
 
     buttonIsDisabled() {
@@ -121,7 +121,7 @@ export default {
       !this.$v.reviewText.required &&
         errors.push("A review text ist required.");
       return errors;
-    }
+    },
   },
 
   methods: {
@@ -131,7 +131,7 @@ export default {
       let data = {
         storeId: this.$route.params.id,
         rating: this.rating,
-        text: this.reviewText
+        text: this.reviewText,
       };
 
       if (this.reviewToEdit === null) {
@@ -171,8 +171,8 @@ export default {
       this.reviewText = "";
       this.$emit("reviewToEdit-to-null");
       this.show = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

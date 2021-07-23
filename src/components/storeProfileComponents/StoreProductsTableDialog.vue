@@ -17,7 +17,7 @@
           hide-details
           class="mb-3"
         />
-        <v-btn @click.stop="addProduct" color="pink" dark outlined class="ml-3">
+        <v-btn color="pink" dark outlined class="ml-3" @click.stop="addProduct">
           <v-icon> mdi-plus </v-icon></v-btn
         >
       </v-card-title>
@@ -52,9 +52,9 @@
                     v-model="props.item.stockAmount"
                     type="number"
                     label="Stock Amount*"
-                    @keyup.enter="updateStock(props.item)"
                     single-line
                     counter
+                    @keyup.enter="updateStock(props.item)"
                   ></v-text-field>
                 </template>
               </v-edit-dialog>
@@ -84,7 +84,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import { storeService } from "../../services";
+import { productService } from "../../services";
 
 export default {
   name: "StoreProductsTableDialog",
@@ -140,7 +140,7 @@ export default {
         productId: product._id
       };
       this.$emit("overlay-start");
-      let response = await storeService.deleteProduct(data);
+      let response = await productService.deleteProduct(data);
       console.log(response);
       this.$emit("delete-product", product._id);
       this.$emit("overlay-end");
@@ -159,7 +159,7 @@ export default {
       };
       this.$emit("overlay-start");
       try {
-        await storeService.updateStockAmount(data);
+        await productService.updateStockAmount(data);
       } catch (error) {
         this.$emit("overlay-end");
         return;

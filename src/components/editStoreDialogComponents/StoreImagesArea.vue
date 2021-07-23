@@ -4,7 +4,7 @@
       <v-row>
         <AddStoreImageDialog
           v-model="showAddStoreImageDialog"
-          v-on:add-store-image="addNewImageToArray"
+          @add-store-image="addNewImageToArray"
         />
         <v-col
           v-for="(img, index) in this.storeImages"
@@ -17,17 +17,19 @@
         >
           <v-card flat tile>
             <v-img :src="img.src" height="200px" class="grey lighten-2">
-              <v-btn
-                icon
-                outlined
-                absolute
-                top
-                left
-                color="red"
-                @click="deleteImage(index)"
-              >
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
+              <v-hover v-slot="{ hover }">
+                <v-btn
+                  :elevation="hover ? 16 : 2"
+                  :class="{ 'on-hover': hover }"
+                  icon
+                  absolute
+                  top
+                  left
+                  @click="deleteImage(index)"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </v-hover>
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
                   <v-progress-circular
@@ -58,12 +60,12 @@
           </v-card>
         </v-col>
         <v-col
+          v-if="storeImages.length !== storeImagesMax"
           cols="12"
           xs="6"
           sm="6"
           md="4"
           lg="3"
-          v-if="storeImages.length !== storeImagesMax"
         >
           <v-hover v-slot:default="{ hover }">
             <v-card
@@ -75,8 +77,8 @@
               height="200px"
               @click="showAddStoreImageDialog = true"
             >
-              <v-btn xLarge dark color="grey lighten-1">
-                <v-icon xLarge>mdi-plus</v-icon>
+              <v-btn x-large dark color="grey lighten-1">
+                <v-icon x-large>mdi-plus</v-icon>
               </v-btn>
             </v-card>
           </v-hover>
@@ -111,21 +113,21 @@ export default {
   name: "StoreImagesArea",
 
   components: {
-    AddStoreImageDialog: AddStoreImageDialog
+    AddStoreImageDialog: AddStoreImageDialog,
   },
 
   mixins: [validationMixin],
 
   props: {
-    mode: String
+    mode: String,
   },
 
   validations: {
     storeImages: {
       required,
       minLength: minLength(1),
-      maxLength: maxLength(10)
-    }
+      maxLength: maxLength(10),
+    },
   },
 
   data() {
@@ -133,11 +135,9 @@ export default {
       storeImages: [],
       storeImagesMin: 1,
       storeImagesMax: 10,
-      showAddStoreImageDialog: false
+      showAddStoreImageDialog: false,
     };
   },
-
-  watch: {},
 
   computed: {
     storeImagesErrors() {
@@ -155,8 +155,10 @@ export default {
       !imageArray.required &&
         errors.push("At least one store image is required.");
       return errors;
-    }
+    },
   },
+
+  watch: {},
 
   methods: {
     addNewImageToArray(newImage) {
@@ -230,8 +232,8 @@ export default {
       } else {
         return false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

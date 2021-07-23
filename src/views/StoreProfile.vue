@@ -14,75 +14,193 @@
 
       <StoreProfileActivationSteps
         v-if="checkForStoreOwner"
-        :storeActivationSteps="demoActivationSteps"
+        :store-activation-steps="dataset.activationSteps"
         class="ml-2"
       />
 
-      <v-divider v-if="checkForStoreOwner" class="my-2" />
-      <v-row>
-        <v-spacer />
+      <v-divider v-if="checkForStoreOwner" class="my-3" />
+      <span v-if="checkForStoreOwner" class="mb-3"> </span>
+
+      <v-row class="mb-3 mx-1">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              icon
+            <v-chip
+              v-if="storeOpened"
               v-bind="attrs"
+              class="ma-0 mr-3"
+              color="green"
+              text-color="white"
               v-on="on"
-              color="cyan accent-4"
-              class="btnNoHover"
-              :ripple="false"
+              @click="$vuetify.goTo($refs.openingHours, scrollingOptions)"
             >
-              <v-icon>mdi-hand-heart</v-icon>
-            </v-btn>
+              Opened
+            </v-chip>
+            <v-chip
+              v-else
+              v-bind="attrs"
+              class="ma-0 mr-3"
+              v-on="on"
+              @click="$vuetify.goTo($refs.openingHours, scrollingOptions)"
+            >
+              <v-icon left>mdi-close</v-icon>
+              Closed
+            </v-chip>
+          </template>
+          <span v-if="storeOpened">This store is currently opened</span>
+          <span v-else>This store is currently closed</span>
+        </v-tooltip>
+
+        <v-divider vertical />
+
+        <v-tooltip v-if="dataset.pickup" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-chip
+              v-bind="attrs"
+              class="ma-0 ml-3 mr-2 primary"
+              outlined
+              v-on="on"
+            >
+              <v-icon left color="primary">mdi-hand-heart</v-icon>
+              Pick-up
+            </v-chip>
           </template>
           <span>Offers self pickup</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip v-if="dataset.delivery" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              icon
-              v-bind="attrs"
-              v-on="on"
-              :ripple="false"
-              color="cyan accent-4"
-              class="btnNoHover"
-            >
-              <v-icon>mdi-truck-delivery</v-icon>
-            </v-btn>
+            <v-chip v-bind="attrs" class="ma-0 primary" outlined v-on="on">
+              <v-icon left color="primary">mdi-truck-delivery</v-icon>
+              Delivery
+            </v-chip>
           </template>
           <span>Offers delivery</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-spacer />
+
+        <v-tooltip v-if="!checkFavoriteStore || loggedIn === false" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" :ripple="false" @click="print">
-              <v-icon>mdi-heart</v-icon>
+            <v-btn
+              icon
+              v-bind="attrs"
+              :ripple="false"
+              v-on="on"
+              @click="addFavorites()"
+            >
+              <v-icon color="pink">mdi-heart-outline</v-icon>
             </v-btn>
           </template>
           <span>Add to favorites</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip v-if="checkFavoriteStore && loggedIn === true" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" :ripple="false" @click="print">
+            <v-btn
+              icon
+              v-bind="attrs"
+              :ripple="false"
+              v-on="on"
+              @click="removeFavorites()"
+            >
+              <v-icon color="pink">mdi-heart</v-icon>
+            </v-btn>
+          </template>
+          <span>Remove from favorites</span>
+        </v-tooltip>
+
+        <!-- <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" :ripple="false" v-on="on" @click="print">
               <v-icon>mdi-bookmark</v-icon>
             </v-btn>
           </template>
           <span>Bookmark</span>
-        </v-tooltip>
+        </v-tooltip> -->
 
-        <v-tooltip bottom>
+        <!-- <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" :ripple="false" @click="print">
+            <v-btn icon v-bind="attrs" :ripple="false" v-on="on" @click="print">
               <v-icon>mdi-share-variant</v-icon>
             </v-btn>
           </template>
           <span>Share</span>
-        </v-tooltip>
+        </v-tooltip> -->
+
+        <v-speed-dial
+          v-model="fab2"
+          direction="bottom"
+          open-on-hover
+          transition="slide-y-reverse-transition"
+        >
+          <template v-slot:activator>
+            <v-btn v-model="fab2" icon color="blue darken-2" dark>
+              <v-icon v-if="fab2">
+                mdi-close
+              </v-icon>
+              <v-icon v-else>
+                mdi-share-variant
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-btn fab dark small color="green">
+            <ShareNetwork
+              network="whatsapp"
+              :url="getCurrentURL()"
+              title="Mysellum store"
+              :description="
+                `Check out this store ${dataset.profileData.title}!`
+              "
+            >
+              <v-icon color="white">mdi-whatsapp</v-icon>
+            </ShareNetwork>
+          </v-btn>
+          <v-btn fab dark small color="#3b5998">
+            <ShareNetwork
+              network="facebook"
+              :url="getCurrentURL()"
+              title="Awesome Article"
+              description="This is an awesome article for awesome readers"
+              hashtags="Frontend, Programming"
+            >
+              <v-icon color="white">mdi-facebook</v-icon>
+            </ShareNetwork>
+          </v-btn>
+          <v-btn fab dark small color="#0072b1">
+            <ShareNetwork
+              network="linkedin"
+              :url="getCurrentURL()"
+              title="Awesome Article"
+            >
+              <v-icon color="white">mdi-linkedin</v-icon>
+            </ShareNetwork>
+          </v-btn>
+          <!-- <v-btn fab dark small color="red">
+            <ShareNetwork
+              network="instagram"
+              :url="getCurrentURL()"
+              title="Awesome Article"
+              description="This is an awesome article for awesome readers"
+              hashtags="Frontend, Programming"
+            >
+              <v-icon color="white">mdi-instagram</v-icon>
+            </ShareNetwork>
+          </v-btn> -->
+          <v-btn fab dark small color="#1DA1F2">
+            <ShareNetwork
+              network="twitter"
+              :url="getCurrentURL()"
+              title="Awesome Article"
+              hashtags="Frontend, Programming"
+            >
+              <v-icon color="white">mdi-twitter</v-icon>
+            </ShareNetwork>
+          </v-btn>
+        </v-speed-dial>
       </v-row>
 
       <!--  -->
-      <v-row align="start" v-if="dataset">
+      <v-row v-if="dataset" align="start">
         <v-col cols="12" xs="2" sm="2" md="1" lg="1" xl="1">
           <div
             v-for="(img, i) in dataset.profileData.images"
@@ -95,7 +213,7 @@
                 : 'opacity: 0.5;'
             "
           >
-            <v-card flat @click="changeImages(i)" :id="'imageCard' + i">
+            <v-card :id="'imageCard' + i" flat @click="changeImages(i)">
               <v-img
                 :src="img.src"
                 :aspect-ratio="4 / 3"
@@ -111,10 +229,11 @@
             <v-carousel
               v-if="dataset"
               v-model="currentImgIndex"
-              show-arrows-on-hover
               height="400px"
               cycle
               hide-delimiters
+              :show-arrows-on-hover="dataset.profileData.images.length > 1"
+              :show-arrows="dataset.profileData.images.length > 1"
             >
               <v-carousel-item
                 v-for="(img, i) in dataset.profileData.images"
@@ -138,16 +257,16 @@
             </v-carousel>
           </v-card>
         </v-col>
-        <v-col cols="12" xs="5" sm="5" md="5" lg="6" xl="6" v-if="dataset">
+        <v-col v-if="dataset" cols="12" xs="5" sm="5" md="5" lg="6" xl="6">
           <div class="text-h4 mb-3">
             {{ dataset.profileData.title }}
           </div>
           <v-chip
+            v-for="(tag, index) in dataset.profileData.tags"
+            :key="index"
             outlined
             class="ma-1"
             color="primary"
-            v-for="(tag, index) in this.dataset.profileData.tags"
-            :key="index"
             >{{ tag }}</v-chip
           >
           <div
@@ -160,37 +279,40 @@
       <EditStoreDialog
         v-if="checkForStoreOwner"
         v-model="showEditStoreDialog"
-        :profileData="profileData"
-        :mapData="mapData"
-        :paypalSignupLink="paypalSignupLink"
-        v-on:edit-store="updateStoreData"
-        v-on:overlay-start="startLoadingOverlay"
-        v-on:overlay-end="endLoadingOverlay"
+        :profile-data="profileData"
+        :map-data="mapData"
+        :shipping-data="shippingData"
+        :paypal-signup-link="paypalSignupLink"
+        :opening-hours-data="openingHoursData"
+        @edit-store="updateStoreData"
+        @overlay-start="startLoadingOverlay"
+        @overlay-end="endLoadingOverlay"
       />
       <StoreProductsTableDialog
         v-if="checkForStoreOwner"
         v-model="showStoreProductsTableDialog"
-        :productList="productList"
-        v-on:delete-product="removeProductFromArray"
-        v-on:edit-product="showProductDialogEdit"
-        v-on:add-product="showProductDialogNew"
-        v-on:overlay-start="startLoadingOverlay"
-        v-on:overlay-end="endLoadingOverlay"
-        v-on:update-stock="updateStockAmount"
+        :product-list="productList"
+        @delete-product="removeProductFromArray"
+        @edit-product="showProductDialogEdit"
+        @add-product="showProductDialogNew"
+        @overlay-start="startLoadingOverlay"
+        @overlay-end="endLoadingOverlay"
+        @update-stock="updateStockAmount"
       />
 
       <ProductDialog
         v-model="showProductDialog"
-        :productToEdit="productToEdit"
-        v-on:add-new-product="addNewProductToArray"
-        v-on:update-product="editExistingProduct"
-        v-on:productToEdit-to-null="nullifyProductToEdit"
-        v-on:change-productToEdit-title="changeTitleProductToEdit"
-        v-on:overlay-start="startLoadingOverlay"
-        v-on:overlay-end="endLoadingOverlay"
-        v-on:recalculate-max-price="recalculateMaxPriceValue"
+        :product-to-edit="productToEdit"
+        @add-new-product="addNewProductToArray"
+        @update-product="editExistingProduct"
+        @productToEdit-to-null="nullifyProductToEdit"
+        @change-productToEdit-title="changeTitleProductToEdit"
+        @overlay-start="startLoadingOverlay"
+        @overlay-end="endLoadingOverlay"
+        @recalculate-max-price="recalculateMaxPriceValue"
       />
-      <v-tabs color="indigo" right icons-and-text centered>
+
+      <v-tabs color="primary" class="mt-3" right icons-and-text centered>
         <v-tab>
           Products
           <v-icon left>
@@ -207,6 +329,11 @@
             half-increments
             readonly
           />
+          ({{
+            dataset.profileData.reviews
+              ? dataset.profileData.reviews.length
+              : 0
+          }})
         </v-tab>
 
         <v-tab-item>
@@ -223,28 +350,22 @@
                     :append-outer-icon="'mdi-send'"
                     clear-icon="mdi-close-circle"
                     clearable
+                    dense
                     @click:clear="clearMessage"
                     @click:append-outer="searchProducts"
                     @keyup.enter="searchProducts"
-                    dense
                   ></v-text-field>
                 </v-card>
                 <!--   </v-col>
             <v-col cols="12" md="1" lg="1" xl="1"> -->
-                <v-menu
-                  bottom
-                  left
-                  :nudge-bottom="10"
-                  offset-y
-                  max-width="250px"
-                >
+                <v-menu bottom left :nudge-bottom="10" offset-y width="400px">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       v-bind="attrs"
-                      v-on="on"
                       outlined
                       color="primary"
                       class="ml-3"
+                      v-on="on"
                     >
                       <v-icon color="primary">mdi-sort</v-icon>
                     </v-btn>
@@ -258,8 +379,8 @@
                         <v-list-item
                           v-for="(item, index) in sortTypes"
                           :key="index"
-                          @click="sortListClicked(index)"
                           link
+                          @click="sortListClicked(index)"
                         >
                           <v-list-item-icon>
                             <v-icon>{{ item.icon }}</v-icon>
@@ -274,63 +395,113 @@
                     </v-list>
                   </v-card>
                 </v-menu>
-                <v-card width="40%" class="ml-3" height="63px">
-                  <div class="text-body-2 text-left ml-1 mt-1">Price Range</div>
-                  <v-range-slider
-                    v-model="priceRange"
-                    :max="maxValue"
-                    :min="min"
-                    hide-details
-                    @change="searchProducts"
-                    ><!-- @change="searchProducts" -->
-                    <template v-slot:prepend>
-                      <v-text-field
-                        label="From:"
-                        :value="priceRange[0]"
-                        class="mt-0 pt-0 ml-1 inputPriceRange"
-                        hide-details
-                        single-line
-                        type="number"
-                        style="width: 40px"
-                        @change="$set(priceRange, 0, $event)"
-                      ></v-text-field>
-                    </template>
-                    <template v-slot:append>
-                      <v-text-field
-                        label="To:"
-                        :value="priceRange[1]"
-                        class="mt-0 pt-0 mr-1 inputPriceRange"
-                        hide-details
-                        single-line
-                        type="number"
-                        style="width: 40px"
-                        @change="$set(priceRange, 1, $event)"
-                      ></v-text-field>
-                    </template>
-                  </v-range-slider>
-                </v-card>
-                <v-col>
-                  <v-btn
-                    v-if="checkForStoreOwner"
-                    @click.stop="showProductDialogNew"
-                    color="pink"
-                    dark
-                    outlined
-                    class="ml-3"
-                  >
-                    <v-icon left> mdi-plus </v-icon>Create Product</v-btn
-                  >
-                  <v-btn
-                    v-if="checkForStoreOwner"
-                    @click.stop="showProductTableDialog"
-                    color="pink"
-                    dark
-                    outlined
-                    class="ml-3"
-                  >
-                    <v-icon left> mdi-table-cog </v-icon>Table View</v-btn
-                  >
-                </v-col>
+
+                <!-- FILTER MENU -->
+                <v-menu
+                  bottom
+                  left
+                  :nudge-bottom="10"
+                  offset-y
+                  :close-on-content-click="false"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      outlined
+                      color="primary"
+                      class="ml-3"
+                      v-on="on"
+                    >
+                      <v-icon color="primary">mdi-filter-menu</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-container>
+                      <div class="text-left text-h6">Filters:</div>
+                      <v-card width="40%" class="ml-3" height="63px">
+                        <div class="text-body-2 text-left ml-1 mt-1">
+                          Price Range
+                        </div>
+                        <v-range-slider
+                          v-model="priceRange"
+                          :max="maxValue"
+                          :min="min"
+                          hide-details
+                          @change="searchProducts"
+                          ><!-- @change="searchProducts" -->
+                          <template v-slot:prepend>
+                            <v-text-field
+                              label="From:"
+                              :value="priceRange[0]"
+                              class="mt-0 pt-0 ml-1 inputPriceRange"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 40px"
+                              @change="$set(priceRange, 0, $event)"
+                            ></v-text-field>
+                          </template>
+                          <template v-slot:append>
+                            <v-text-field
+                              label="To:"
+                              :value="priceRange[1]"
+                              class="mt-0 pt-0 mr-1 inputPriceRange"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 40px"
+                              @change="$set(priceRange, 1, $event)"
+                            ></v-text-field>
+                          </template>
+                        </v-range-slider>
+                      </v-card>
+                    </v-container>
+                    <v-card-actions>
+                      <v-spacer />
+                      <v-btn color="primary" @click="searchFilterSort(true)"
+                        >Set</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </v-menu>
+
+                <v-spacer />
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-if="checkForStoreOwner"
+                      color="pink"
+                      v-bind="attrs"
+                      dark
+                      outlined
+                      class="ml-3"
+                      v-on="on"
+                      @click.stop="showProductDialogNew"
+                    >
+                      <v-icon> mdi-plus </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Create new product</span>
+                </v-tooltip>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-if="checkForStoreOwner"
+                      color="pink"
+                      v-bind="attrs"
+                      dark
+                      outlined
+                      class="ml-3"
+                      v-on="on"
+                      @click.stop="showProductTableDialog"
+                    >
+                      <v-icon> mdi-table-cog </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Products table view</span>
+                </v-tooltip>
               </v-row>
             </v-container>
             <div
@@ -338,23 +509,23 @@
             >
               <v-row class="mb-2 ml-1 mr-1">
                 <v-col
+                  v-for="prod in computedProducts"
+                  :key="prod._id"
                   cols="12"
                   xs="6"
                   sm="6"
                   md="3"
                   lg="3"
                   xl="2"
-                  v-for="prod in computedProducts"
-                  v-bind:key="prod._id"
                 >
                   <StoreProfileListItemNew
-                    v-bind:product="prod"
-                    v-bind:modifiable="checkForStoreOwner"
-                    v-on:delete-product="removeProductFromArray"
-                    v-on:edit-product="showProductDialogEdit"
-                    v-on:overlay-start="startLoadingOverlay"
-                    v-on:overlay-end="endLoadingOverlay"
-                    v-on:update-stock="updateStockAmount"
+                    :product="prod"
+                    :modifiable="checkForStoreOwner"
+                    @delete-product="removeProductFromArray"
+                    @edit-product="showProductDialogEdit"
+                    @overlay-start="startLoadingOverlay"
+                    @overlay-end="endLoadingOverlay"
+                    @update-stock="updateStockAmount"
                   />
                 </v-col>
               </v-row>
@@ -381,7 +552,7 @@
         </v-tab-item>
         <v-tab-item v-if="dataset">
           <v-row class="my-5">
-            <div>
+            <!-- <div>
               <div class="text-left text-body-1 font-weight-bold ml-5">
                 {{
                   dataset.profileData.reviews
@@ -400,14 +571,14 @@
                   readonly
                 />
               </div>
-            </div>
+            </div> -->
             <v-btn
-              @click.stop="showReviewDialogNew"
               v-show="!addButtonHidden"
               dark
               color="pink"
               class="ml-5"
               :disabled="reviewButtonDisabled"
+              @click.stop="showReviewDialogNew"
             >
               <v-icon>mdi-plus</v-icon>
               Add Review
@@ -415,24 +586,24 @@
           </v-row>
           <ReviewDialog
             v-model="showReviewDialog"
-            :reviewToEdit="reviewToEdit"
-            v-on:add-new-review="addNewReviewToArray"
-            v-on:update-review="editExistingReview"
-            v-on:reviewToEdit-to-null="nullifyReviewToEdit"
-            v-on:change-reviewToEdit-rating="changeRatingReviewToEdit"
-            v-on:change-reviewToEdit-text="changeTextReviewToEdit"
-            v-on:overlay-start="startLoadingOverlay"
-            v-on:overlay-end="endLoadingOverlay"
+            :review-to-edit="reviewToEdit"
+            @add-new-review="addNewReviewToArray"
+            @update-review="editExistingReview"
+            @reviewToEdit-to-null="nullifyReviewToEdit"
+            @change-reviewToEdit-rating="changeRatingReviewToEdit"
+            @change-reviewToEdit-text="changeTextReviewToEdit"
+            @overlay-start="startLoadingOverlay"
+            @overlay-end="endLoadingOverlay"
           />
           <div v-if="dataset.profileData.reviews">
             <StoreProfileReviewListItem
               v-for="rvw in computedReviews"
-              v-bind:key="rvw.reviewId"
-              v-bind:review="rvw"
-              v-on:remove-review="removeReviewfromArray"
-              v-on:edit-review="showReviewDialogEdit"
-              v-on:overlay-start="startLoadingOverlay"
-              v-on:overlay-end="endLoadingOverlay"
+              :key="rvw.reviewId"
+              :review="rvw"
+              @remove-review="removeReviewfromArray"
+              @edit-review="showReviewDialogEdit"
+              @overlay-start="startLoadingOverlay"
+              @overlay-end="endLoadingOverlay"
             />
           </div>
           <div
@@ -444,45 +615,90 @@
           </div>
           <div v-if="dataset.profileData.reviews">
             <v-pagination
+              v-if="dataset.profileData.reviews.length > reviewsPerPage"
               v-model="currentPage"
               :length="numOfPagesReviews"
-              v-if="dataset.profileData.reviews.length > reviewsPerPage"
             />
           </div>
         </v-tab-item>
       </v-tabs>
+
       <v-divider class="my-3" />
-      <v-card class="mx-auto mb-5" v-if="dataset" flat>
-        <v-card-title>Payment Methods</v-card-title>
-        <v-img src="../assets/payment-methods-logo.jpg" width="500px" />
-      </v-card>
-      <v-divider />
+
       <v-row>
         <v-col cols="12" lg="6">
-          <v-card class="mx-auto" max-width="344" flat v-if="dataset">
-            <v-card-title>Address</v-card-title>
-            <v-card-text>
-              <div>
-                Store GmbH
+          <v-card v-if="dataset" class="mx-auto mb-5" flat>
+            <v-card-title>Payment Methods</v-card-title>
+            <v-img src="../assets/payment-methods-logo.jpg" width="500px" />
+          </v-card>
+        </v-col>
+        <v-col cols="12" lg="6">
+          <v-card v-if="dataset" class=" mb-5" flat>
+            <v-card-title>Shipping</v-card-title>
+            <v-card-text class="text-left text-body-1 black--text ml-2">
+              <div v-if="shippingData.method === 'free'">
+                Always free
               </div>
-              <div>
-                {{ dataset.mapData.address.addressLine1 }}
+              <div v-if="shippingData.method === 'fixed'">
+                Fixed costs of {{ shippingData.costs }}€
               </div>
-              <!-- {{ dataset.mapData.address.houseNumber }} -->
-              <div>
-                {{ dataset.mapData.address.city }}
-                {{ dataset.mapData.address.postcode }}
-              </div>
-              <div>
-                Lat: {{ dataset.mapData.location.lat }} Lng:
-                {{ dataset.mapData.location.lng }}
+              <div v-if="shippingData.method === 'threshold'">
+                Costs of {{ shippingData.costs }}€, but free from a purchase
+                value of {{ shippingData.thresholdValue }}€
               </div>
             </v-card-text>
           </v-card>
         </v-col>
+      </v-row>
+
+      <v-divider class="my-3" />
+
+      <v-row>
+        <v-col cols="12" lg="6">
+          <!-- OPENING HOURS -->
+          <v-card v-if="dataset" ref="openingHours" flat>
+            <v-card-title>Opening Hours</v-card-title>
+            <v-expansion-panels flat hover>
+              <v-expansion-panel>
+                <v-expansion-panel-header
+                  v-if="!storeOpened"
+                  class="text-body-1 red--text"
+                >
+                  Closed today
+                </v-expansion-panel-header>
+                <v-expansion-panel-header
+                  v-else
+                  class="text-body-1 green--text"
+                >
+                  Open today ({{ todaysOpeningTimes }})
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <OpeningHoursDisplay :opening-hours="openingHoursData" />
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-card>
+
+          <!-- ADDRESS -->
+          <v-card v-if="dataset" flat>
+            <v-card-title>Address</v-card-title>
+            <v-card-text class="text-body-1 text-left ml-2 black--text">
+              <div>
+                Store GmbH
+              </div>
+              <div>
+                {{ dataset.mapData.address.addressLine1 }},
+                {{ dataset.mapData.address.postcode }}
+                {{ dataset.mapData.address.city }}
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <!-- GOOGLE MAP -->
         <v-col cols="12" lg="6">
           <div v-if="dataset" height="200px">
-            <GoogleMapProfile :mapData="dataset.mapData" />
+            <GoogleMapProfile :map-data="dataset.mapData" />
           </div>
         </v-col>
       </v-row>
@@ -515,14 +731,19 @@ import StoreProfileActivationSteps from "../components/storeProfileComponents/St
 import GoogleMapProfile from "../components/storeProfileComponents/GoogleMapProfile";
 import ProductDialog from "../components/storeProfileComponents/ProductDialog";
 import ReviewDialog from "../components/storeProfileComponents/ReviewDialog";
+import OpeningHoursDisplay from "../components/storeProfileComponents/OpeningHoursDisplay";
 
 // Edit Store
 import EditStoreDialog from "../components/editStoreDialogComponents/EditStoreDialog";
 
 // Others
-import { compareArrayAsc, compareArrayDesc } from "../helpers";
-import { storeService } from "../services";
-import { mapState } from "vuex";
+import {
+  compareArrayAsc,
+  compareArrayDesc,
+  checkIfStoreOpened,
+} from "../helpers";
+import { storeService, paypalService } from "../services";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "StoreProfileView",
@@ -534,7 +755,8 @@ export default {
     ProductDialog: ProductDialog,
     StoreProductsTableDialog: StoreProductsTableDialog,
     StoreProfileActivationSteps: StoreProfileActivationSteps,
-    GoogleMapProfile: GoogleMapProfile
+    GoogleMapProfile: GoogleMapProfile,
+    OpeningHoursDisplay: OpeningHoursDisplay,
   },
 
   data() {
@@ -552,17 +774,20 @@ export default {
         profileComplete: true,
         minOneProduct: true,
         shippingRegistered: true,
-        paymentMethodRegistered: false
+        paymentMethodRegistered: false,
       },
 
       editMode: false,
       fab: false,
+      fab2: false,
       overlay: false,
       //profileData: {},
       productList: [],
       dataset: null,
       mapData: {},
       profileData: {},
+      shippingData: {},
+      openingHoursData: {},
       avgRating: 0,
       addButtonHidden: false,
       showEditStoreDialog: false,
@@ -581,7 +806,7 @@ export default {
         "Chicken",
         "Beverages",
         "Wine",
-        "Beer"
+        "Beer",
       ],
       currentImgIndex: 0,
       //Product search and sort
@@ -593,15 +818,15 @@ export default {
         {
           type: "Title",
           icon: "mdi-sort-alphabetical-descending",
-          tooltip: ""
+          tooltip: "",
         },
         {
           type: "Title",
           icon: "mdi-sort-alphabetical-ascending",
-          tooltip: ""
+          tooltip: "",
         },
         { type: "Price", icon: "mdi-sort-numeric-descending", tooltip: "" },
-        { type: "Price", icon: "mdi-sort-numeric-ascending", tooltip: "" }
+        { type: "Price", icon: "mdi-sort-numeric-ascending", tooltip: "" },
       ],
       //Price Slider
       priceRange: [0, 1000],
@@ -617,7 +842,16 @@ export default {
 
       //Pagination Reviews
       currentPage: 1,
-      reviewsPerPage: 5
+      reviewsPerPage: 5,
+
+      // opened
+      storeOpened: false,
+      todaysOpeningTimes: "",
+
+      // scrolling options
+      duration: 400,
+      offset: 0,
+      easing: "easeInOutCubic",
     };
   },
 
@@ -642,11 +876,11 @@ export default {
         "2px solid black";
       document.getElementById(`imageDiv${val}`).style.borderRadius = "6px";
       document.getElementById(`imageDiv${val}`).style.opacity = "1";
-    }
+    },
   },
 
   computed: {
-    ...mapState("account", ["user", "loggedIn"]),
+    ...mapState("account", ["user", "loggedIn", "favoriteStores"]),
     //Review Pagination
     numOfPagesReviews() {
       if (this.dataset) {
@@ -676,6 +910,24 @@ export default {
       return this.sliceStart + this.reviewsPerPage;
     },
 
+    scrollingOptions() {
+      return {
+        duration: this.duration,
+        offset: this.offset,
+        easing: this.easing,
+      };
+    },
+
+    checkFavoriteStore() {
+      if (
+        this.loggedIn === true &&
+        this.favoriteStores.includes(this.$route.params.id)
+      ) {
+        return true;
+      }
+      return false;
+    },
+
     //Product Pagination
     computedProducts() {
       return this.productList.slice(
@@ -703,12 +955,12 @@ export default {
             return prev.price > curr.price ? prev : curr;
           });
           //console.log(max);Math.round(parseFloat(max.price))
-          console.log(Math.round(parseFloat(max.price)));
+          // console.log(Math.round(parseFloat(max.price)));
           return Math.round(parseFloat(max.price));
         } else {
           return 0;
         }
-      }
+      },
     },
     checkForStoreOwner() {
       //check if the store owner is viewing his own store
@@ -732,12 +984,12 @@ export default {
       },
       set(value) {
         this.dataset.profileData.tags = value;
-      }
+      },
     },
     avgRatingComputed: {
       get() {
         return Math.round(this.avgRating * 10) / 10;
-      }
+      },
     },
     reviewButtonDisabled: {
       //Add Review Button disabled if a review was already submitted by this user
@@ -753,7 +1005,7 @@ export default {
           return true;
         }
         return false;
-      }
+      },
     },
     reviewAlreadySubmitted: {
       //check if logged in user already submitted a review for this store
@@ -768,12 +1020,17 @@ export default {
           }
         }
         return false;
-      }
-    }
+      },
+    },
 
     //...mapState("shoppingCart", ["shoppingCart", "counter"])
   },
   async mounted() {
+    // Option 1 to save the Paypal Merchant Id -> click on the Return to Store Button
+    if (this.$route.query.merchantId && this.$route.query.merchantIdInPayPal) {
+      await this.saveOnboardingDataFunction();
+    }
+
     let id = this.$route.params.id;
     let responseStore;
     try {
@@ -783,18 +1040,22 @@ export default {
       this.loadingStore = false;
       return;
     }
-    console.log("store:");
-    console.log(responseStore);
+
     //Set data
     this.dataset = responseStore;
     this.mapData = responseStore.mapData;
     this.profileData = responseStore.profileData;
+    this.shippingData = responseStore.shipping;
+    this.openingHoursData = responseStore.openingHours;
     this.tagsString = this.dataset.profileData.tags.join(", ");
+    // console.log(JSON.stringify(responseStore.openingHours));
+    this.setStoreOpeningHours(responseStore.openingHours);
+    // console.log(`store opened: ${this.storeOpened}`);
 
     if (this.dataset.payment.paypal) {
       this.paypalSignupLink = this.dataset.payment.paypal.urls.actionUrl.href;
     }
-    console.log(this.paypalSignupLink);
+    // console.log(this.paypalSignupLink);
     this.avgRating = parseFloat(this.dataset.profileData.avgRating);
     //end store loading
     this.loadingStore = false;
@@ -816,16 +1077,58 @@ export default {
   },
 
   methods: {
+    ...mapActions("snackbar", [
+      "addSuccessSnackbar",
+      "addErrorSnackbar",
+      "addInfoSnackbar",
+    ]),
+    ...mapActions("account", [
+      "addStoreToFavorites",
+      "removeStoreFromFavorites",
+    ]),
+
+    // https://prjct-frontend.azurewebsites.net/store-profile/60ba8b63114d260f4415f636?merchantId=60ba8b63114d260f4415f636&merchantIdInPayPal=5FHJ5NA2X94VG&permissionsGranted=true&consentStatus=true&productIntentId=addipmt&productIntentID=addipmt&isEmailConfirmed=true&accountStatus=BUSINESS_ACCOUNT
+    async saveOnboardingDataFunction() {
+      const storeId = this.$route.params.id;
+      const payload = {
+        merchantId: this.$route.query.merchantId,
+        merchantIdInPayPal: this.$route.query.merchantIdInPayPal,
+        permissionsGranted: this.$route.query.permissionsGranted === "true", // convert to boolean
+        consentStatus: this.$route.query.consentStatus === "true",
+        productIntentId: this.$route.query.productIntentId,
+        productIntentID: this.$route.query.productIntentID,
+        isEmailConfirmed: this.$route.query.isEmailConfirmed === "true",
+        accountStatus: this.$route.query.accountStatus,
+      };
+      try {
+        await paypalService.saveOnboardingData(payload, storeId);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      let query = Object.assign({}, this.$route.query);
+      for (const key of Object.keys(payload)) {
+        delete query[key];
+      }
+      this.$router.replace({ query });
+      return;
+    },
+
+    setStoreOpeningHours(openingHours) {
+      const openingHelperResponse = checkIfStoreOpened(openingHours);
+      this.storeOpened = openingHelperResponse.opened;
+      if (this.storeOpened) {
+        this.todaysOpeningTimes = openingHelperResponse.todaysOpeningTimes;
+      }
+    },
+
     setPriceRange() {
       if (this.productList.length > 0) {
         let objct = this.productList.reduce(function(prev, curr) {
           return prev.priceFloat > curr.priceFloat ? prev : curr;
         });
-        //console.log(max);Math.round(parseFloat(max.price))
-        //console.log(Math.round(parseFloat(max.price)));
         this.maxValue = Math.ceil(parseFloat(objct.priceFloat));
         this.priceRange[1] = this.maxValue;
-        console.log(this.maxValue);
       }
     },
     //...mapActions("shoppingCart", ["addProduct", "removeProduct"]),
@@ -842,6 +1145,10 @@ export default {
       console.log(Math.round(this.avgRating * 10) / 10);
       this.drawer = true;
       //this.overlay = true;
+    },
+
+    getCurrentURL() {
+      return window.location.href;
     },
 
     //at click on a mini img, change the current image
@@ -864,19 +1171,27 @@ export default {
 
     //update the store values which come from the edit store dialog's event
     updateStoreData: async function(data) {
-      this.dataset.profileData.title = data.title;
-      this.dataset.profileData.description = data.description;
-      this.dataset.profileData.tags = data.tags;
-      this.dataset.profileData.images = data.images;
+      this.profileData.title = data.title;
+      this.profileData.description = data.description;
+      this.profileData.tags = data.tags;
+      this.profileData.images = data.images;
 
-      this.dataset.mapData.address.addressLine1 = data.address.addressLine1;
-      this.dataset.mapData.address.postcode = data.address.postcode;
-      this.dataset.mapData.address.city = data.address.city;
-      this.dataset.mapData.address.country = data.address.country;
-      this.dataset.mapData.mapIcon = data.mapIcon;
+      this.mapData.address.addressLine1 = data.address.addressLine1;
+      this.mapData.address.postcode = data.address.postcode;
+      this.mapData.address.city = data.address.city;
+      this.mapData.address.country = data.address.country;
+      this.mapData.mapIcon = data.mapIcon;
+      this.mapData.location.lat = data.location.lat;
+      this.mapData.location.lng = data.location.lng;
 
-      this.dataset.mapData.location.lat = data.location.lat;
-      this.dataset.mapData.location.lng = data.location.lng;
+      this.shippingData.method = data.shippingMethod;
+      this.shippingData.costs = data.shippingCosts;
+      this.shippingData.thresholdValue = data.shippingThresholdValue;
+
+      this.openingHoursData = data.openingHours;
+      // this.dataset.openingHours = data.openingHours;
+      this.setStoreOpeningHours(data.openingHours);
+
       this.overlay = false;
     },
 
@@ -892,14 +1207,14 @@ export default {
     },
     editExistingReview(updatedReview) {
       let index = this.dataset.profileData.reviews.findIndex(
-        rv => rv.reviewId === updatedReview.review.reviewId
+        (rv) => rv.reviewId === updatedReview.review.reviewId
       );
       this.dataset.profileData.reviews.splice(index, 1, updatedReview.review);
       this.avgRating = parseFloat(updatedReview.avgRating);
     },
     removeReviewfromArray(eventData) {
       let indexOfReview = this.dataset.profileData.reviews.findIndex(
-        r => r.reviewId === eventData.reviewId
+        (r) => r.reviewId === eventData.reviewId
       );
       this.dataset.profileData.reviews.splice(indexOfReview, 1);
       this.avgRating = parseFloat(eventData.avgRating);
@@ -936,7 +1251,7 @@ export default {
       this.showProductDialog = true;
     },
     removeProductFromArray(_id) {
-      var indexOfProduct = this.productList.findIndex(r => r._id === _id);
+      var indexOfProduct = this.productList.findIndex((r) => r._id === _id);
       this.productList.splice(indexOfProduct, 1);
     },
     nullifyProductToEdit() {
@@ -946,15 +1261,14 @@ export default {
       this.productToEdit.title = value;
     },
     editExistingProduct(updatedProduct) {
-      console.log(updatedProduct);
       var index = this.productList.findIndex(
-        prd => prd._id === updatedProduct._id
+        (prd) => prd._id === updatedProduct._id
       );
       //replace array element
       this.productList.splice(index, 1, updatedProduct);
     },
     updateStockAmount(_id, stockAmount) {
-      var indexOfProduct = this.productList.findIndex(prd => prd._id === _id);
+      var indexOfProduct = this.productList.findIndex((prd) => prd._id === _id);
       this.productList[indexOfProduct].stockAmount = stockAmount;
     },
     //Overlay
@@ -968,12 +1282,12 @@ export default {
     async clearMessage() {
       this.productSearchTerm = "";
       let data = {
-        storeId: this.$route.params.id
+        storeId: this.$route.params.id,
       };
       this.productList = await storeService.getStoreProducts(data);
     },
+
     sortListClicked(index) {
-      console.log(index);
       switch (index) {
         case 0:
           this.productList.sort(compareArrayDesc("datetimeCreated"));
@@ -995,12 +1309,11 @@ export default {
           break;
       }
     },
+
     async searchProducts() {
-      console.log(this.priceRange[1]);
-      console.log(this.maxValue);
       let data = {
         storeId: this.$route.params.id,
-        searchTerm: this.productSearchTerm
+        searchTerm: this.productSearchTerm,
       };
       if (
         this.priceRange[0] !== this.min ||
@@ -1009,10 +1322,49 @@ export default {
         data["priceMin"] = this.priceRange[0];
         data["priceMax"] = this.priceRange[1];
       }
-      console.log(data);
       this.productList = await storeService.getStoreProducts(data);
-    }
-  }
+    },
+
+    async removeFavorites() {
+      if (this.loggedIn === false) {
+        this.addInfoSnackbar(
+          "Please login to remove this store from your favorites."
+        );
+        return;
+      }
+      try {
+        await this.removeStoreFromFavorites(this.$route.params.id);
+      } catch (error) {
+        // console.log(error);
+        this.addErrorSnackbar("Error while removing store from favorites.");
+        return;
+      }
+      this.addSuccessSnackbar("Store was removed from favorites.");
+      return;
+    },
+
+    async addFavorites() {
+      if (this.loggedIn === false) {
+        this.addInfoSnackbar(
+          "Please login to add this store to your favorites."
+        );
+        return;
+      }
+      try {
+        await this.addStoreToFavorites(this.$route.params.id);
+      } catch (error) {
+        // console.log(error);
+        this.addErrorSnackbar("Error while adding store to favorites.");
+        return;
+      }
+      this.addSuccessSnackbar("Store was added to favorites.");
+      return;
+    },
+
+    print() {
+      console.log(`hi`);
+    },
+  },
 };
 </script>
 

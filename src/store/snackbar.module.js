@@ -1,12 +1,11 @@
-/* eslint-disable prettier/prettier */
 const state = {
   snackbarObjct: {
     showSnackbar: false,
     type: "",
     message: "",
     closeButtonColor: "",
-    timeout: 5000
-  }
+    timeout: 5000,
+  },
 };
 
 const actions = {
@@ -21,7 +20,7 @@ const actions = {
   },
   addCloseSnackbar({ commit }) {
     commit("closeSnackbar");
-  }
+  },
 };
 
 const mutations = {
@@ -64,7 +63,7 @@ const mutations = {
     state.snackbarObjct.message = "";
     state.snackbarObjct.closeButtonColor = "";
     state.snackbarObjct.timeout = randomTimeout();
-  }
+  },
 };
 
 function randomTimeout() {
@@ -75,5 +74,5 @@ export const snackbar = {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
 };

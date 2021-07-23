@@ -13,3 +13,4 @@ export * from "./currency-codes";
 export * from "./dates";
 export * from "./strings";
 export * from "./array-util";
+export * from "./store-opened";

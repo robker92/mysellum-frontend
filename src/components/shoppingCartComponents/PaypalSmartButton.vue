@@ -4,48 +4,51 @@
 
 <script>
 import { arrayRemoveDuplicates } from "../../helpers";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import { paypalService } from "../../services";
 
 export default {
+  props: {
+    orderData: Object,
+  },
   data() {
     return {};
   },
-
-  props: {
-    orderData: Object
+  computed: {
+    ...mapState("account", ["loggedIn"]),
   },
-
   mounted: async function() {
-    // https://developer.paypal.com/docs/checkout/reference/customize-sdk/
-    const script = document.createElement("script");
-    const clientId =
-      "AZ4Ot1_cYotHmBv5ljIROuwrazfyUOkvSR2hDVfCrAaB1wTpkkaTzi9C7dIp08HTX6lEVMdOZ4l4FZrc";
-    console.log(this.orderData.products);
-    const storeIds = arrayRemoveDuplicates(
-      this.getStoreIdsFromShoppingCart(this.orderData.products)
-    );
-    console.log(storeIds);
-    const merchantIds = await paypalService.fetchMerchantIds({
-      storeIds: storeIds
-    });
-    console.log(merchantIds);
-    if (merchantIds.length === 1) {
-      // products of exactly one store in cart
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=${merchantIds[0]}&currency=EUR&intent=capture`;
-    } else {
-      console.log("multiple stores");
-      // products of more than one store in cart
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=*&currency=EUR&intent=capture`;
-      const merchaneIdString = this.getMerchantIdString(merchantIds);
-      script.setAttribute("data-merchant-id", merchaneIdString);
-    }
+    if (this.loggedIn === true) {
+      // https://developer.paypal.com/docs/checkout/reference/customize-sdk/
+      const script = document.createElement("script");
+      const clientId =
+        "AZ4Ot1_cYotHmBv5ljIROuwrazfyUOkvSR2hDVfCrAaB1wTpkkaTzi9C7dIp08HTX6lEVMdOZ4l4FZrc";
+      console.log(this.orderData.products);
+      const storeIds = arrayRemoveDuplicates(
+        this.getStoreIdsFromShoppingCart(this.orderData.products)
+      );
+      console.log(storeIds);
+      const merchantIds = await paypalService.fetchMerchantIds({
+        storeIds: storeIds,
+      });
+      console.log(merchantIds);
+      if (merchantIds.length === 1) {
+        // products of exactly one store in cart
+        script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=${merchantIds[0]}&currency=EUR&intent=capture`;
+      } else {
+        console.log("multiple stores");
+        // products of more than one store in cart
+        script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=*&currency=EUR&intent=capture`;
+        const merchaneIdString = this.getMerchantIdString(merchantIds);
+        script.setAttribute("data-merchant-id", merchaneIdString);
+      }
 
-    // script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=*&currency=EUR&intent=capture`;
-    // script.setAttribute("data-merchant-id", "UW8X6XK7RGLP8,5FHJ5NA2X94VG");
-    // console.log(script);
-    script.addEventListener("load", this.setLoaded);
-    document.body.appendChild(script);
+      // script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}&merchant-id=*&currency=EUR&intent=capture`;
+      // script.setAttribute("data-merchant-id", "UW8X6XK7RGLP8,5FHJ5NA2X94VG");
+      // console.log(script);
+      script.addEventListener("load", this.setLoaded);
+      document.body.appendChild(script);
+    }
   },
 
   methods: {
@@ -79,7 +82,7 @@ export default {
             try {
               await paypalService.capturePaypalOrder({
                 orderId: data.orderID,
-                orderData: this.orderData
+                orderData: this.orderData,
               });
             } catch (error) {
               //console.log(error.response);
@@ -104,20 +107,20 @@ export default {
             return;
           },
 
-          onCancel: data => {
+          onCancel: (data) => {
             console.log(data);
             // Show a cancel page, or return to cart
             this.$emit("overlay-end");
           },
 
-          onError: error => {
+          onError: (error) => {
             console.log("at error handler");
             console.log(error);
 
             this.addErrorSnackbar("Error while creating your order.");
             this.$emit("overlay-end");
             return;
-          }
+          },
         })
         .render(this.$refs.paypal);
     },
@@ -140,7 +143,7 @@ export default {
         storeIds.push(element[0].storeId);
       }
       return storeIds;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -1,22 +1,30 @@
-import axios from "axios";
-
+/* eslint-disable no-useless-catch */
+import { baseClient } from "./client";
 import { authHeader } from "../helpers";
 
-const paypalBaseUrl = "http://127.0.0.1:3000/paypal";
+export const paypalService = {
+  saveOnboardingData,
+  fetchMerchantIds,
+  createPaypalOrder,
+  capturePaypalOrder,
+};
 
-const paypalClient = axios.create({
-  baseURL: paypalBaseUrl,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  timeout: 20000,
-  withCredentials: true
-});
+async function saveOnboardingData(data, storeId) {
+  try {
+    await baseClient.post(`/paypal/onboarding-data/${storeId}`, data, {
+      headers: authHeader(),
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  // throw new Error("This is an example error");
+  return;
+}
 
 async function fetchMerchantIds(data) {
-  const response = await paypalClient.post(`/fetch-merchant-ids`, data, {
-    headers: authHeader()
+  const response = await baseClient.post(`/paypal/fetch-merchant-ids`, data, {
+    headers: authHeader(),
   });
   console.log(response.data);
 
@@ -25,8 +33,8 @@ async function fetchMerchantIds(data) {
 }
 
 async function createPaypalOrder(data) {
-  const response = await paypalClient.post(`/create-order`, data, {
-    headers: authHeader()
+  const response = await baseClient.post(`/paypal/create-order`, data, {
+    headers: authHeader(),
   });
   console.log(response.data);
 
@@ -37,8 +45,8 @@ async function createPaypalOrder(data) {
 async function capturePaypalOrder(data) {
   let response;
   try {
-    response = await paypalClient.post(`/capture-order`, data, {
-      headers: authHeader()
+    response = await baseClient.post(`/paypal/capture-order`, data, {
+      headers: authHeader(),
     });
   } catch (error) {
     throw error;
@@ -47,9 +55,3 @@ async function capturePaypalOrder(data) {
 
   return response.data;
 }
-
-export const paypalService = {
-  fetchMerchantIds,
-  createPaypalOrder,
-  capturePaypalOrder
-};

@@ -3,9 +3,9 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        sassOptions: {}
-      }
-    }
+        sassOptions: {},
+      },
+    },
   },
 
   /**
@@ -15,6 +15,7 @@ module.exports = {
    * https://github.com/<USERNAME>/<REPO>), set publicPath to "/<REPO>/". For example, if your repo name is "my-project",
    * your vue.config.js should look like this: process.env.NODE_ENV === "production" ? "/my-project/" : "/"
    */
-  publicPath: "/"
+  // publicPath: "/project-frontend/"
+  publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
   //process.env.NODE_ENV === "production" ? "/my-project/" : "/"
 };

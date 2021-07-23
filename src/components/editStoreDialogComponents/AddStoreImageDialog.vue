@@ -10,26 +10,26 @@
             <v-col>
               <!-- <v-text-field v-model="imageSrc" label="Image Src*" required /> -->
               <v-file-input
-                prepend-icon="mdi-camera"
                 v-model="file"
+                prepend-icon="mdi-camera"
                 accept="image/*"
                 label="Upload Image*"
                 show-size
                 truncate-length="15"
                 required
+                :error-messages="fileErrors"
                 @input="$v.file.$touch()"
                 @blur="$v.file.$touch()"
-                :error-messages="fileErrors"
               ></v-file-input>
               <!-- @change="Preview_image" -->
               <v-text-field
                 v-model="imageTitle"
                 label="Image Title*"
                 required
+                :error-messages="imageTitleErrors"
                 @keyup.enter="submitImage()"
                 @input="$v.imageTitle.$touch()"
                 @blur="$v.imageTitle.$touch()"
-                :error-messages="imageTitleErrors"
               />
               <v-img :src="url"></v-img>
             </v-col>
@@ -41,8 +41,8 @@
         <v-btn color="primary" text @click="cancel">Close</v-btn>
         <v-btn
           color="primary"
-          @click="submitImage"
           :disabled="submitButtonDisabled"
+          @click="submitImage"
           >Submit</v-btn
         >
       </v-card-actions>
@@ -57,7 +57,7 @@ import { validationMixin } from "vuelidate";
 
 //Custom validator
 //TODO custom validator for image dimensions
-const file_size_validation = file => {
+const file_size_validation = (file) => {
   if (!file) {
     return true;
   }
@@ -74,7 +74,11 @@ export default {
 
   validations: {
     file: { required, file_size_validation },
-    imageTitle: { required }
+    imageTitle: { required },
+  },
+
+  props: {
+    value: Boolean,
   },
 
   data() {
@@ -83,12 +87,8 @@ export default {
       //imageSrc: "",
       imageTitle: "",
       file: null,
-      url: ""
+      url: "",
     };
-  },
-
-  props: {
-    value: Boolean
   },
   computed: {
     show: {
@@ -98,7 +98,7 @@ export default {
       set(value) {
         this.$v.$reset();
         this.$emit("input", value);
-      }
+      },
     },
     imageTitleErrors() {
       const errors = [];
@@ -119,7 +119,7 @@ export default {
         return true;
       }
       return false;
-    }
+    },
     //...mapState("account", ["user", "loggedIn"])
   },
 
@@ -147,7 +147,7 @@ export default {
         src: response.buffer,
         size: this.file.size,
         //file: this.imageUpload,
-        title: this.imageTitle
+        title: this.imageTitle,
       };
       this.$emit("add-store-image", data);
 
@@ -166,8 +166,8 @@ export default {
       this.url = "";
       this.file = null;
       this.show = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

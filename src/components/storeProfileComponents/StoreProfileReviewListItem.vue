@@ -33,20 +33,20 @@
           </v-row>
         </v-col>
         <v-col
+          v-if="this.user.email === this.review.userEmail"
           cols="12"
           xs="4"
           sm="3"
           md="2"
           lg="1"
           xl="1"
-          v-if="this.user.email === this.review.userEmail"
           align-self="center"
         >
           <v-btn icon @click="editReview">
-            <v-icon color="indigo">mdi-pencil</v-icon>
+            <v-icon color="primary">mdi-pencil</v-icon>
           </v-btn>
           <v-btn icon @click="deleteReview">
-            <v-icon color="indigo">mdi-delete</v-icon>
+            <v-icon color="primary">mdi-delete</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -80,13 +80,13 @@ import { reviewService } from "../../services";
 export default {
   name: "StoreProfileReviewListItem",
   props: {
-    review: Object
+    review: Object,
   },
   data() {
     return {
       amountTextField: 1,
       //colors: ["red","pink","purple","deep-purple","indigo","blue","light-blue","cyan","teal","green","light-green","lime","yellow","amber","orange","deep-orange","brown","blue-grey","grey"]
-      clrs: getMdColors()[Math.floor(Math.random() * getMdColors().length)]
+      clrs: getMdColors()[Math.floor(Math.random() * getMdColors().length)],
     };
   },
   computed: {
@@ -108,19 +108,19 @@ export default {
           );
         }
         return dateCreated;
-      }
+      },
     },
     reviewUserName: {
       get() {
         console.log(this.review.userName);
         return this.review.userName;
-      }
+      },
     },
     reviewRating: {
       get() {
         return parseInt(this.review.rating);
-      }
-    }
+      },
+    },
   },
   methods: {
     printClrs() {
@@ -135,7 +135,7 @@ export default {
     deleteReview: async function() {
       const data = {
         storeId: this.$route.params.id,
-        reviewId: this.review.reviewId
+        reviewId: this.review.reviewId,
       };
       this.$emit("overlay-start");
       let response;
@@ -152,7 +152,7 @@ export default {
 
       this.$emit("remove-review", {
         reviewId: response.reviewId,
-        avgRating: response.avgRating
+        avgRating: response.avgRating,
       });
       this.$emit("overlay-end");
       // this.addSuccessSnackbar("Review was successfully deleted.");
@@ -161,8 +161,8 @@ export default {
 
     editReview() {
       this.$emit("edit-review", this.review);
-    }
-  }
+    },
+  },
 };
 </script>
 

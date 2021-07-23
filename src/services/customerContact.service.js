@@ -1,17 +1,6 @@
-/* eslint-disable prettier/prettier */
-import axios from "axios";
+import { baseClient } from "./client";
 
-const baseURL = "http://127.0.0.1:3000";
-
-const customerContactClient = axios.create({
-  baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  timeout: 20000,
-  withCredentials: true
-});
+export { sendCustomerContactMessgae };
 
 async function sendCustomerContactMessgae(
   email,
@@ -21,15 +10,15 @@ async function sendCustomerContactMessgae(
   message
 ) {
   let response;
+
   try {
-    response = await customerContactClient.post(`/contacts`, {
+    response = await baseClient.post(`/contacts`, {
       email,
       subject,
       phoneNr,
       topic,
-      message
+      message,
     });
-    // response = await notifClient.post(`/rgstrPrdctAvNotif`, data);
   } catch (e) {
     console.log(e.response);
     throw e;
@@ -38,5 +27,3 @@ async function sendCustomerContactMessgae(
 
   return response.data;
 }
-
-export { sendCustomerContactMessgae };

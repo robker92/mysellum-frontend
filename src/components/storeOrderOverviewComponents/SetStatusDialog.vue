@@ -12,11 +12,11 @@
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
           <v-text-field
-            prepend-icon="mdi-map-marker-path"
             v-model="trackingId"
+            prepend-icon="mdi-map-marker-path"
             label="Tracking Id (optional)"
-            @keyup.enter.native="submit"
             append-outer-icon="mdi-information"
+            @keyup.enter.native="submit"
             @click:append-outer="
               showHelp(
                 'You can add a tracking id which will help the customer to track the delivery.',
@@ -53,7 +53,6 @@ export default {
       showShowHelpDialog: false
     };
   },
-  watch: {},
   computed: {
     show: {
       get() {
@@ -64,11 +63,12 @@ export default {
       }
     }
   },
+  watch: {},
   methods: {
     submit() {
       console.log(this.trackingId);
       let data = {
-        trackingId: trackingId,
+        trackingId: this.trackingId,
         step: "inDelivery"
       };
       this.$emit("set-status", data);

@@ -9,8 +9,8 @@
           <v-row>
             <v-col>
               <v-text-field
-                prepend-icon="mdi-email"
                 v-model="email"
+                prepend-icon="mdi-email"
                 :error-messages="emailErrors"
                 :label="$t('loginDialog.emailField') + '*'"
                 required
@@ -19,8 +19,8 @@
                 @keyup.enter.native="submitLogin"
               />
               <v-text-field
-                prepend-icon="mdi-lock-question"
                 v-model="password"
+                prepend-icon="mdi-lock-question"
                 :error-messages="passwordErrors"
                 :label="$t('loginDialog.passwordField') + '*'"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -37,9 +37,9 @@
             <router-link
               :to="{
                 name: 'ForgotPassword',
-                params: { locale: $i18n.locale }
+                params: { locale: $i18n.locale },
               }"
-              v-on:click.native="cancel"
+              @click.native="cancel"
             >
               {{ $t("loginDialog.forgotPasswordLabel") }}
             </router-link>
@@ -57,8 +57,8 @@
         <v-btn
           color="blue darken-1"
           text
-          @click="submitLogin"
           :disabled="buttonIsDisabled"
+          @click="submitLogin"
           >{{ $t("loginDialog.submitButton") }}</v-btn
         >
       </v-card-actions>
@@ -80,10 +80,10 @@ export default {
 
   validations: {
     email: { required, email },
-    password: { required }
+    password: { required },
   },
   props: {
-    value: Boolean
+    value: Boolean,
   },
 
   data() {
@@ -92,7 +92,7 @@ export default {
 
       email: "",
       password: "",
-      showPassword: false
+      showPassword: false,
     };
   },
 
@@ -105,7 +105,7 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
+      },
     },
 
     emailErrors() {
@@ -132,7 +132,7 @@ export default {
       } else {
         return true;
       }
-    }
+    },
   },
 
   methods: {
@@ -142,18 +142,21 @@ export default {
     submitLogin: async function() {
       var credentials = {
         email: this.email,
-        password: this.password
+        password: this.password,
       };
 
       try {
         await this.login(credentials);
       } catch (error) {
         console.log(error);
-        console.log(error.response.data);
+        // console.log(error.response);
         let msg;
-        if (error.response.data.type === "incorrect") {
+        if (error.response && error.response.data.type === "incorrect") {
           msg = this.$t("loginDialog.submitLoginIncorrectError");
-        } else if (error.response.data.type === "verification") {
+        } else if (
+          error.response &&
+          error.response.data.type === "verification"
+        ) {
           msg = this.$t("loginDialog.submitLoginVerificationError");
         } else {
           msg = this.$t("loginDialog.submitLoginOtherError");
@@ -179,8 +182,8 @@ export default {
       if (username && password) {
         this.login({ username, password });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

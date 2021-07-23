@@ -1,23 +1,35 @@
-/* eslint-disable prettier/prettier */
-//import config from './config'
-import axios from "axios";
+/* eslint-disable no-useless-catch */
 
-import { authHeader } from "../helpers";
+import { baseClient } from "./client";
+import { authHeader, getCookie } from "../helpers";
 
-const usersBaseURL = "http://127.0.0.1:3000";
+export const userService = {
+  getSingleUser,
+  login,
+  logout,
+  register,
+  verifyRegistration,
+  addToShoppingCart,
+  removeFromShoppingCart,
+  updateShoppingCart,
+  // Favorites:
+  addStoreToFavorites,
+  removeStoreFromFavorites,
+  // Reset Password:
+  sendResetPasswordMail,
+  checkResetToken,
+  resetPassword,
+};
 
-const usersClient = axios.create({
-  baseURL: usersBaseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  timeout: 20000,
-  withCredentials: true
-});
-
-async function getSingleUser(email) {
-  let response = await usersClient.get(`/users/${email}`);
+async function getSingleUser() {
+  let response;
+  try {
+    response = await baseClient.get(`/users`, {
+      headers: authHeader(),
+    });
+  } catch (error) {
+    throw error;
+  }
   console.log(response.data);
 
   return response.data;
@@ -26,34 +38,35 @@ async function getSingleUser(email) {
 async function login(credentials) {
   let response;
   try {
-    response = await usersClient.post("/auth/login-user", credentials);
+    response = await baseClient.post("/auth/login-user", credentials);
   } catch (error) {
     throw error;
   }
-  //var user = response.data.user
-  //console.log(user)
-  //var user = await handleResponse(response)
-  // if (response.data.user.token) {
-  //     // store user details and jwt token in local storage to keep user logged in between page refreshes
-  //     localStorage.setItem('user', JSON.stringify({
-  //         token: response.data.user.token
-  //     }));
-  // };
-
-  return response.data;
+  localStorage.setItem("authToken", response.data.authToken);
+  // console.log(getCookie("authToken"));
+  // if (!getCookie("authToken")) {
+  //   throw new Error("No Cookie set!");
+  // }
+  console.log(response.data.userData);
+  return response.data.userData;
 }
 
 function logout() {
-  // remove user from local storage to log user out
-  //localStorage.removeItem('user');
-  document.cookie =
-    "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  // Cookie approach:
+  // remove auth control cookie to log user out
+  // document.cookie = "authControl=false";
+  // document.cookie =
+  //   "authControl=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  // "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+  // local storage approach:
+  localStorage.removeItem("authToken");
 }
 
 async function register(data) {
   let response;
   try {
-    response = await usersClient.post("/auth/register-user", data);
+    response = await baseClient.post("/auth/register-user", data);
   } catch (error) {
     throw error;
   }
@@ -64,98 +77,148 @@ async function register(data) {
 async function verifyRegistration(token) {
   let response;
   try {
-    response = await usersClient.post(`/auth/verify-registration/${token}`);
+    response = await baseClient.post(`/auth/verify-registration/${token}`);
   } catch (error) {
     throw error;
   }
 
-  if (response.data.user.token) {
-    // store user details and jwt token in local storage to keep user logged in between page refreshes
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        token: response.data.user.token
-      })
-    );
-  }
+  // TODO
+  // if (response.data.user.token) {
+  //   // store user details and jwt token in local storage to keep user logged in between page refreshes
+  //   localStorage.setItem(
+  //     "user",
+  //     JSON.stringify({
+  //       token: response.data.user.token,
+  //     })
+  //   );
+  // }
 
-  return response.data;
+  localStorage.setItem("authToken", response.data.authToken);
+
+  return response.data.userData;
 }
 
 async function addToShoppingCart(data) {
   let response;
-  response = await usersClient.patch(`/cart/add/${data["email"]}`, data, {
-    headers: authHeader()
-  });
-  console.log(response.data);
-  let shoppingCart = response.data.shoppingCart;
+  try {
+    response = await baseClient.patch(`/cart/add/${data["email"]}`, data, {
+      headers: authHeader(),
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+  const shoppingCart = response.data.shoppingCart;
+  const shippingCosts = response.data.shippingCosts;
 
-  return shoppingCart;
+  return { shoppingCart, shippingCosts };
 }
 
 async function removeFromShoppingCart(data) {
-  let response = await usersClient.patch(
-    `/cart/remove/${data["email"]}`,
-    data,
-    {
-      headers: authHeader()
-    }
-  );
-  let shoppingCart = response.data.shoppingCart;
-  return shoppingCart;
+  let response;
+  try {
+    response = await baseClient.patch(`/cart/remove/${data["email"]}`, data, {
+      headers: authHeader(),
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+  const shoppingCart = response.data.shoppingCart;
+  const shippingCosts = response.data.shippingCosts;
+
+  return { shoppingCart, shippingCosts };
 }
 
 async function updateShoppingCart(data) {
   console.log(data.cart);
-  await usersClient.patch(
-    `/cart/update/${data.email}`,
-    {
-      shoppingCart: data.cart
-    },
-    {
-      headers: authHeader()
-    }
-  );
-  return;
+  let response;
+  try {
+    response = await baseClient.patch(
+      `/cart/update/${data.email}`,
+      {
+        shoppingCart: data.cart,
+      },
+      {
+        headers: authHeader(),
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  return { shippingCosts: response.shippingCosts };
 }
 
 async function sendResetPasswordMail(data) {
   let response;
   try {
-    response = await usersClient.post(`/auth/send-password-reset-mail`, data);
+    response = await baseClient.post(`/auth/send-password-reset-mail`, data);
   } catch (error) {
-    //console.log(error.message)
+    console.log(error.message);
     throw error;
   }
 
-  // let checkResponse = await handleResponse(response)
-  // console.log("hi2")
-  // console.log(checkResponse)
   return response.data;
 }
 
 async function checkResetToken(token) {
   let response;
   try {
-    response = await usersClient.get(`/auth/check-reset-token/${token}`);
+    response = await baseClient.get(`/auth/check-reset-token/${token}`);
   } catch (error) {
+    console.log(error.message);
     throw error;
   }
-  //console.log(response)
+
   return response.data;
 }
 
 async function resetPassword(data) {
   let response;
   try {
-    response = await usersClient.post(`/auth/reset-password/${data.token}`, {
-      password: data.password
+    response = await baseClient.post(`/auth/reset-password/${data.token}`, {
+      password: data.password,
     });
   } catch (error) {
+    console.log(error.message);
     throw error;
   }
-  //console.log(response)
+
   return response.data;
+}
+
+async function addStoreToFavorites(storeId) {
+  let response;
+  try {
+    response = await baseClient.post(
+      `/users/favorite-store`,
+      {
+        storeId: storeId,
+      },
+      {
+        headers: authHeader(),
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  return storeId;
+}
+
+async function removeStoreFromFavorites(storeId) {
+  let response;
+  try {
+    response = await baseClient.delete(`/users/favorite-store/${storeId}`, {
+      headers: authHeader(),
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  return storeId;
 }
 
 //REFACTOR
@@ -193,22 +256,3 @@ function handleResponse(fctn) {
   //     Promise.resolve(response);
   // }
 }
-
-export const userService = {
-  getSingleUser,
-  login,
-  logout,
-  register,
-  addToShoppingCart,
-  removeFromShoppingCart,
-  updateShoppingCart,
-  //Reset Password:
-  sendResetPasswordMail,
-  checkResetToken,
-  resetPassword,
-  verifyRegistration
-  // getAll,
-  // getById,
-  // update,
-  // delete: _delete
-};

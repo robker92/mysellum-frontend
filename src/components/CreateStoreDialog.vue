@@ -5,7 +5,7 @@
       :title="helpDialogTitle"
       :text="helpDialogMessage"
     />
-    <v-card flat v-if="show === true">
+    <v-card v-if="show === true" flat>
       <v-card-title>
         <span class="dialogHeadline">
           Create your Store
@@ -27,50 +27,50 @@
           </v-stepper-step>
 
           <v-stepper-content step="1">
-            <v-card class="ma-1 mb-4" color="grey lighten-4">
+            <v-card class="mb-4 mx-3 my-1">
               <v-container>
                 <v-text-field
                   v-model="storeTitle"
                   :counter="storeTitleMax"
                   :error-messages="storeTitleErrors"
-                  @input="$v.storeTitle.$touch()"
-                  @blur="$v.storeTitle.$touch()"
                   label="Store Title*"
                   required
+                  @input="$v.storeTitle.$touch()"
+                  @blur="$v.storeTitle.$touch()"
                 />
               </v-container>
             </v-card>
 
             <EditStoreDialogDescriptionTextArea
-              :storeDescriptionInput="storeDescription"
-              v-on:description-text-changed="changeDescriptionText"
-              v-on:description-valid="storeDescriptionInvalid = false"
-              v-on:description-invalid="storeDescriptionInvalid = true"
+              :store-description-input="storeDescription"
               class="mb-4"
+              @description-text-changed="changeDescriptionText"
+              @description-valid="storeDescriptionInvalid = false"
+              @description-invalid="storeDescriptionInvalid = true"
             />
 
-            <v-card class="ma-1">
+            <v-card class="mb-4 mx-3 my-1">
               <v-container>
                 <v-combobox
                   v-model="tagsComboBoxModel"
                   :items="tagsComboBoxItems"
                   :counter="tagsComboBoxModelMax"
                   :error-messages="storeTagsErrors"
-                  @input="$v.tagsComboBoxModel.$touch()"
-                  @blur="$v.tagsComboBoxModel.$touch()"
                   label="Store Tags*"
                   multiple
                   chips
                   deletable-chips
+                  @input="$v.tagsComboBoxModel.$touch()"
+                  @blur="$v.tagsComboBoxModel.$touch()"
                 />
               </v-container>
             </v-card>
 
             <v-btn
               color="primary"
-              @click="e6 = 2"
               :disabled="continue1Disabled"
               class="mt-3"
+              @click="e6 = 2"
             >
               Continue
             </v-btn>
@@ -82,74 +82,76 @@
           </v-stepper-step>
 
           <v-stepper-content step="2">
-            <v-container>
-              <v-row>
-                <v-col>
-                  <v-text-field
-                    v-model="addressLine1"
-                    :counter="40"
-                    label="Address Line 1*"
-                    required
-                    :error-messages="addressLine1Errors"
-                    @input="$v.addressLine1.$touch()"
-                    @blur="$v.addressLine1.$touch()"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12" sm="2" md="2">
-                  <v-text-field
-                    v-model="postcode"
-                    label="Postcode*"
-                    class="inputPostcode"
-                    required
-                    type="number"
-                    maxlength="5"
-                    oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
-                    :error-messages="postcodeErrors"
-                    @input="$v.postcode.$touch()"
-                    @blur="$v.postcode.$touch()"
-                  />
-                </v-col>
-                <v-col cols="12" sm="10" md="10">
-                  <v-text-field
-                    v-model="city"
-                    label="City*"
-                    :counter="20"
-                    required
-                    :error-messages="cityErrors"
-                    @input="$v.city.$touch()"
-                    @blur="$v.city.$touch()"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
-                  <v-select
-                    :items="mapIconList"
-                    v-model="mapIcon"
-                    :prepend-icon="'mdi-' + mapIcon"
-                    append-outer-icon="mdi-information"
-                    @click:append-outer="
-                      showHelp(
-                        'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.'
-                      )
-                    "
-                    label="Choose your map icon"
-                    menu-props="auto"
-                  >
-                    <template v-slot:item="{ item }">
-                      <!-- <img :src="item.image" /> -->
-                      <v-icon>mdi-{{ item.value }}</v-icon>
-                      <div class="ml-3">
-                        {{ item.text }}
-                      </div>
-                    </template>
-                  </v-select>
-                </v-col>
-              </v-row>
-            </v-container>
-            <v-btn color="primary" @click="e6 = 3" :disabled="continue2Disabled"
+            <v-card class="ma-1">
+              <v-container>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="addressLine1"
+                      :counter="40"
+                      label="Address Line 1*"
+                      required
+                      :error-messages="addressLine1Errors"
+                      @input="$v.addressLine1.$touch()"
+                      @blur="$v.addressLine1.$touch()"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" sm="2" md="2">
+                    <v-text-field
+                      v-model="postcode"
+                      label="Postcode*"
+                      class="inputPostcode"
+                      required
+                      type="number"
+                      maxlength="5"
+                      oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
+                      :error-messages="postcodeErrors"
+                      @input="$v.postcode.$touch()"
+                      @blur="$v.postcode.$touch()"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="10" md="10">
+                    <v-text-field
+                      v-model="city"
+                      label="City*"
+                      :counter="20"
+                      required
+                      :error-messages="cityErrors"
+                      @input="$v.city.$touch()"
+                      @blur="$v.city.$touch()"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+                    <v-select
+                      v-model="mapIcon"
+                      :items="mapIconList"
+                      :prepend-icon="'mdi-' + mapIcon"
+                      append-outer-icon="mdi-information"
+                      label="Choose your map icon"
+                      menu-props="auto"
+                      @click:append-outer="
+                        showHelp(
+                          'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.'
+                        )
+                      "
+                    >
+                      <template v-slot:item="{ item }">
+                        <!-- <img :src="item.image" /> -->
+                        <v-icon>mdi-{{ item.value }}</v-icon>
+                        <div class="ml-3">
+                          {{ item.text }}
+                        </div>
+                      </template>
+                    </v-select>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+            <v-btn color="primary" :disabled="continue2Disabled" @click="e6 = 3"
               >Continue</v-btn
             >
             <!-- <v-btn text @click="printInputs">Print</v-btn> -->
@@ -162,25 +164,25 @@
           <v-stepper-content step="3">
             <StoreImagesArea
               :mode="this.StoreImagesAreaMode.CREATE"
-              v-on:set-store-images-array="setStoreImagesArray"
-              v-on:disable-continue-button-3="disableSubmitButton"
-              v-on:enable-continue-button-3="enableSubmitButton"
+              @set-store-images-array="setStoreImagesArray"
+              @disable-continue-button-3="disableSubmitButton"
+              @enable-continue-button-3="enableSubmitButton"
             />
             <!-- v-on:disable-continue-button-3="disableContinueButton3"
               v-on:enable-continue-button-3="enableContinueButton3" -->
-            <v-btn
+            <!-- <v-btn
               color="primary"
-              @click="e6 = 4"
               :disabled="continue3Disabled"
+              @click="e6 = 4"
             >
               Continue
-            </v-btn>
+            </v-btn> -->
 
             <v-btn
               color="primary"
               :disabled="submitButtonDisabled"
-              @click="submitCreation"
               class="mt-3"
+              @click="submitCreation"
             >
               Create Store
             </v-btn>
@@ -232,31 +234,31 @@ import { storeService } from "../services";
 export default {
   name: "CreateStoreDialog",
 
-  props: {
-    value: Boolean
-  },
-  mixins: [validationMixin],
-
   components: {
     EditStoreDialogDescriptionTextArea: EditStoreDialogDescriptionTextArea,
     ShowHelpDialog: ShowHelpDialog,
-    StoreImagesArea: StoreImagesArea
+    StoreImagesArea: StoreImagesArea,
+  },
+  mixins: [validationMixin],
+
+  props: {
+    value: Boolean,
   },
 
   validations: {
     storeTitle: {
       required,
       minLength: minLength(10),
-      maxLength: maxLength(100)
+      maxLength: maxLength(100),
     },
     tagsComboBoxModel: {
       required,
       minLength: minLength(1),
-      maxLength: maxLength(15)
+      maxLength: maxLength(15),
     },
     city: { required, maxLength: maxLength(20) },
     postcode: { required },
-    addressLine1: { required, maxLength: maxLength(40) }
+    addressLine1: { required, maxLength: maxLength(40) },
   },
 
   data() {
@@ -287,7 +289,7 @@ export default {
         "Chicken",
         "Beverages",
         "Wine",
-        "Beer"
+        "Beer",
       ],
       addressLine1: "",
       postcode: "",
@@ -295,7 +297,7 @@ export default {
       mapIconList: mapIconList,
       mapIcon: "",
       helpDialogTitle: "",
-      helpDialogMessage: ""
+      helpDialogMessage: "",
     };
   },
   computed: {
@@ -305,7 +307,7 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
+      },
     },
     ...mapState("account", ["user", "loggedIn"]),
 
@@ -396,7 +398,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
 
   methods: {
@@ -429,9 +431,9 @@ export default {
           postcode: this.postcode,
           city: this.city,
           addressLine1: this.addressLine1,
-          country: "Germany"
+          country: "Germany",
         },
-        mapIcon: this.mapIcon
+        mapIcon: this.mapIcon,
       };
       console.log(payload);
 
@@ -452,6 +454,7 @@ export default {
     },
 
     cancel() {
+      this.$v.$reset();
       this.storeTitle = "";
       this.storeSubtitle = "";
       this.storeDescription = "";
@@ -460,7 +463,8 @@ export default {
       this.postcode = "";
       this.city = "";
       this.mapIcon = "";
-
+      this.tagsComboBoxModel = [];
+      this.e6 = 1;
       this.show = false;
     },
 
@@ -493,8 +497,8 @@ export default {
     },
     enableContinueButton3() {
       this.continue3Disabled = false;
-    }
-  }
+    },
+  },
 };
 </script>
 

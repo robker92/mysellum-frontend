@@ -3,16 +3,14 @@
     <!-- <v-app-bar app elevate-on-scroll scroll-target="#scrolling-techniques-7"> -->
     <!-- <v-app-bar-nav-icon class="hidden-md-and-up" /> -->
     <v-app-bar app color="grey lighten-3" elevate-on-scroll>
-      <v-app-bar-nav-icon @click="navDrawer = true"></v-app-bar-nav-icon>
-
       <router-link
         :to="{
           name: 'Home',
-          params: { locale: $i18n.locale }
+          params: { locale: $i18n.locale },
         }"
       >
         <v-img
-          :src="require('@/assets/logo.png')"
+          :src="require('@/assets/mysellum_logo.png')"
           class="mr-5"
           contain
           height="48"
@@ -20,8 +18,15 @@
           max-width="48"
         />
       </router-link>
-
-      <v-toolbar-title>Gronnity</v-toolbar-title>
+      <router-link
+        :to="{
+          name: 'Home',
+          params: { locale: $i18n.locale },
+        }"
+        style="text-decoration: none; color: inherit;"
+      >
+        <v-toolbar-title>Mysellum</v-toolbar-title>
+      </router-link>
       <!-- <v-btn @click="createDevData">Create Dev Data</v-btn> -->
       <v-spacer />
 
@@ -233,7 +238,7 @@
           loggedIn === false ||
             (loggedIn === true && checkOwnedStoreId === false)
         "
-        class="ml-2"
+        class=""
       >
         <v-badge
           overlap
@@ -259,7 +264,7 @@
       </div>
 
       <!-- RECEIVED ORDERS BUTTON -->
-      <div v-if="loggedIn === true && checkOwnedStoreId" class="ml-2">
+      <!-- <div v-if="loggedIn === true && checkOwnedStoreId" class="ml-2">
         <v-badge
           overlap
           color="green"
@@ -278,10 +283,16 @@
             {{ $t("header.receivedOrdersButton") }}
           </v-btn>
         </v-badge>
-      </div>
+      </div> -->
+      <v-app-bar-nav-icon
+        color="primary"
+        class="rounded-xl mr-1 ml-2"
+        tile
+        @click="navDrawer = true"
+      ></v-app-bar-nav-icon>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="navDrawer" absolute temporary>
+    <v-navigation-drawer v-model="navDrawer" temporary right fixed>
       <v-list>
         <v-list-item v-if="loggedIn == true" @click="printCart">
           <v-list-item-avatar color="indigo">
@@ -339,6 +350,21 @@
           </v-list-item-content>
         </v-list-item>
 
+        <!-- FAVORITE STORES -->
+        <v-list-item
+          v-if="loggedIn == true"
+          :to="{
+            name: `FavoriteStores`,
+          }"
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-heart</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content class="text-left">
+            <v-list-item-title>Favorite Stores</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
         <!-- CREATE STORE -->
         <v-list-item
           v-if="loggedIn == true && checkOwnedStoreId === false"
@@ -362,7 +388,7 @@
           v-if="loggedIn == true && checkOwnedStoreId"
           :to="{
             name: `StoreProfile`,
-            params: { locale: $i18n.locale, id: user.ownedStoreId }
+            params: { id: user.ownedStoreId },
           }"
           @click="menu = false"
         >
@@ -381,7 +407,7 @@
           v-if="loggedIn == true && checkOwnedStoreId"
           :to="{
             name: `StoreOrderOverview`,
-            params: { locale: $i18n.locale, id: user.ownedStoreId }
+            params: { locale: $i18n.locale, id: user.ownedStoreId },
           }"
           @click="menu = false"
         >
@@ -441,14 +467,22 @@ import { createDevDataService } from "../../services";
 
 export default {
   name: "Header",
+
+  components: {
+    RegisterDialog,
+    LoginDialog,
+    CreateStoreDialog,
+    SettingsDialog,
+    LanguageSwitcher: LanguageSwitcher,
+  },
   data() {
     return {
       navDrawer: false,
       links: [
         {
           href: "#!",
-          icon: "mdi-twitter"
-        }
+          icon: "mdi-twitter",
+        },
       ],
       showRegisterDialog: false,
       showLoginDialog: false,
@@ -457,16 +491,8 @@ export default {
       userLoggedIn: false,
       menu: false,
       group: "",
-      searchTerm: ""
+      searchTerm: "",
     };
-  },
-
-  components: {
-    RegisterDialog,
-    LoginDialog,
-    CreateStoreDialog,
-    SettingsDialog,
-    LanguageSwitcher: LanguageSwitcher
   },
 
   computed: {
@@ -474,7 +500,7 @@ export default {
       "user",
       "loggedIn",
       "shoppingCart",
-      "productCounter"
+      "productCounter",
     ]),
 
     checkOwnedStoreId: {
@@ -485,14 +511,14 @@ export default {
         ) {
           return false;
         } else return true;
-      }
+      },
     },
 
     checkProductCounter: {
       get() {
         return this.productCounter;
-      }
-    }
+      },
+    },
   },
 
   created() {
@@ -512,14 +538,16 @@ export default {
         try {
           await this.updateCart({
             email: this.user.email,
-            cart: this.shoppingCart
+            cart: this.shoppingCart,
           });
         } catch (error) {
           console.log(error);
         }
       }
       this.logout();
-      this.$router.push({ name: "Home" });
+      if (this.$route.name !== "Home") {
+        this.$router.push({ name: "Home" });
+      }
     },
 
     searchForTerm() {
@@ -533,8 +561,8 @@ export default {
     },
     async createDevData() {
       await createDevDataService();
-    }
-  }
+    },
+  },
 };
 </script>
 

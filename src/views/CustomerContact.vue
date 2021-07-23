@@ -6,47 +6,47 @@
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="6">
         <v-text-field
+          v-model="email"
           label="Your E-Mail Address"
           placeholder="You will receive our answer to this address"
-          v-model="email"
           outlined
           dense
           :error-messages="emailErrors"
+          counter="50"
           @input="$v.email.$touch()"
           @blur="$v.email.$touch()"
-          counter="50"
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="6" lg="6">
         <v-text-field
-          label="Your Message Subject"
           v-model="subject"
+          label="Your Message Subject"
           outlined
           dense
           :error-messages="subjectErrors"
+          counter="100"
           @input="$v.subject.$touch()"
           @blur="$v.subject.$touch()"
-          counter="100"
         ></v-text-field>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12" sm="6" md="6" lg="6">
         <v-text-field
-          label="Your telephone number (optional)"
           v-model="phoneNr"
+          label="Your telephone number (optional)"
           outlined
           dense
           :error-messages="phoneNrErrors"
+          counter="20"
           @input="$v.phoneNr.$touch()"
           @blur="$v.phoneNr.$touch()"
-          counter="20"
         ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="6" lg="6">
         <v-select
-          :items="topics"
           v-model="topic"
+          :items="topics"
           label="Your Message Topic"
           outlined
           dense
@@ -56,13 +56,13 @@
     <v-row>
       <v-col cols="12" sm="12" md="12">
         <v-textarea
+          v-model="message"
           outlined
           label="Your Message"
-          v-model="message"
           :error-messages="messageErrors"
+          counter="2000"
           @input="$v.message.$touch()"
           @blur="$v.message.$touch()"
-          counter="2000"
         ></v-textarea>
       </v-col>
     </v-row>
@@ -71,8 +71,8 @@
       <v-btn
         color="primary"
         class="ma-2 white--text"
-        @click="sendMessage"
         :disabled="buttonIsDisabled"
+        @click="sendMessage"
       >
         Send Message
         <v-icon right dark>
@@ -88,7 +88,7 @@ import {
   required,
   email,
   maxLength,
-  minLength
+  minLength,
 } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import { sendCustomerContactMessgae } from "../services";
@@ -103,11 +103,11 @@ export default {
       required,
       email,
       minLength: minLength(5),
-      maxLength: maxLength(50)
+      maxLength: maxLength(50),
     },
     subject: { required, minLength: minLength(5), maxLength: maxLength(100) },
     message: { required, minLength: minLength(20), maxLength: maxLength(2000) },
-    phoneNr: { minLength: minLength(5), maxLength: maxLength(20) }
+    phoneNr: { minLength: minLength(5), maxLength: maxLength(20) },
   },
   props: {},
   data() {
@@ -117,10 +117,9 @@ export default {
       message: "",
       phoneNr: "",
       topic: "",
-      topics: ["Question", "Technical", "Help Request"]
+      topics: ["Question", "Technical", "Help Request"],
     };
   },
-  watch: {},
   computed: {
     emailErrors() {
       const errors = [];
@@ -179,8 +178,15 @@ export default {
       } else {
         return true;
       }
-    }
+    },
   },
+  watch: {},
+
+  mounted() {
+    // console.log(`hi1`);
+    // this.$vuetify.goTo(0);
+  },
+
   methods: {
     ...mapActions("alert", ["successAlert", "errorAlert", "clearAlert"]),
 
@@ -208,8 +214,8 @@ export default {
         this.clearAlert();
       }, 5000);
       return;
-    }
-  }
+    },
+  },
 };
 </script>
 

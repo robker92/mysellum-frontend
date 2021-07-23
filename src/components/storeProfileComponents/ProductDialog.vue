@@ -45,32 +45,32 @@
               <v-text-field
                 v-model="price"
                 class="inputPrice"
-                @input="
-                  checkPriceFormat;
-                  $v.price.$touch();
-                "
                 :error-messages="priceErrors"
-                @blur="$v.price.$touch()"
                 placeholder="Format: ##.##"
                 label="Price"
                 required
                 :prefix="pricePrefix"
                 type="number"
+                @input="
+                  checkPriceFormat;
+                  $v.price.$touch();
+                "
+                @blur="$v.price.$touch()"
               />
             </v-col>
             <v-col>
               <v-file-input
-                prepend-icon="mdi-camera"
                 v-model="image"
+                prepend-icon="mdi-camera"
                 accept="image/*"
                 :label="imageLabel"
                 show-size
                 truncate-length="15"
                 required
+                :error-messages="imageErrors"
                 @change="getImageBuffer()"
                 @input="$v.image.$touch()"
                 @blur="$v.image.$touch()"
-                :error-messages="imageErrors"
               />
             </v-col>
           </v-row>
@@ -122,8 +122,8 @@
           color="primary"
           right
           dark
-          @click="submitProduct"
           :disabled="buttonIsDisabled"
+          @click="submitProduct"
           >Save</v-btn
         >
       </v-card-actions>
@@ -138,9 +138,9 @@ import { validationMixin } from "vuelidate";
 
 import { mapActions } from "vuex";
 
-import { storeService } from "../../services";
+import { productService, storeService } from "../../services";
 
-const file_size_validation = file => {
+const file_size_validation = (file) => {
   if (!file) {
     return true;
   }
@@ -154,23 +154,23 @@ const file_size_validation = file => {
 export default {
   name: "AddProductDialog",
 
+  mixins: [validationMixin],
+
   props: {
     value: Boolean,
-    productToEdit: Object
+    productToEdit: Object,
   },
-
-  mixins: [validationMixin],
 
   validations: {
     title: {
       required,
       minLength: minLength(5),
-      maxLength: maxLength(30)
+      maxLength: maxLength(30),
     },
     description: {
       required,
       minLength: minLength(20),
-      maxLength: maxLength(200)
+      maxLength: maxLength(200),
     },
     price: { required },
     image: { required, file_size_validation },
@@ -178,21 +178,21 @@ export default {
     quantityValue: { required },
     delivery2: { required },
     isDelivery: {
-      delivery: val => val === true
+      delivery: (val) => val === true,
     },
     isPickup: {
-      pickup: val => val === true
+      pickup: (val) => val === true,
     },
     checkboxDelivery: {
       checked(val) {
         return val;
-      }
+      },
     },
     checkboxPickup: {
       checked(val) {
         return val;
-      }
-    }
+      },
+    },
   },
 
   data() {
@@ -209,32 +209,8 @@ export default {
       quantityType: "Kilograms",
       quantityTypeItems: ["Kilograms", "Grams", "Pieces"],
       quantityValue: "",
-      radioGroup: "delivery"
+      radioGroup: "delivery",
     };
-  },
-
-  watch: {
-    productToEdit: function(newVal) {
-      if (newVal !== null) {
-        this.title = newVal.title;
-        this.description = newVal.description;
-        this.price = newVal.price;
-        this.imageLabel = "Update Image*";
-        this.imageBuffer = newVal.imgSrc;
-        this.imageDetails = newVal.imageDetails;
-        this.image = {
-          buffer: newVal.imgSrc,
-          size: newVal.imageDetails.size,
-          originalname: newVal.imageDetails.originalname,
-          name: newVal.imageDetails.name
-        };
-        //this.image = newVal.imgSrc;
-        this.delivery = newVal.delivery;
-        this.pickup = newVal.pickup;
-        this.quantityType = newVal.quantityType;
-        this.quantityValue = newVal.quantityValue;
-      }
-    }
   },
 
   computed: {
@@ -244,7 +220,7 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
+      },
     },
     titleErrors() {
       const errors = [];
@@ -315,7 +291,32 @@ export default {
       } else {
         return true;
       }
-    }
+    },
+  },
+
+  watch: {
+    productToEdit: function(newVal) {
+      if (newVal !== null) {
+        this.title = newVal.title;
+        this.description = newVal.description;
+        this.price = newVal.price;
+        this.imageLabel = "Update Image*";
+        this.imageBuffer = newVal.imgSrc;
+        this.imageDetails = newVal.imageDetails;
+        this.image = {
+          buffer: newVal.imgSrc,
+          size: newVal.imageDetails.size,
+          originalname: newVal.imageDetails.originalname,
+          name: newVal.imageDetails.name,
+        };
+        //this.image = newVal.imgSrc;
+        this.delivery = newVal.delivery;
+        this.pickup = newVal.pickup;
+        this.quantityType = newVal.quantityType;
+        this.quantityValue = newVal.quantityValue;
+        this.setRadioGroup(newVal.delivery, newVal.pickup);
+      }
+    },
   },
 
   methods: {
@@ -349,7 +350,7 @@ export default {
         quantityValue: this.quantityValue,
         delivery: delivery,
         pickup: pickup,
-        stockAmount: 1
+        stockAmount: 1,
       };
 
       if (this.productToEdit === null) {
@@ -360,7 +361,7 @@ export default {
         //let newProduct;
         let response;
         try {
-          response = await storeService.createProduct(payload);
+          response = await productService.createProduct(payload);
         } catch (error) {
           this.$emit("overlay-end");
           return;
@@ -378,7 +379,7 @@ export default {
         payload["_id"] = this.productToEdit._id;
         let response;
         try {
-          response = await storeService.editProduct(payload);
+          response = await productService.editProduct(payload);
         } catch (error) {
           this.$emit("overlay-end");
           return;
@@ -418,6 +419,21 @@ export default {
       console.log(this.imageDetails);
     },
 
+    setRadioGroup(delivery, pickup) {
+      if (delivery === true && pickup === true) {
+        this.radioGroup = "pickupAndDelivery";
+        return;
+      }
+      if (delivery === true && pickup === false) {
+        this.radioGroup = "delivery";
+        return;
+      }
+      if (delivery === false && pickup === true) {
+        this.radioGroup = "pickup";
+        return;
+      }
+    },
+
     cancel() {
       this.$v.$reset();
       this.title = "";
@@ -434,6 +450,7 @@ export default {
       this.$emit("productToEdit-to-null");
       this.show = false;
     },
+
     fill() {
       this.title = "Product 1";
       this.description = "Test Test Test Test Test ";
@@ -442,6 +459,7 @@ export default {
       this.quantityType = "Kilograms";
       this.quantityValue = "2";
     },
+
     printData() {
       console.log(this.productToEdit);
       console.log(this.description);
@@ -449,8 +467,8 @@ export default {
       console.log(this.productToEdit.imgSrc);
       console.log(this.quantityType);
       console.log(this.quantityValue);
-    }
-  }
+    },
+  },
 };
 </script>
 

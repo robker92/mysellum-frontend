@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 <template>
   <div>
     <div id="map"></div>
@@ -7,10 +6,12 @@
 </template>
 
 <script>
+/* eslint-disable no-undef */
 //import loadGoogleMapsApi from 'load-google-maps-api'
-import { getGoogleMapLoader } from "../../helpers";
+// import { getGoogleMapLoader } from "../../helpers";
 import { mapOptions, getMarkerIconURL } from "../../helpers";
-import markerFishIcon from "../../assets/markers/fish.png";
+// import markerIconFish from "../../assets/markers/fish.png";
+// import markerIconBarn from "../../assets/markers/barn.png";
 //import { Loader } from "google-maps";
 
 import MapInfoWindow from "./MapInfoWindow.vue";
@@ -20,6 +21,12 @@ import router from "../../router";
 
 export default {
   name: "GoogleMap",
+
+  props: {
+    markers: Array,
+    stores: Array,
+    // mapBoundries: Object
+  },
   data() {
     return {
       map: null,
@@ -27,21 +34,15 @@ export default {
       markerArray: [],
       markerObject: {},
       contentStringArray: [],
-      activeInfoWindows: []
+      activeInfoWindows: [],
     };
-  },
-
-  props: {
-    markers: Array,
-    stores: Array
-    // mapBoundries: Object
   },
 
   watch: {
     // eslint-disable-next-line no-unused-vars
     stores: function(newVal, oldVal) {
       //this.deleteIdentifiedMarkers(markersToRemove);
-      if (newVal.length > 0) {
+      if (newVal && newVal.length > 0) {
         //console.log(newVal);
 
         //this.deleteMarkers();
@@ -76,7 +77,7 @@ export default {
         let markersToRemove = this.identifyMarkersToRemove(newVal);
         this.deleteIdentifiedMarkers(markersToRemove);
       }
-    }
+    },
 
     // mapBoundries: function(newVal, oldVal) {
     //   console.log(newVal);
@@ -116,11 +117,9 @@ export default {
     await this.initMap();
     // check if the result of the param validation function
     if (this.checkBoundryQueryParams()) {
-      console.log(`hi1`);
       // set the map boundries to the url param when check passed
       this.setMapBoundries(this.map);
     } else {
-      console.log(`hi2`);
       // if check did not pass (invalid values or no values provided) set the center of the map
       // to the current location
       this.setCurrentLocation(this.map);
@@ -140,7 +139,7 @@ export default {
         mapTypeControl: false,
         fullscreenControl: false,
         rotateControl: false,
-        options: { styles: mapOptions }
+        options: { styles: mapOptions },
       });
     },
 
@@ -154,7 +153,7 @@ export default {
           min_lat: sw.toJSON().lat,
           max_lat: ne.toJSON().lat,
           min_lng: sw.toJSON().lng,
-          max_lng: ne.toJSON().lng
+          max_lng: ne.toJSON().lng,
           // zoom: map.getZoom()
         };
         // send boundries to Search view
@@ -187,7 +186,7 @@ export default {
     //     var marker = new google.maps.Marker({
     //       position: item.mapData.location,
     //       //animation: this.google2.maps.Animation.DROP,
-    //       icon: markerFishIcon,
+    //       icon: markerIconFish,
     //       //map: null,
     //       map: this.map,
     //       title: item.profileData.title,
@@ -265,13 +264,13 @@ export default {
       // let iconUrl = this.markerBaseUrl + store.mapData.mapIcon + ".png";
       // console.log(store.mapData.mapIcon);
       // console.log(this.markerBaseUrl + store.mapData.mapIcon + ".png");
-      // console.log(markerFishIcon);
+      // console.log(markerIconFish);
       const iconURL = getMarkerIconURL(store.mapData.mapIcon);
       const icon = {
-        //url: markerFishIcon, // url
+        //url: markerIconFish, // url
         url: iconURL,
         // eslint-disable-next-line no-undef
-        scaledSize: new google.maps.Size(50, 50) // scaled size
+        scaledSize: new google.maps.Size(50, 50), // scaled size
         //origin: new this.google2.maps.Point(0, 0), // origin
         //anchor: new this.google2.maps.Point(0, 0) // anchor
       };
@@ -284,7 +283,7 @@ export default {
         //map: null,
         map: this.map,
         title: store.profileData.title,
-        storeId: store._id
+        storeId: store._id,
       });
 
       //Custom Info Window
@@ -293,17 +292,17 @@ export default {
         propsData: {
           content: "This displays as info-window content!",
           store: store,
-          locale: this.$i18n.locale
+          locale: this.$i18n.locale,
         },
         vuetify,
-        router
+        router,
       });
       instance.$mount();
 
       // eslint-disable-next-line no-undef
       let infoWindow = new google.maps.InfoWindow({
         content: instance.$el,
-        maxWidth: 400
+        maxWidth: 400,
       });
 
       const that = this;
@@ -312,34 +311,34 @@ export default {
           infoWindow.open(this.map, marker);
           clicked = true;
           this.activeInfoWindows.push(infoWindow);
-          that.$emit("elevate-store", marker.storeId);
+          // that.$emit("elevate-store", marker.storeId);
         } else {
           infoWindow.close();
           clicked = false;
-          that.$emit("unelevate-store", marker.storeId);
+          // that.$emit("unelevate-store", marker.storeId);
         }
       });
       marker.addListener("mouseover", function() {
         if (clicked === false) {
           infoWindow.open(this.map, marker);
-          that.$emit("elevate-store", marker.storeId);
+          // that.$emit("elevate-store", marker.storeId);
         }
       });
       marker.addListener("mouseout", function() {
         if (clicked === false) {
           infoWindow.close();
-          that.$emit("unelevate-store", marker.storeId);
+          console.log(marker.storeId);
+          // that.$emit("unelevate-store", marker.storeId);
         }
       });
 
       // eslint-disable-next-line no-unused-vars
-      this.map.addListener("click", evt => {
+      this.map.addListener("click", (evt) => {
         this.activeInfoWindows.forEach(function(window) {
           window.close();
         });
-        that.$emit("unelevate-all-stores");
+        // that.$emit("unelevate-all-stores");
         clicked = false;
-        //console.log(evt.latLng.toJSON());
       });
 
       this.markerArray.push(marker);
@@ -397,14 +396,16 @@ export default {
       return -1;
     },
 
-    getMarkerIconURL(icon) {
-      switch (icon) {
-        case "fish":
-          return markerFishIcon;
-        case "cat":
-          return "cat";
-      }
-    },
+    // getMarkerIconURL(icon) {
+    //   switch (icon) {
+    //     case "fish":
+    //       return markerIconFish;
+    //     case "cat":
+    //       return "cat";
+    //     case "barn":
+    //       return markerIconBarn;
+    //   }
+    // },
     //############################################################################################################################## OLD:
 
     removeMarkers(markersToRemove) {
@@ -489,14 +490,14 @@ export default {
         var instance = new CustomInfoWindow({
           propsData: {
             content: "This displays as info-window content!",
-            store: this.stores[i]
-          }
+            store: this.stores[i],
+          },
         });
         instance.$mount();
 
         // eslint-disable-next-line no-undef
         var infowindow = new google.maps.InfoWindow({
-          content: this.contentStringArray[i]
+          content: this.contentStringArray[i],
           //content: instance.$el,
           //maxWidth: 50
         });
@@ -667,7 +668,7 @@ export default {
           function(position) {
             var current_pos = {
               lat: position.coords.latitude,
-              lng: position.coords.longitude
+              lng: position.coords.longitude,
             };
             // console.log(current_pos);
             map.setCenter(current_pos);
@@ -689,12 +690,12 @@ export default {
       // const sw = new google.maps.LatLng(min_lat, min_lng);
       const sw = {
         lat: min_lat,
-        lng: min_lng
+        lng: min_lng,
       };
       // const ne = new google.maps.LatLng(max_lat, max_lng);
       const ne = {
         lat: max_lat,
-        lng: max_lng
+        lng: max_lng,
       };
 
       const LatLngBounds = new google.maps.LatLngBounds(sw, ne);
@@ -759,7 +760,7 @@ export default {
 
     addQueryParam(queryObject) {
       this.$router.push({
-        query: Object.assign({}, this.$route.query, queryObject)
+        query: Object.assign({}, this.$route.query, queryObject),
       });
     },
 
@@ -767,8 +768,8 @@ export default {
       let query = Object.assign({}, this.$route.query);
       delete query[param];
       this.$router.replace({ query });
-    }
-  }
+    },
+  },
   //var current_position_and_zoom = await this.setCurrentLocation(map)
   //console.log(current_position_and_zoom)
   //center: current_position_and_zoom['current_pos'],

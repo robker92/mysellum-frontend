@@ -1,25 +1,19 @@
-/* eslint-disable prettier/prettier */
-import axios from "axios";
-
+import { baseClient } from "./client";
 import { authHeader, errorHandler } from "../helpers";
 
-const ordersBaseURL = "http://127.0.0.1:3000/orders";
-
-const ordersClient = axios.create({
-  baseURL: ordersBaseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json"
-  },
-  timeout: 20000,
-  withCredentials: true
-});
+export const orderService = {
+  getAllOrders,
+  createOrder,
+  getStoresOrders,
+  setStepStatus,
+  searchOrderByTerm,
+};
 
 async function createOrder(data) {
   let response;
   try {
-    response = await ordersClient.post("/createOrder", data, {
-      headers: authHeader()
+    response = await baseClient.post("/orders/createOrder", data, {
+      headers: authHeader(),
     });
   } catch (error) {
     errorHandler(error, "createOrder");
@@ -30,7 +24,7 @@ async function createOrder(data) {
 
 async function getAllOrders() {
   // console.log(credentials)
-  let response = await ordersClient.get("/");
+  let response = await baseClient.get("/orders/");
   console.log(response);
   return response.data;
 }
@@ -61,8 +55,8 @@ async function getStoresOrders(data) {
 
   let response;
   try {
-    response = await ordersClient.get(`/stores-orders?${urlQuery}`, {
-      headers: authHeader()
+    response = await baseClient.get(`/orders/stores-orders?${urlQuery}`, {
+      headers: authHeader(),
     });
   } catch (error) {
     errorHandler(error, "getStoresOrders");
@@ -75,8 +69,8 @@ async function getStoresOrders(data) {
 async function setStepStatus(data) {
   let response;
   try {
-    response = await ordersClient.post(`/step-status`, data, {
-      headers: authHeader()
+    response = await baseClient.post(`/orders/step-status`, data, {
+      headers: authHeader(),
     });
   } catch (error) {
     errorHandler(error, "setStepStatus");
@@ -95,10 +89,10 @@ async function searchOrderByTerm(searchTerm, storeId) {
   console.log(searchTermString);
   let response;
   try {
-    response = await ordersClient.get(
-      `/search-store-order/${storeId}${searchTermString}`,
+    response = await baseClient.get(
+      `/orders/search-store-order/${storeId}${searchTermString}`,
       {
-        headers: authHeader()
+        headers: authHeader(),
       }
     );
   } catch (error) {
@@ -108,11 +102,3 @@ async function searchOrderByTerm(searchTerm, storeId) {
   console.log(response);
   return response.data;
 }
-
-export const orderService = {
-  getAllOrders,
-  createOrder,
-  getStoresOrders,
-  setStepStatus,
-  searchOrderByTerm
-};

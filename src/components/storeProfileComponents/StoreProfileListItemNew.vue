@@ -2,16 +2,16 @@
   <div>
     <ProductAvailabilityNotificationDialog
       v-model="showProductAvailabilityNotificationDialog"
-      :productId="product._id"
-      :storeId="product.storeId"
+      :product-id="product._id"
+      :store-id="product.storeId"
     />
     <v-card :disabled="cardDisabled">
       <v-speed-dial
         v-if="modifiable"
+        v-model="fab"
         absolute
         top
         right
-        v-model="fab"
         direction="left"
         :open-on-hover="true"
         transition="scale-transition"
@@ -37,9 +37,7 @@
       <v-img height="150px" :src="product.imgSrc" class="rounded-t"></v-img>
 
       <v-card-title>
-        <div>
-          {{ product.title }}
-        </div>
+        {{ product.title }}
       </v-card-title>
 
       <!-- v-model="avgRatingComputed"-->
@@ -58,36 +56,43 @@
             {{ stockStatusLabel }}
           </div>
         </div>
-        <v-card v-if="modifiable === false" flat class="mt-5">
-          <v-row class="mt-3" no-gutters>
-            <v-col cols="12" xs="5" sm="9" md="9" lg="9" xl="9">
+        <!-- <v-card v-if="modifiable === false" flat class="mt-3"> -->
+        <div v-if="modifiable === false" class="mt-3">
+          <v-row class="mt-2" no-gutters>
+            <v-col cols="12" xs="10" sm="8" md="7" lg="9" xl="9">
               <v-combobox
-                :items="quantityItemsComputed"
                 v-model="productQuantity"
+                :items="quantityItemsComputed"
                 label="Quantity"
                 required
                 :error-messages="quantityErrors"
+                dense
                 @input="$v.quantity.$touch()"
                 @blur="$v.quantity.$touch()"
-                dense
               ></v-combobox>
             </v-col>
-            <v-col cols="12" xs="3" sm="1" md="1" lg="1" xl="1">
-              <v-btn
-                class="mx-3"
-                x-small
-                fab
-                @click.stop="putInCart(product)"
-                :disabled="putInCartButtonDisabled"
-                color="pink"
-                :dark="putInCartButtonDark"
-              >
-                <v-icon>mdi-cart-plus</v-icon>
-              </v-btn>
-              <v-btn @click="print">print</v-btn>
+            <v-col cols="12" xs="2" sm="4" md="3" lg="1" xl="1">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="mx-3"
+                    :disabled="putInCartButtonDisabled"
+                    small
+                    color="primary"
+                    :dark="putInCartButtonDark"
+                    v-on="on"
+                    @click.stop="putInCart(product)"
+                  >
+                    <v-icon>mdi-cart-plus</v-icon>
+                  </v-btn>
+                </template>
+                <span>Add to shopping cart</span>
+              </v-tooltip>
             </v-col>
           </v-row>
-        </v-card>
+          <!-- </v-card> -->
+        </div>
         <div v-else>
           <v-divider />
           <div class="text-left black--text text-body-1 mt-3">
@@ -132,7 +137,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { storeService } from "../../services";
+import { productService } from "../../services";
 import { validationMixin } from "vuelidate";
 import ProductAvailabilityNotificationDialog from "./ProductAvailabilityNotificationDialog";
 
@@ -146,19 +151,19 @@ function quantityNotInStock(value) {
 export default {
   name: "StoreProfileListItem",
 
+  components: {
+    ProductAvailabilityNotificationDialog: ProductAvailabilityNotificationDialog,
+  },
+
   mixins: [validationMixin],
 
   validations: {
-    quantity: { quantityNotInStock }
+    quantity: { quantityNotInStock },
   },
 
   props: {
     product: Object,
-    modifiable: Boolean
-  },
-
-  components: {
-    ProductAvailabilityNotificationDialog: ProductAvailabilityNotificationDialog
+    modifiable: Boolean,
   },
 
   data() {
@@ -167,7 +172,7 @@ export default {
       fab: false,
       stockAmount: "",
       productQuantity: parseInt(this.product.stockAmount) <= 0 ? 0 : 1, //parseInt(this.product.stockAmount) <= 0 ? 0 : 1,
-      showProductAvailabilityNotificationDialog: false
+      showProductAvailabilityNotificationDialog: false,
       // quantityItems: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
       // quantityItems2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     };
@@ -179,7 +184,7 @@ export default {
       "user",
       "loggedIn",
       "shoppingCart",
-      "productCounter"
+      "productCounter",
     ]),
     descriptionComputed: {
       get() {
@@ -193,12 +198,12 @@ export default {
         } else {
           return this.product.description;
         }
-      }
+      },
     },
     pricePerKilogramComputed: {
       get() {
         return (this.product.price / this.product.quantityValue).toFixed(2);
-      }
+      },
     },
     pricePerGramComputed: {
       get() {
@@ -207,7 +212,7 @@ export default {
           this.product.quantityValue
         ).toFixed(2);
         return pricePerGram;
-      }
+      },
     },
     stockStatusLabel: {
       get() {
@@ -220,7 +225,7 @@ export default {
           console.log(parseInt(this.product.stockAmount));
           return "out of stock";
         }
-      }
+      },
     },
     stockStatusColor: {
       get() {
@@ -231,7 +236,7 @@ export default {
         } else {
           return "error";
         }
-      }
+      },
     },
     cardDisabled: {
       //disables the complete card when product is out of stock (only for non store owner)
@@ -245,7 +250,7 @@ export default {
         } else {
           return false;
         }
-      }
+      },
     },
     putInCartButtonDisabled: {
       get() {
@@ -254,7 +259,7 @@ export default {
         } else {
           return false;
         }
-      }
+      },
     },
     putInCartButtonDark: {
       get() {
@@ -263,7 +268,7 @@ export default {
         } else {
           return true;
         }
-      }
+      },
     },
     quantityItemsComputed: {
       get() {
@@ -284,7 +289,7 @@ export default {
           }
         }
         return arr;
-      }
+      },
     },
     quantityErrors: {
       get() {
@@ -294,8 +299,8 @@ export default {
           return errors;
         }
         return errors;
-      }
-    }
+      },
+    },
   },
   methods: {
     ...mapActions("account", ["addProduct", "addProductLoggedOut"]),
@@ -315,14 +320,14 @@ export default {
         this.addProductLoggedOut({
           product: product,
           quantity: parseInt(this.productQuantity),
-          currentCart: this.shoppingCart
+          currentCart: this.shoppingCart,
         });
       } else {
         //Logged In routine
         this.addProduct({
           email: this.user.email,
           product: product,
-          amount: this.productQuantity
+          amount: this.productQuantity,
         });
       }
     },
@@ -330,11 +335,11 @@ export default {
     deleteProduct: async function() {
       let data = {
         storeId: this.$route.params.id,
-        productId: this.product._id
+        productId: this.product._id,
       };
       console.log(data);
       this.$emit("overlay-start");
-      let response = await storeService.deleteProduct(data);
+      let response = await productService.deleteProduct(data);
       console.log(response);
       this.$emit("delete-product", this.product._id);
       this.$emit("overlay-end");
@@ -356,11 +361,11 @@ export default {
       var data = {
         storeId: this.$route.params.id,
         _id: this.product._id,
-        stockAmount: parseInt(this.stockAmount)
+        stockAmount: parseInt(this.stockAmount),
       };
       this.$emit("overlay-start");
       try {
-        await storeService.updateStockAmount(data);
+        await productService.updateStockAmount(data);
       } catch (error) {
         this.$emit("overlay-end");
         this.addErrorSnackbar("Stock update was not successful.");
@@ -377,8 +382,8 @@ export default {
       console.log(this.product.stockAmount);
       console.log(this.stockAmount);
       console.log(this.quantityItemsComputed);
-    }
-  }
+    },
+  },
 };
 </script>
 

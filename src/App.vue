@@ -6,8 +6,20 @@
       <v-container fluid>
         <v-container>
           <v-alert
+            type="error"
+            outlined
+            text
+            dense
+            elevation="3"
+            transition="slide-x-transition"
+          >
+            Please note: This page is currently under construction. All content
+            is for testing, development and demo purposes.
+          </v-alert>
+
+          <v-alert
             v-for="(alert, index) in alertArray"
-            v-bind:key="index"
+            :key="index"
             :type="alert.type"
             outlined
             text
@@ -24,7 +36,8 @@
             :color="snackbarObjct.type"
             outlined
             text
-            top
+            bottom
+            left
             shaped
             :timeout="computedTimeout"
             transition="slide-x-transition"
@@ -69,7 +82,7 @@ export default {
 
   components: {
     Header,
-    Footer
+    Footer,
   },
 
   data: () => ({}),
@@ -84,7 +97,7 @@ export default {
       },
       set() {
         this.closeSnack();
-      }
+      },
     },
 
     computedTimeout: {
@@ -94,8 +107,8 @@ export default {
         } else {
           return 5000;
         }
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -103,7 +116,7 @@ export default {
     ...mapActions("snackbar", [
       "addSuccessSnackbar",
       "addErrorSnackbar",
-      "addCloseSnackbar"
+      "addCloseSnackbar",
     ]),
 
     addSuccessAlert() {
@@ -139,8 +152,8 @@ export default {
 
     print() {
       console.log(this.alertArray);
-    }
-  }
+    },
+  },
 };
 </script>
 

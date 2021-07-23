@@ -1,0 +1,14 @@
+Marker:
+- https://materialdesignicons.com/
+- map marker
+- advanced
+- size:148
+
+Icon:
+- Background: same color as icon
+- full color strength
+- size: 148
+
+- add both to ppt
+- crop only the icon, not the marker
+- save as image

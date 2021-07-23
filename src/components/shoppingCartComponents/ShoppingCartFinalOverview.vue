@@ -1,122 +1,95 @@
 <template>
   <div>
     <v-card>
-      <v-card-title>
-        <div class="text-h6 text-left font-weight-medium">
+      <v-container>
+        <div class="text-h5 text-left font-weight-medium mb-5">
           Products
         </div>
-      </v-card-title>
-      <ShoppingCartListItem
-        v-for="(prod, index) in this.shoppingCart"
-        v-bind:key="index"
-        v-bind:product="prod[0]"
-        v-bind:amount="prod[1]"
-        :modifiable="false"
-        class="ma-4"
-      />
-      <v-divider />
-      <v-row no-gutters height="60px">
-        <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
-          <p>Shipping costs:</p>
-        </v-col>
-        <v-col cols="12" sm="1">
-          <p>0.00€</p>
-        </v-col>
-      </v-row>
-      <v-row no-gutters height="60px">
-        <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
-          <p>Total costs:</p>
-        </v-col>
-        <v-col cols="12" sm="1">
-          <p>{{ computedTotalSum }}€</p>
-        </v-col>
-      </v-row>
+        <v-row no-gutters height="60px" align="center">
+          <v-col sm="7"> </v-col>
+          <v-col sm="1">
+            <div class="text-center font-weight-bold">
+              Quantity
+            </div>
+          </v-col>
+          <v-col sm="2"> </v-col>
+          <v-col sm="1">
+            <div class="text-center font-weight-bold">
+              Price
+            </div>
+          </v-col>
+          <v-col sm="1">
+            <div class="text-center font-weight-bold">
+              Total
+            </div>
+          </v-col>
+        </v-row>
+        <ShoppingCartListItem
+          v-for="(prod, index) in this.shoppingCart"
+          :key="index"
+          :product="prod[0]"
+          :amount="prod[1]"
+          :modifiable="false"
+          class="my-3"
+        />
+        <v-divider />
+        <v-row no-gutters height="60px" class="mt-2">
+          <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
+            <div class="text-left text-body-1">Shipping costs:</div>
+          </v-col>
+          <v-col cols="12" sm="1">
+            <div class="text-right text-body-1">{{ shippingCosts }}€</div>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters height="60px">
+          <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
+            <div class="text-left text-body-1">Total costs:</div>
+          </v-col>
+          <v-col cols="12" sm="1">
+            <div class="text-right text-body-1">{{ computedTotalSum }}€</div>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card>
 
     <v-row class="mt-3">
-      <v-col cols="12" sm="6" lg="4" xl="4">
-        <v-card v-if="this.orderData.shippingAddress">
+      <v-col v-if="orderData.shippingAddress" cols="12" sm="6" lg="4" xl="4">
+        <v-card>
           <v-card-title>
             <div class="text-xl-h6">Shipping Address</div>
           </v-card-title>
           <v-divider></v-divider>
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-content>Name:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                {{ this.orderData.shippingAddress.firstName }},
-                {{ this.orderData.shippingAddress.lastName }}
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>Address:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                {{ this.orderData.shippingAddress.addressLine1 }},
-                {{ this.orderData.shippingAddress.postcode }}
-                {{ this.orderData.shippingAddress.city }}
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+          <v-card-text class="text-left text-body-1 black--text">
+            <div>
+              {{ orderData.shippingAddress.firstName }}
+              {{ orderData.shippingAddress.lastName }}
+            </div>
+            <div>
+              {{ orderData.shippingAddress.addressLine1 }},
+              {{ orderData.shippingAddress.postcode }}
+              {{ orderData.shippingAddress.city }}
+            </div>
+          </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" sm="6" lg="4" xl="4">
-        <v-card v-if="this.orderData.billingAddress">
+      <v-col v-if="orderData.billingAddress" cols="12" sm="6" lg="4" xl="4">
+        <v-card>
           <v-card-title>
             <div class="text-xl-h6">Billing Address</div>
           </v-card-title>
           <v-divider></v-divider>
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-content>Name:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                {{ this.orderData.billingAddress.firstName }},
-                {{ this.orderData.billingAddress.lastName }}
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>Address:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                {{ this.orderData.billingAddress.addressLine1 }},
-                {{ this.orderData.billingAddress.postcode }}
-                {{ this.orderData.billingAddress.city }}
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="6" lg="4" xl="4">
-        <v-card v-if="this.orderData.billingAddress">
-          <v-card-title>
-            <div class="text-xl-h6">Credit Card Payment</div>
-          </v-card-title>
-          <v-divider></v-divider>
-          <v-list dense>
-            <v-list-item>
-              <v-list-item-content>Card Number:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                11111111111111111
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>Name on Card:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                {{ this.orderData.billingAddress.firstName }},
-                {{ this.orderData.billingAddress.lastName }}
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>Expiry Date:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                01/23
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>Security Code:</v-list-item-content>
-              <v-list-item-content class="align-end">
-                123
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
+          <v-card-text class="text-left text-body-1 black--text">
+            <div>
+              {{ orderData.billingAddress.firstName }}
+              {{ orderData.billingAddress.lastName }}
+            </div>
+            <div>
+              {{ orderData.billingAddress.addressLine1 }},
+              {{ orderData.billingAddress.postcode }}
+              {{ orderData.billingAddress.city }}
+            </div>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -125,31 +98,28 @@
 
 <script>
 import ShoppingCartListItem from "./ShoppingCartListItem";
-// import { calculateTotalCartSum } from "../helpers";
-// import { orderService } from "../services";
-//mapActions
 import { mapState } from "vuex";
 
 export default {
   name: "ShoppingCartFinalOverview",
-
-  props: { computedTotalSum: String },
   components: {
-    ShoppingCartListItem: ShoppingCartListItem
+    ShoppingCartListItem: ShoppingCartListItem,
   },
+
+  props: { computedTotalSum: String, shippingCosts: String },
 
   data() {
     return {
-      elevation: 1
+      elevation: 1,
     };
   },
 
   computed: {
     ...mapState("order", ["orderData"]),
-    ...mapState("account", ["user", "loggedIn", "shoppingCart"])
+    ...mapState("account", ["user", "loggedIn", "shoppingCart"]),
   },
 
-  methods: {}
+  methods: {},
 };
 </script>
 

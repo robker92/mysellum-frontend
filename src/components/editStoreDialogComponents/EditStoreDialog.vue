@@ -8,18 +8,24 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-tabs>
-        <v-tab>
+      <v-tabs vertical class="my-tabs">
+        <v-tab class="text-left">
           <v-icon left>
             mdi-store
           </v-icon>
           Store Profile
         </v-tab>
-        <v-tab>
+        <v-tab class="text-left">
           <v-icon left>
             mdi-map-marker-radius
           </v-icon>
           Location
+        </v-tab>
+        <v-tab class="text-left">
+          <v-icon left>
+            mdi-clock-time-four-outline
+          </v-icon>
+          Opening Hours
         </v-tab>
         <v-tab>
           <v-icon left>
@@ -35,6 +41,12 @@
         </v-tab>
         <v-tab>
           <v-icon left>
+            mdi-truck
+          </v-icon>
+          Shipping
+        </v-tab>
+        <v-tab>
+          <v-icon left>
             mdi-lock
           </v-icon>
           Security
@@ -47,6 +59,12 @@
         </v-tab>
 
         <v-tab-item>
+          <div class="ma-3">
+            <v-alert type="info" text dense class="text-left"
+              >Here you can edit the basic information of your store. Click on
+              the save button at the bottom, when you are done.</v-alert
+            >
+          </div>
           <!-- <div class="text-h6 text-left ml-3">Store Profile:</div> -->
           <v-card class="ma-3">
             <v-container>
@@ -56,7 +74,7 @@
 
               <AddStoreImageDialog
                 v-model="showAddStoreImageDialog"
-                v-on:add-store-image="addNewImageToArray"
+                @add-store-image="addNewImageToArray"
               />
 
               <ShowHelpDialog
@@ -77,17 +95,19 @@
                 >
                   <v-card flat tile>
                     <v-img :src="img.src" height="200px" class="grey lighten-2">
-                      <v-btn
-                        icon
-                        outlined
-                        absolute
-                        top
-                        left
-                        color="red"
-                        @click="deleteImage(index)"
-                      >
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
+                      <v-hover v-slot="{ hover }">
+                        <v-btn
+                          :elevation="hover ? 16 : 2"
+                          :class="{ 'on-hover': hover }"
+                          icon
+                          absolute
+                          top
+                          left
+                          @click="deleteImage(index)"
+                        >
+                          <v-icon color="red">mdi-delete</v-icon>
+                        </v-btn>
+                      </v-hover>
                       <template v-slot:placeholder>
                         <v-row
                           class="fill-height ma-0"
@@ -126,12 +146,12 @@
                   </v-card>
                 </v-col>
                 <v-col
+                  v-if="storeImages.length !== storeImagesMax"
                   cols="12"
                   xs="6"
                   sm="6"
                   md="4"
                   lg="3"
-                  v-if="storeImages.length !== storeImagesMax"
                 >
                   <v-hover v-slot:default="{ hover }">
                     <v-card
@@ -145,8 +165,8 @@
                     >
                       <!-- <v-row>
                     <v-col> -->
-                      <v-btn xLarge dark color="grey lighten-1">
-                        <v-icon xLarge>mdi-plus</v-icon>
+                      <v-btn x-large dark color="grey lighten-1">
+                        <v-icon x-large>mdi-plus</v-icon>
                       </v-btn>
                       <!-- </v-col>
                   </v-row> -->
@@ -178,10 +198,10 @@
                 v-model="storeTitle"
                 :counter="storeTitleMax"
                 :error-messages="storeTitleErrors"
-                @input="$v.storeTitle.$touch()"
-                @blur="$v.storeTitle.$touch()"
                 label="Store Title*"
                 required
+                @input="$v.storeTitle.$touch()"
+                @blur="$v.storeTitle.$touch()"
               />
             </v-container>
           </v-card>
@@ -193,37 +213,44 @@
                 :items="tagsComboBoxItems"
                 :counter="tagsComboBoxModelMax"
                 :error-messages="storeTagsErrors"
-                @input="$v.tagsComboBoxModel.$touch()"
-                @blur="$v.tagsComboBoxModel.$touch()"
                 label="Store Tags*"
                 multiple
                 chips
                 deletable-chips
+                @input="$v.tagsComboBoxModel.$touch()"
+                @blur="$v.tagsComboBoxModel.$touch()"
               />
             </v-container>
           </v-card>
 
           <EditStoreDialogDescriptionTextArea
             v-if="show"
-            :storeDescriptionInput="storeDescription"
-            v-on:description-text-changed="changeDescriptionText"
-            v-on:description-valid="storeDescriptionInvalid = false"
-            v-on:description-invalid="storeDescriptionInvalid = true"
+            :store-description-input="storeDescription"
+            @description-text-changed="changeDescriptionText"
+            @description-valid="storeDescriptionInvalid = false"
+            @description-invalid="storeDescriptionInvalid = true"
           />
 
-          <v-container>
+          <!-- <v-container>
             <v-btn color="indigo" text @click="cancel">Close</v-btn>
             <v-btn
               color="indigo"
               dark
-              @click="submitEditStore"
               :disabled="editButtonDisabled"
+              @click="submitEditStore"
               >Save</v-btn
             >
-          </v-container>
+          </v-container> -->
         </v-tab-item>
 
         <v-tab-item>
+          <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              Here you can edit the address of your store. Please be aware that
+              stores addresses have to be unique. Click on the save button at
+              the bottom, when you are done.
+            </v-alert>
+          </div>
           <!-- <div class="text-h6 text-left ml-3">Store Address:</div> -->
           <v-card class="ma-3">
             <v-container>
@@ -267,28 +294,28 @@
                   />
                 </v-col>
               </v-row>
-              <v-row>
+              <!-- <v-row>
                 <v-col cols="12" sm="6" md="6">
                   <v-text-field v-model="lat" label="Latitude*" required />
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
                   <v-text-field v-model="lng" label="Longitude*" required />
                 </v-col>
-              </v-row>
+              </v-row> -->
               <v-row>
                 <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
                   <v-select
-                    :items="mapIconList"
                     v-model="mapIcon"
+                    :items="mapIconList"
                     :prepend-icon="'mdi-' + mapIcon"
                     append-outer-icon="mdi-information"
+                    label="Choose your map icon"
+                    menu-props="auto"
                     @click:append-outer="
                       showHelp(
                         'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.'
                       )
                     "
-                    label="Choose your map icon"
-                    menu-props="auto"
                   >
                     <template v-slot:item="{ item }">
                       <!-- <img :src="item.image" /> -->
@@ -299,13 +326,45 @@
                     </template>
                   </v-select>
                 </v-col>
-                <v-btn @click="printAddress"> Print</v-btn>
+                <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+                  <v-alert type="info" text>
+                    You need to refresh the page to see your updated marker icon
+                    in the map.
+                  </v-alert>
+                </v-col>
               </v-row>
             </v-container>
           </v-card>
         </v-tab-item>
 
         <v-tab-item>
+          <!-- <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              Here you can set the preferences for notifications you would like
+              to receive. Click on the save button at the bottom, when you are
+              done.
+            </v-alert>
+          </div>
+          <v-card class="ma-3">
+            <v-container>
+              <v-checkbox v-model="openMonday" :label="`Monday`"></v-checkbox>
+            </v-container>
+          </v-card> -->
+
+          <OpeningHoursTab
+            :opening-hours="openingHours"
+            @opening-hours-changed="openingHoursChanged"
+          />
+        </v-tab-item>
+
+        <v-tab-item>
+          <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              Here you can set the preferences for notifications you would like
+              to receive. Click on the save button at the bottom, when you are
+              done.
+            </v-alert>
+          </div>
           <v-card class="ma-3">
             <v-container>
               <div class="text-left text-body-1">
@@ -351,45 +410,45 @@
         </v-tab-item>
 
         <v-tab-item>
-          <v-card flat min-height="600px">
-            <v-card-text>
-              <p>
-                Morbi nec metus. Suspendisse faucibus, nunc et pellentesque
-                egestas, lacus ante convallis tellus, vitae iaculis lacus elit
-                id tortor. Sed mollis, eros et ultrices tempus, mauris ipsum
-                aliquam libero, non adipiscing dolor urna a orci. Curabitur
-                ligula sapien, tincidunt non, euismod vitae, posuere imperdiet,
-                leo. Nunc sed turpis.
-              </p>
-
-              <p>
-                Suspendisse feugiat. Suspendisse faucibus, nunc et pellentesque
-                egestas, lacus ante convallis tellus, vitae iaculis lacus elit
-                id tortor. Proin viverra, ligula sit amet ultrices semper,
-                ligula arcu tristique sapien, a accumsan nisi mauris ac eros. In
-                hac habitasse platea dictumst. Fusce ac felis sit amet ligula
-                pharetra condimentum.
-              </p>
-
-              <v-btn
-                text
-                href="https://www.paypal.com/us/webapps/mpp/security/seller-protection"
-                target="_blank"
-                class="no-uppercase"
-              >
-                Paypal's Seller Protection Privacy
-                <v-icon right>mdi-link-variant</v-icon>
-              </v-btn>
-              <v-btn
+          <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              Here you can add and adjust your payment information. You will
+              receive your payments to the defined method. Furthermore, you have
+              to add at least one payment method in order to be seen by
+              customers on the platform.Click on the save button at the bottom,
+              when you are done.
+            </v-alert>
+          </div>
+          <v-card min-height="300px" class="ma-3">
+            <v-container>
+              <div class="text-left text-h5">
+                PayPal
+              </div>
+              <v-row align="center" class="ma-3">
+                <div class="text-left text-body-1">
+                  Please read the text carefully in order to benefit from the
+                  seller protection:
+                </div>
+                <v-btn
+                  text
+                  href="https://www.paypal.com/us/webapps/mpp/security/seller-protection"
+                  target="_blank"
+                  class="no-uppercase"
+                >
+                  Paypal's Seller Protection Privacy
+                  <v-icon right>mdi-link-variant</v-icon>
+                </v-btn>
+              </v-row>
+              <!-- <v-btn
                 text
                 href="https://www.paypal.com/us/webapps/mpp/security/seller-protection"
                 target="_blank"
                 class="no-uppercase"
               >
                 Sign-up to Paypal
-              </v-btn>
+              </v-btn> -->
 
-              <v-hover v-slot="{ hover }">
+              <!-- <v-hover v-slot="{ hover }">
                 <v-card
                   max-width="500px"
                   max-height="100px"
@@ -411,11 +470,98 @@
                     </v-row>
                   </v-container>
                 </v-card>
-              </v-hover>
-            </v-card-text>
+              </v-hover> -->
+              <v-row align="center" class="ma-3">
+                <div class="text-left text-body-1">
+                  Afterwards, you can connect your PayPal account to your
+                  Mysellum store or create a new PayPal account via this link:
+                </div>
+                <v-btn class="mt-3" @click="signupPaypal">
+                  <v-img
+                    left
+                    src="../../assets/paypal/de-pp-logo-100px.png"
+                  ></v-img>
+                  <div class="ml-3">
+                    Connect to Paypal
+                  </div>
+                </v-btn>
+              </v-row>
+            </v-container>
           </v-card>
         </v-tab-item>
 
+        <v-tab-item>
+          <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              Here you can adjust your shipping preferences.
+            </v-alert>
+          </div>
+          <div class="text-h5 text-left">
+            Shipping Cost Logic
+          </div>
+          <v-container>
+            <v-row>
+              <v-col cols="12" md="4" lg="3">
+                <v-radio-group v-model="shippingMethod">
+                  <v-radio label="Always Free" value="free"></v-radio>
+                  <v-radio label="Fixed price" value="fixed"></v-radio>
+                  <v-radio label="With Threshold" value="threshold"></v-radio>
+                </v-radio-group>
+              </v-col>
+              <v-col cols="12" md="8" lg="9">
+                <v-card v-if="shippingMethod === 'free'" flat>
+                  <v-alert type="info" text dense class="text-left">
+                    You have chosen free shipping. With this option your
+                    customers will never pay shipping costs if they order your
+                    products.
+                  </v-alert>
+                </v-card>
+                <v-card v-if="shippingMethod === 'fixed'" flat>
+                  <v-alert type="info" text dense class="text-left">
+                    You have chosen fixed shipping costs. With this option your
+                    customers will always pay the same shipping costs regardless
+                    of how much they order.
+                  </v-alert>
+                  <v-text-field
+                    v-model="shippingCosts"
+                    label="Price"
+                    suffix="€"
+                    class="inputShippingCosts"
+                    type="number"
+                    required
+                    :error-messages="shippingCostsErrors"
+                    @input="$v.shippingCosts.$touch()"
+                    @blur="$v.shippingCosts.$touch()"
+                  >
+                  </v-text-field>
+                </v-card>
+                <v-card v-if="shippingMethod === 'threshold'" flat>
+                  <v-alert type="info" text dense class="text-left">
+                    You have chosen the threshold value variant. With this you
+                    can set a minimum order amount from which the delivery costs
+                    are free for the customer.
+                  </v-alert>
+                  <v-text-field
+                    v-model="shippingThresholdValue"
+                    label="Minimum Order Amount"
+                    suffix="€"
+                    class="inputShippingThresholdValue"
+                    type="number"
+                  >
+                  </v-text-field>
+                  <v-text-field
+                    v-model="shippingCosts"
+                    label="Price"
+                    suffix="€"
+                    class="inputShippingCosts"
+                    type="number"
+                  >
+                  </v-text-field>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
         <v-tab-item>
           <v-card flat min-height="600px">
             <v-card-text>
@@ -467,8 +613,8 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="indigo" text @click="cancel">Close</v-btn>
-        <v-btn color="indigo" dark @click="submitEditStore">Save</v-btn>
+        <v-btn color="primary" text @click="cancel">Close</v-btn>
+        <v-btn color="primary" dark @click="submitEditStore">Save</v-btn>
       </v-card-actions>
     </v-card>
     <v-overlay v-model="overlay">
@@ -483,6 +629,7 @@ import { validationMixin } from "vuelidate";
 
 import AddStoreImageDialog from "./AddStoreImageDialog";
 import EditStoreDialogDescriptionTextArea from "./DescriptionTextArea";
+import OpeningHoursTab from "./editStoreDialogTabs/OpeningHoursTab.vue";
 import ShowHelpDialog from "../ShowHelpDialog";
 
 import { mapState, mapActions } from "vuex";
@@ -500,23 +647,26 @@ export default {
   components: {
     AddStoreImageDialog: AddStoreImageDialog,
     ShowHelpDialog: ShowHelpDialog,
-    EditStoreDialogDescriptionTextArea: EditStoreDialogDescriptionTextArea
+    EditStoreDialogDescriptionTextArea: EditStoreDialogDescriptionTextArea,
+    OpeningHoursTab: OpeningHoursTab,
   },
+
+  mixins: [validationMixin],
 
   props: {
     value: Boolean,
     profileData: Object,
     mapData: Object,
-    paypalSignupLink: String
+    paypalSignupLink: String,
+    shippingData: Object,
+    openingHoursData: Object,
   },
-
-  mixins: [validationMixin],
 
   validations: {
     storeTitle: {
       required,
       minLength: minLength(10),
-      maxLength: maxLength(100)
+      maxLength: maxLength(100),
     },
     // storeDescription: {
     //   required,
@@ -526,23 +676,18 @@ export default {
     storeImages: {
       required,
       minLength: minLength(1),
-      maxLength: maxLength(10)
+      maxLength: maxLength(10),
     },
     tagsComboBoxModel: {
       required,
       minLength: minLength(1),
-      maxLength: maxLength(15)
+      maxLength: maxLength(15),
     },
     city: { required, maxLength: maxLength(20) },
     postcode: { required },
-    addressLine1: { required, maxLength: maxLength(40) }
-  },
-
-  watch: {
-    //Watch show status to initialize data
-    show() {
-      this.initializeData();
-    }
+    addressLine1: { required, maxLength: maxLength(40) },
+    shippingCosts: { required },
+    shippingThresholdValue: { required },
   },
 
   data() {
@@ -579,16 +724,26 @@ export default {
         "Chicken",
         "Beverages",
         "Wine",
-        "Beer"
+        "Beer",
       ],
-      //chosenIcon: "",
+
+      // chosenIcon: "",
       mapIcon: "",
       mapIconList: mapIconList,
 
-      //Notifications
+      // Shipping
+      shippingMethod: "",
+      shippingCosts: 0,
+      fixedShippingCostsModel: 0,
+      shippingThresholdValue: 0,
+
+      // Notifications
       notificationOrderReceive: false,
       notificationOrderReturn: false,
       stockNotificationValue: 0,
+
+      // Opening Hours
+      openingHours: {},
 
       //Settings
       //Store Address
@@ -601,10 +756,17 @@ export default {
 
       showShowHelpDialog: false,
       helpDialogTitle: "",
-      helpDialogMessage: ""
+      helpDialogMessage: "",
 
       // paypal
     };
+  },
+
+  watch: {
+    //Watch show status to initialize data
+    show() {
+      this.initializeData();
+    },
   },
 
   computed: {
@@ -614,7 +776,7 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
+      },
     },
     profileDataWatcher() {
       return this.profileData;
@@ -713,6 +875,21 @@ export default {
       return errors;
     },
 
+    shippingCostsErrors() {
+      const errors = [];
+      if (!this.$v.shippingCosts.$dirty) return errors;
+      !this.$v.shippingCosts.required &&
+        errors.push("A value for the shipping costs is required.");
+      return errors;
+    },
+    shippingThresholdValueErrors() {
+      const errors = [];
+      if (!this.$v.shippingThresholdValue.$dirty) return errors;
+      !this.$v.shippingThresholdValue.required &&
+        errors.push("A value for the shipping threshold is required.");
+      return errors;
+    },
+
     editButtonDisabled() {
       if (this.show === true) {
         if (
@@ -731,7 +908,7 @@ export default {
         return false;
       }
     },
-    ...mapState("account", ["user", "loggedIn"])
+    ...mapState("account", ["user", "loggedIn"]),
   },
   methods: {
     ...mapActions("stores", ["createStore"]),
@@ -752,6 +929,10 @@ export default {
         this.tagsComboBoxModel = this.profileData.tags;
         this.storeImages = [...this.profileData.images];
         this.editedHtmlText = this.profileData.description;
+        this.shippingMethod = this.shippingData.method;
+        this.shippingCosts = this.shippingData.costs;
+        this.shippingThresholdValue = this.shippingData.thresholdValue;
+        this.openingHours = this.openingHoursData;
       }
       //MapData
       if (this.mapData) {
@@ -765,9 +946,6 @@ export default {
     },
 
     showHelp(message) {
-      console.log(message);
-      //this.chosenIcon = "fish";
-      console.log(this.mapIcon);
       this.helpDialogTitle = "Title";
       this.helpDialogMessage = message;
       this.showShowHelpDialog = true;
@@ -791,7 +969,6 @@ export default {
     },
 
     submitEditStore: async function() {
-      console.log(this.addressLine1);
       let payload = {
         storeId: this.$route.params.id,
         title: this.storeTitle,
@@ -802,15 +979,19 @@ export default {
           postcode: this.postcode,
           city: this.city,
           addressLine1: this.addressLine1,
-          country: "Germany"
+          country: "Germany",
         },
         mapIcon: this.mapIcon,
         location: {
           lat: this.lat,
-          lng: this.lng
-        }
+          lng: this.lng,
+        },
+        shippingMethod: this.shippingMethod,
+        shippingCosts: parseFloat(this.shippingCosts),
+        shippingThresholdValue: parseFloat(this.shippingThresholdValue),
+        openingHours: this.openingHours,
       };
-      console.log(payload);
+
       //this.$emit("overlay-start");
       this.overlay = true;
       try {
@@ -832,8 +1013,6 @@ export default {
     },
 
     cancel() {
-      console.log(this.profileData);
-      console.log(this.mapData);
       this.storeTitle = this.profileData.title;
       // this.storeDescription = this.profileData.description;
       this.editedHtmlText = this.profileData.description;
@@ -853,7 +1032,6 @@ export default {
       newImage["id"] = this.storeImages.length + 1;
       this.storeImages.push(newImage);
       this.$v.storeImages.$touch();
-      console.log(this.storeImages);
     },
 
     getImgSortArrLeftDisabled(index) {
@@ -892,6 +1070,10 @@ export default {
       return arr; // for testing
     },
 
+    openingHoursChanged(openingHours) {
+      this.openingHours = openingHours;
+    },
+
     changeDescriptionText(newDescription) {
       this.editedHtmlText = newDescription;
     },
@@ -899,8 +1081,8 @@ export default {
     signupPaypal() {
       const win = window.open(this.paypalSignupLink, "_blank");
       win.focus();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -913,11 +1095,31 @@ export default {
   -webkit-appearance: none;
 }
 
+.inputShippingCosts input[type="number"] {
+  -moz-appearance: textfield;
+}
+.inputShippingCosts input::-webkit-outer-spin-button,
+.inputShippingCosts input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.inputShippingThresholdValue input[type="number"] {
+  -moz-appearance: textfield;
+}
+.inputShippingThresholdValue input::-webkit-outer-spin-button,
+.inputShippingThresholdValue input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
 .editor {
   height: 350px;
 }
 
 .no-uppercase {
   text-transform: none;
+}
+
+div.my-tabs [role="tab"] {
+  justify-content: flex-start;
 }
 </style>

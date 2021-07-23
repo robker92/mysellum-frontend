@@ -1,8 +1,7 @@
-/* eslint-disable prettier/prettier */
 const state = {
   //     type: null,
   //     message: null,
-  alertArray: []
+  alertArray: [],
 };
 
 const actions = {
@@ -14,30 +13,30 @@ const actions = {
   },
   clearAlert({ commit }) {
     commit("clearAlert");
-  }
+  },
 };
 
 const mutations = {
   successAlert(state, message) {
     state.alertArray.push({
       type: "success",
-      message
+      message,
     });
   },
   errorAlert(state, message) {
     state.alertArray.push({
       type: "error",
-      message
+      message,
     });
   },
   clearAlert(state) {
     state.alertArray.shift();
-  }
+  },
 };
 
 export const alert = {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
 };

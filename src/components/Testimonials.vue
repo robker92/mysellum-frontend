@@ -4,10 +4,10 @@
     <v-row>
       <!-- Each Element -->
       <v-col
-        cols="12"
-        lg="3"
         v-for="(element, index) in this.testimonialList"
         :key="index"
+        cols="12"
+        lg="3"
       >
         <v-card>
           <v-container>
@@ -77,8 +77,8 @@ export default {
       ]
     };
   },
-  watch: {},
   computed: {},
+  watch: {},
   methods: {}
 };
 </script>

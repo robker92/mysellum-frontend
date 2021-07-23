@@ -1,101 +1,244 @@
 <template>
-  <v-container>
-    <v-radio-group v-model="radioGroupAddress" @change="checkValidation()">
-      <v-radio :label="`Same address for billing`" value="sameBillingAddress" />
-      <v-radio
-        :label="`Different billing address`"
-        value="differentBillingAddress"
-      />
-    </v-radio-group>
-    <v-row>
-      <v-col cols="12" lg="6">
-        <v-card flat>
-          <div class="text-h6 text-left font-weight-medium mb-4">
-            Shipping Address
-          </div>
-          <v-row>
-            <v-col cols="12" sm="6" md="6">
-              <v-text-field
-                v-model="shippingFirstName"
-                :error-messages="shippingFirstNameErrors"
-                :counter="20"
-                label="First Name*"
-                required
-                @input="
-                  $v.shippingFirstName.$touch();
-                  checkValidation();
-                "
-                @blur="$v.shippingFirstName.$touch()"
-              />
-            </v-col>
-            <v-col cols="12" sm="6" md="6">
-              <v-text-field
-                v-model="shippingLastName"
-                :error-messages="shippingLastNameErrors"
-                :counter="20"
-                label="Last Name*"
-                required
-                @input="
-                  $v.shippingLastName.$touch();
-                  checkValidation();
-                "
-                @blur="$v.shippingLastName.$touch()"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="shippingAddressLine1"
-                :error-messages="shippingAddressLine1Errors"
-                :counter="40"
-                label="Address Line 1*"
-                required
-                @input="
-                  $v.shippingAddressLine1.$touch();
-                  checkValidation();
-                "
-                @blur="$v.shippingAddressLine1.$touch()"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="4" md="4">
-              <v-text-field
-                v-model="shippingPostcode"
-                :error-messages="shippingPostcodeErrors"
-                label="Postcode*"
-                class="inputPostcode"
-                required
-                type="number"
-                maxlength="5"
-                oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
-                @input="
-                  $v.shippingPostcode.$touch();
-                  checkValidation();
-                "
-                @blur="$v.shippingPostcode.$touch()"
-              />
-            </v-col>
-            <v-col cols="12" sm="8" md="8">
-              <v-text-field
-                v-model="shippingCity"
-                :error-messages="shippingCityErrors"
-                label="City*"
-                required
-                @input="
-                  $v.shippingCity.$touch();
-                  checkValidation();
-                "
-                @blur="$v.shippingCity.$touch()"
-              />
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-      <v-col cols="12" lg="6">
-        <div v-if="radioGroupAddress == 'differentBillingAddress'">
-          <v-card flat>
+  <div>
+    <div class="text-h5 text-left font-weight-medium mt-3">
+      Delivery / Pickup
+    </div>
+    <v-container>
+      <v-alert type="info" text dense class="text-left">
+        Please consider: If you choose pickup, you have to go to the store (see
+        its address and opening hours) to pick them up.
+      </v-alert>
+
+      <v-radio-group
+        v-model="radioGroupDelivery"
+        @change="
+          checkValidation();
+          writeOrderInfoToState();
+        "
+      >
+        <v-radio :label="`Delivery`" value="delivery" />
+        <v-radio :label="`Pickup`" value="pickup" :disabled="false" />
+      </v-radio-group>
+    </v-container>
+
+    <div v-if="radioGroupDelivery === 'delivery'">
+      <div class="text-h5 text-left font-weight-medium">
+        Addresses
+      </div>
+      <v-container>
+        <v-radio-group
+          v-model="radioGroupAddress"
+          @change="
+            checkValidation();
+            writeOrderInfoToState();
+          "
+        >
+          <v-radio
+            :label="`Same address for billing`"
+            value="sameBillingAddress"
+          />
+          <v-radio
+            :label="`Different billing address`"
+            value="differentBillingAddress"
+          />
+        </v-radio-group>
+        <v-row>
+          <v-col cols="12" lg="6">
+            <v-card>
+              <v-container>
+                <div class="text-h6 text-left font-weight-medium mb-4">
+                  Shipping Address
+                </div>
+                <v-row>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field
+                      v-model="shippingFirstName"
+                      :error-messages="shippingFirstNameErrors"
+                      :counter="20"
+                      label="First Name*"
+                      required
+                      dense
+                      @input="
+                        $v.shippingFirstName.$touch();
+                        checkValidation();
+                      "
+                      @blur="$v.shippingFirstName.$touch()"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field
+                      v-model="shippingLastName"
+                      :error-messages="shippingLastNameErrors"
+                      :counter="20"
+                      label="Last Name*"
+                      required
+                      dense
+                      @input="
+                        $v.shippingLastName.$touch();
+                        checkValidation();
+                      "
+                      @blur="$v.shippingLastName.$touch()"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-text-field
+                      v-model="shippingAddressLine1"
+                      :error-messages="shippingAddressLine1Errors"
+                      :counter="40"
+                      label="Address Line 1*"
+                      required
+                      dense
+                      @input="
+                        $v.shippingAddressLine1.$touch();
+                        checkValidation();
+                      "
+                      @blur="$v.shippingAddressLine1.$touch()"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" sm="4" md="4">
+                    <v-text-field
+                      v-model="shippingPostcode"
+                      :error-messages="shippingPostcodeErrors"
+                      label="Postcode*"
+                      class="inputPostcode"
+                      required
+                      dense
+                      type="number"
+                      maxlength="5"
+                      oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
+                      @input="
+                        $v.shippingPostcode.$touch();
+                        checkValidation();
+                      "
+                      @blur="$v.shippingPostcode.$touch()"
+                    />
+                  </v-col>
+                  <v-col cols="12" sm="8" md="8">
+                    <v-text-field
+                      v-model="shippingCity"
+                      :error-messages="shippingCityErrors"
+                      label="City*"
+                      required
+                      dense
+                      @input="
+                        $v.shippingCity.$touch();
+                        checkValidation();
+                      "
+                      @blur="$v.shippingCity.$touch()"
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-col>
+          <v-col cols="12" lg="6">
+            <div v-if="radioGroupAddress == 'differentBillingAddress'">
+              <v-card>
+                <v-container>
+                  <div class="text-h6 text-left font-weight-medium mb-4">
+                    Billing Address
+                  </div>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                        v-model="billingFirstName"
+                        :error-messages="billingFirstNameErrors"
+                        :counter="20"
+                        label="First Name*"
+                        required
+                        dense
+                        @input="
+                          $v.billingFirstName.$touch();
+                          checkValidation();
+                        "
+                        @blur="$v.billingFirstName.$touch()"
+                      />
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                        v-model="billingLastName"
+                        :error-messages="billingLastNameErrors"
+                        :counter="20"
+                        label="Last Name*"
+                        required
+                        dense
+                        @input="
+                          $v.billingLastName.$touch();
+                          checkValidation();
+                        "
+                        @blur="$v.billingLastName.$touch()"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="billingAddressLine1"
+                        :error-messages="billingAddressLine1Errors"
+                        :counter="40"
+                        label="Address Line 1*"
+                        required
+                        dense
+                        @input="
+                          $v.billingAddressLine1.$touch();
+                          checkValidation();
+                        "
+                        @blur="$v.billingAddressLine1.$touch()"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" sm="4" md="4">
+                      <v-text-field
+                        v-model="billingPostcode"
+                        :error-messages="billingPostcodeErrors"
+                        label="Postcode*"
+                        class="inputPostcode"
+                        required
+                        dense
+                        type="number"
+                        maxlength="5"
+                        oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
+                        @input="
+                          $v.billingPostcode.$touch();
+                          checkValidation();
+                        "
+                        @blur="$v.billingPostcode.$touch()"
+                      />
+                    </v-col>
+                    <v-col cols="12" sm="8" md="8">
+                      <v-text-field
+                        v-model="billingCity"
+                        :error-messages="billingCityErrors"
+                        label="City*"
+                        required
+                        dense
+                        @input="
+                          $v.billingCity.$touch();
+                          checkValidation();
+                        "
+                        @blur="$v.billingCity.$touch()"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+    <div v-if="radioGroupDelivery === 'pickup'">
+      <div class="text-h5 text-left font-weight-medium">
+        Billing Address
+      </div>
+      <v-container>
+        <v-card>
+          <v-container>
             <div class="text-h6 text-left font-weight-medium mb-4">
               Billing Address
             </div>
@@ -107,6 +250,7 @@
                   :counter="20"
                   label="First Name*"
                   required
+                  dense
                   @input="
                     $v.billingFirstName.$touch();
                     checkValidation();
@@ -121,6 +265,7 @@
                   :counter="20"
                   label="Last Name*"
                   required
+                  dense
                   @input="
                     $v.billingLastName.$touch();
                     checkValidation();
@@ -137,6 +282,7 @@
                   :counter="40"
                   label="Address Line 1*"
                   required
+                  dense
                   @input="
                     $v.billingAddressLine1.$touch();
                     checkValidation();
@@ -153,6 +299,7 @@
                   label="Postcode*"
                   class="inputPostcode"
                   required
+                  dense
                   type="number"
                   maxlength="5"
                   oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
@@ -169,6 +316,7 @@
                   :error-messages="billingCityErrors"
                   label="City*"
                   required
+                  dense
                   @input="
                     $v.billingCity.$touch();
                     checkValidation();
@@ -177,81 +325,11 @@
                 />
               </v-col>
             </v-row>
-            <!-- </v-container> -->
-          </v-card>
-        </div>
-      </v-col>
-    </v-row>
-
-    <div class="text-h6 text-left font-weight-medium ma-4">
-      Payment Method
-    </div>
-    <v-row>
-      <v-col cols="12" xl="2">
-        <v-radio-group
-          v-model="radioGroupPayment"
-          @change="
-            checkValidation();
-            writeOrderInfoToState();
-          "
-        >
-          <v-radio :label="`Paypal`" value="paypalPayment" />
-          <v-radio :label="`Credit Card`" value="creditCardPayment" />
-          <v-radio :label="`Payment on invoice`" value="invoicePayment">
-            <h3 v-if="radioGroupPayment == 'invoicePayment'">Test</h3>
-          </v-radio>
-          <v-radio
-            :label="`Cash payment`"
-            value="cashPayment"
-            :disabled="true"
-          />
-        </v-radio-group>
-      </v-col>
-
-      <v-col v-if="radioGroupPayment == 'creditCardPayment'" cols="12" xl="10">
-        <v-card>
-          <v-container>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="creditCardName"
-                  label="Name on Card*"
-                  required
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="creditCardNumber"
-                  label="Card Number*"
-                  required
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="creditCardExpiryDate"
-                  label="Expiry Date*"
-                  required
-                />
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="creditCardSecurityCode"
-                  label="Security Code*"
-                  required
-              /></v-col>
-            </v-row>
           </v-container>
         </v-card>
-      </v-col>
-    </v-row>
-    <v-btn @click="print">Print Data</v-btn>
-    <v-btn @click="fill">Fill Data</v-btn>
-    <v-btn @click="writeOrderInfoToState()">save</v-btn>
-  </v-container>
+      </v-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -260,7 +338,7 @@ import { userService } from "../../services";
 
 import {
   required,
-  maxLength
+  maxLength,
   //   email,
   //   minLength,
   //   sameAs
@@ -271,11 +349,11 @@ import { validationMixin } from "vuelidate";
 export default {
   name: "ShoppingCartCheckout",
 
-  mixins: [validationMixin],
-
   components: {
     //AddressInput
   },
+
+  mixins: [validationMixin],
 
   validations: {
     shippingFirstName: { required, maxLength: maxLength(20) },
@@ -288,13 +366,13 @@ export default {
     billingLastName: { required, maxLength: maxLength(20) },
     billingCity: { required },
     billingPostcode: { required },
-    billingAddressLine1: { required, maxLength: maxLength(40) }
+    billingAddressLine1: { required, maxLength: maxLength(40) },
   },
 
   data() {
     return {
       radioGroupAddress: "sameBillingAddress",
-      radioGroupPayment: "",
+      radioGroupDelivery: "delivery",
 
       // Shipping Address
       shippingFirstName: "",
@@ -314,19 +392,33 @@ export default {
       creditCardName: "",
       creditCardNumber: "",
       creditCardExpiryDate: "",
-      creditCardSecurityCode: ""
+      creditCardSecurityCode: "",
     };
   },
 
   async mounted() {
     if (this.loggedIn == true) {
-      let response = await userService.getSingleUser(this.user.email);
+      console.log(this.user.email);
+      let response;
+      try {
+        response = await userService.getSingleUser();
+      } catch (error) {
+        console.log(error);
+        // TODO emit event which blocks the further process
+        return;
+      }
+
       console.log(response);
-      this.shippingFirstName = response.firstName;
-      this.shippingLastName = response.lastName;
-      this.shippingAddressLine1 = response.addressLine1;
-      this.shippingPostcode = response.postcode;
-      this.shippingCity = response.city;
+      this.shippingFirstName = response.user.firstName;
+      this.shippingLastName = response.user.lastName;
+      this.shippingAddressLine1 = response.user.addressLine1;
+      this.shippingPostcode = response.user.postcode;
+      this.shippingCity = response.user.city;
+
+      // this.emptyOrderDataSuccess();
+      this.writeOrderInfoToState();
+      this.checkValidation();
+      return;
     }
   },
 
@@ -419,7 +511,40 @@ export default {
       return errors;
     },
 
-    checkInputFields() {
+    checkInputFieldsValid() {
+      if (this.radioGroupDelivery === "delivery") {
+        if (this.checkShippingAddressValid) {
+          // shipping address valid
+          if (this.radioGroupAddress === "sameBillingAddress") {
+            return true;
+          } else if (
+            //Billing
+            this.checkBillingAddressValid
+          ) {
+            // billing address is also valid
+            return true;
+          } else {
+            // not valid
+            return false;
+          }
+          //Information valid
+        } else {
+          // not valid
+          return false;
+        }
+      } else {
+        if (
+          //Billing
+          this.checkBillingAddressValid
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+
+    checkShippingAddressValid() {
       if (
         //Shipping
         !this.$v.shippingFirstName.$invalid &&
@@ -428,40 +553,49 @@ export default {
         !this.$v.shippingPostcode.$invalid &&
         !this.$v.shippingCity.$invalid
       ) {
-        if (this.radioGroupAddress == "sameBillingAddress") {
-          return false;
-        } else if (
-          //Billing
-          !this.$v.billingFirstName.$invalid &&
-          !this.$v.billingLastName.$invalid &&
-          !this.$v.billingAddressLine1.$invalid &&
-          !this.$v.billingPostcode.$invalid &&
-          !this.$v.billingCity.$invalid
-        ) {
-          return false;
-        } else {
-          return true;
-        }
-        //Information valid
-      } else {
+        // address is valid
         return true;
+      } else {
+        // not valid
+        return false;
       }
     },
+
+    checkBillingAddressValid() {
+      if (
+        //Shipping
+        !this.$v.billingFirstName.$invalid &&
+        !this.$v.billingLastName.$invalid &&
+        !this.$v.billingAddressLine1.$invalid &&
+        !this.$v.billingPostcode.$invalid &&
+        !this.$v.billingCity.$invalid
+      ) {
+        // address is valid
+        return true;
+      } else {
+        // not valid
+        return false;
+      }
+    },
+
     checkRadioButtons() {
       return this.radioGroupPayment != "" ? false : true;
     },
     buttonIsDisabled() {
-      if (this.checkInputFields == false && this.checkRadioButtons == false) {
+      if (
+        this.checkInputFieldsValid
+        // && this.checkRadioButtons == false
+      ) {
         this.$emit("enable-step2-continue-button");
         return false;
       } else {
         return true;
       }
-    }
+    },
   },
 
   methods: {
-    ...mapActions("order", ["saveOrderDataToState"]),
+    ...mapActions("order", ["saveOrderDataToState", "emptyOrderDataSuccess"]),
 
     fill() {
       this.shippingFirstName = "Test";
@@ -490,41 +624,61 @@ export default {
     },
 
     checkValidation() {
-      if (this.checkInputFields == false && this.checkRadioButtons == false) {
+      if (
+        this.checkInputFieldsValid
+        // && this.checkRadioButtons == false
+      ) {
         this.$emit("step2-continue-button", false);
       } else {
+        this.writeOrderInfoToState();
         this.$emit("step2-continue-button", true);
       }
     },
 
-    writeOrderInfoToState() {
-      let orderData = {
-        shippingAddress: {
-          firstName: this.shippingFirstName,
-          lastName: this.shippingLastName,
-          addressLine1: this.shippingAddressLine1,
-          city: this.shippingCity,
-          postcode: this.shippingPostcode,
-          country: "DE"
-        },
-        payment: this.radioGroupPayment
+    getShippingAddress() {
+      return {
+        firstName: this.shippingFirstName,
+        lastName: this.shippingLastName,
+        addressLine1: this.shippingAddressLine1,
+        city: this.shippingCity,
+        postcode: this.shippingPostcode,
+        country: "DE",
       };
-      if (this.radioGroupAddress == "sameBillingAddress") {
-        orderData.billingAddress = orderData.shippingAddress;
-      } else {
-        orderData.billingAddress = {
-          firstName: this.billingFirstName,
-          lastName: this.billingFirstName,
-          addressLine1: this.billingAddressLine1,
-          city: this.billingCity,
-          postcode: this.billingPostcode,
-          country: "DE"
+    },
+
+    getBillingAddress() {
+      return {
+        firstName: this.billingFirstName,
+        lastName: this.billingFirstName,
+        addressLine1: this.billingAddressLine1,
+        city: this.billingCity,
+        postcode: this.billingPostcode,
+        country: "DE",
+      };
+    },
+
+    writeOrderInfoToState() {
+      let orderData;
+      if (this.radioGroupDelivery === "delivery") {
+        orderData = {
+          deliveryMethod: "delivery",
+          shippingAddress: this.getShippingAddress(),
+        };
+        if (this.radioGroupAddress === "sameBillingAddress") {
+          orderData.billingAddress = orderData.shippingAddress;
+        } else {
+          orderData.billingAddress = this.getBillingAddress();
+        }
+      } else if (this.radioGroupDelivery === "pickup") {
+        orderData = {
+          deliveryMethod: "pickup",
+          billingAddress: this.getBillingAddress(),
         };
       }
 
       this.saveOrderDataToState(orderData);
-    }
-  }
+    },
+  },
 };
 </script>
 

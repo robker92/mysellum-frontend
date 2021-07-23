@@ -28,8 +28,8 @@
           :dark="minusButtonDark"
           x-small
           color="primary"
-          @click.stop="decreaseProductAmount(1)"
           :disabled="minusButtonDisabled"
+          @click.stop="decreaseProductAmount(1)"
         >
           <v-icon dark>mdi-minus</v-icon>
         </v-btn>
@@ -103,7 +103,7 @@
 
 */
 import { mapState, mapActions } from "vuex";
-import { storeService } from "../../services";
+import { productService } from "../../services";
 //import { checkAuthentication } from "../helpers";
 
 //import { addProductLoggedOut, removeProductLoggedOut } from "../helpers";
@@ -114,20 +114,20 @@ export default {
   props: {
     product: Object,
     amount: Number,
-    modifiable: Boolean
+    modifiable: Boolean,
   },
 
   data() {
     return {
       amountTextField: this.amount,
-      image: ""
+      image: "",
     };
   },
 
   async mounted() {
     let result;
     try {
-      result = await storeService.getProductImage(
+      result = await productService.getProductImage(
         this.product.storeId,
         this.product._id
       );
@@ -144,19 +144,19 @@ export default {
       "user",
       "loggedIn",
       "shoppingCart",
-      "productCounter"
+      "productCounter",
     ]),
     shoppingCartComputed: {
       get() {
         return this.shoppingCart;
-      }
+      },
     },
     computedRowSum: {
       get() {
         var rowSum = (this.product.price * this.amount).toFixed(2);
-        console.log(rowSum);
+        // console.log(rowSum);
         return `${rowSum}${this.product.currencySymbol}`;
-      }
+      },
     },
     minusButtonDisabled: {
       get() {
@@ -165,7 +165,7 @@ export default {
         } else {
           return true;
         }
-      }
+      },
     },
     minusButtonDark: {
       get() {
@@ -174,7 +174,7 @@ export default {
         } else {
           return false;
         }
-      }
+      },
     },
     plusButtonDisabled: {
       get() {
@@ -183,7 +183,7 @@ export default {
         } else {
           return false;
         }
-      }
+      },
     },
     plusButtonDark: {
       get() {
@@ -192,15 +192,15 @@ export default {
         } else {
           return true;
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     ...mapActions("account", [
       "addProduct",
       "removeProduct",
       "addProductLoggedOut",
-      "removeProductLoggedOut"
+      "removeProductLoggedOut",
     ]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
     async putInCart() {
@@ -209,14 +209,14 @@ export default {
       if (this.loggedIn === false) {
         this.addProductLoggedOut({
           product: this.product,
-          quantity: 1
+          quantity: 1,
         });
       } else {
         //Logged In routine
         this.addProduct({
           email: this.user.email,
           product: this.product,
-          amount: 1
+          amount: 1,
         });
       }
     },
@@ -226,13 +226,13 @@ export default {
       if (this.loggedIn === false) {
         this.removeProductLoggedOut({
           product: product,
-          quantity: value
+          quantity: value,
         });
       } else {
-        await this.removeProduct({
+        this.removeProduct({
           email: this.user.email,
           product: product,
-          amount: value
+          amount: value,
         });
       }
     },
@@ -240,8 +240,8 @@ export default {
     printProduct() {
       console.log(this.product);
       console.log(this.amount);
-    }
-  }
+    },
+  },
 };
 </script>
 

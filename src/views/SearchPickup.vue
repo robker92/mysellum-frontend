@@ -11,10 +11,10 @@
       clearable
       outlined
       dense
+      class="mb-1"
       @click:clear="clearMessage"
       @click:append-outer="fetchStores()"
       @keyup.enter="fetchStores()"
-      class="mb-1"
     >
       <!-- <template slot="append-outer">
         <v-icon @click="fetchStores()">mdi-magnify</v-icon>
@@ -47,13 +47,13 @@
     <!-- MAP -->
     <div class="mb-4">
       <GoogleMap
-        v-bind:markers="computedStores"
-        v-bind:stores="computedStores"
-        v-on:map-boundaries-changed="setMapBoundaries"
-        v-on:unelevate-all-stores="setElevationArray"
-        v-on:elevate-store="elevateStore"
-        v-on:unelevate-store="unelevateStore"
-        style="height: 500px; width: 100%; display: block; margin-left: auto; margin-right: auto"
+        :markers="computedStores"
+        :stores="computedStores"
+        style="height: 600px; width: 100%; display: block; margin-left: auto; margin-right: auto"
+        @map-boundaries-changed="setMapBoundaries"
+        @unelevate-all-stores="setElevationArray"
+        @elevate-store="elevateStore"
+        @unelevate-store="unelevateStore"
       />
     </div>
     <!-- v-bind:mapBoundries="mapBoundaries" -->
@@ -66,15 +66,15 @@
     <div v-if="storeData">
       <v-row>
         <v-col
+          v-for="(store, index) in computedStores"
+          :key="index"
           cols="12"
           xs="12"
           sm="6"
           md="4"
           lg="3"
           xl="2"
-          v-for="(store, index) in computedStores"
-          v-bind:key="index"
-          v-bind:store="store"
+          :store="store"
         >
           <SearchStoreListItem
             :store="store"
@@ -103,7 +103,7 @@ export default {
   name: "SearchPickupView",
   components: {
     GoogleMap: GoogleMap,
-    SearchStoreListItem: SearchStoreListItem
+    SearchStoreListItem: SearchStoreListItem,
   },
   data() {
     return {
@@ -112,22 +112,14 @@ export default {
       mapBoundaries: null,
       filterArray: [],
       filterObject: {
-        tags: []
+        tags: [],
       },
       elevationArray: [],
       //Pagination
       currentPage: 1,
       storesPerPage: 5,
-      numSkeletonLoaders: 10
+      numSkeletonLoaders: 10,
     };
-  },
-
-  watch: {
-    mapBoundaries: function(newVal) {
-      console.log(newVal);
-      // this.setStartUpQueryParams();
-      this.fetchStores();
-    }
   },
 
   // async mounted() {
@@ -139,7 +131,7 @@ export default {
     numberOfRows: {
       get() {
         return Math.ceil(this.storeData.length / 4);
-      }
+      },
     },
 
     //Pagination:
@@ -149,7 +141,7 @@ export default {
     computedStores() {
       return this.storeData;
       // .slice(this.sliceStart, this.sliceEnd);
-    }
+    },
     // sliceStart() {
     //   return (this.currentPage - 1) * this.storesPerPage;
     // },
@@ -158,9 +150,16 @@ export default {
     // }
   },
 
+  watch: {
+    mapBoundaries: function(newVal) {
+      console.log(newVal);
+      // this.setStartUpQueryParams();
+      this.fetchStores();
+    },
+  },
+
   methods: {
     setMapBoundaries(mapBoundaries) {
-      console.log(`hi`);
       this.mapBoundaries = mapBoundaries;
     },
 
@@ -176,7 +175,7 @@ export default {
       // const filter = this.filterObject.tags ? this.filterObject : {};
       const data = {
         pickup: true,
-        delivery: true
+        delivery: true,
       };
 
       if (this.searchTerm) {
@@ -245,6 +244,10 @@ export default {
     },
 
     setElevationArray() {
+      if (!this.storeData) {
+        this.elevationArray = [];
+        return;
+      }
       for (let i = 0; i < this.storeData.length; i++) {
         this.elevationArray = [];
         this.elevationArray.push(false);
@@ -260,13 +263,13 @@ export default {
           break;
         }
       }
-      // console.log(storeId);
+      console.log(storeId);
       // console.log(index);
       // this.elevationArray[index] = true;
       if (found === true) {
         this.elevationArray.splice(index, 1, true);
       }
-      // console.log(this.elevationArray);
+      console.log(this.elevationArray);
     },
     unelevateStore(storeId) {
       let index = 0;
@@ -320,7 +323,7 @@ export default {
 
     addQueryParam(queryObject) {
       this.$router.push({
-        query: Object.assign({}, this.$route.query, queryObject)
+        query: Object.assign({}, this.$route.query, queryObject),
       });
     },
 
@@ -328,8 +331,8 @@ export default {
       let query = Object.assign({}, this.$route.query);
       delete query[param];
       this.$router.replace({ query });
-    }
-  }
+    },
+  },
 };
 </script>
 
