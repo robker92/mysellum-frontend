@@ -9,9 +9,9 @@
     <div class="text-body-1 font-weight-bold">
       Mysellum GmbH
     </div>
-    <div class="text-body-1 ">
+    <!-- <div class="text-body-1 ">
       Vollmannstraße 8
-    </div>
+    </div> -->
     <div class="text-body-1 mb-4">
       81927 München
     </div>
@@ -23,9 +23,9 @@
     <div class="text-body-1 font-weight-bold">
       Kontakt:
     </div>
-    <div class="text-body-1 ">
+    <!-- <div class="text-body-1 ">
       support@mysellum.com
-    </div>
+    </div> -->
     <router-link :to="{ name: 'CustomerContact' }" custom>
       <div class="text-body-1 ">
         Contact Form

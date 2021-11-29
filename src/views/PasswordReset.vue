@@ -10,18 +10,11 @@
           <div class="text-left text-h5">
             {{ this.$t("passwordReset.headline") }}
           </div>
-          <v-alert
-            border="left"
-            type="info"
-            outlined
-            max-width="60%"
-            class="mt-5"
-            dense
-          >
+          <v-alert border="left" type="info" outlined class="mt-5" dense>
             {{ this.$t("passwordReset.infoAlert") }}
           </v-alert>
 
-          <v-card class="mt-5" max-width="60%">
+          <v-card class="mt-5">
             <v-container>
               <v-text-field
                 v-model="password"
@@ -67,6 +60,7 @@
           </v-card>
         </v-col>
       </v-row>
+
       <v-row v-else align="center" justify="center">
         <v-alert
           border="left"
@@ -80,11 +74,22 @@
         </v-alert>
       </v-row>
     </v-container>
+
     <v-container v-else>
-      <div text-body-1>
-        {{ this.$t("passwordReset.successfullyChangedBody") }}
-      </div>
+      <v-row align="center">
+        <v-spacer />
+        <v-col>
+          <div text-body-1>
+            {{ this.$t("passwordReset.successfullyChangedBody") }}
+          </div>
+        </v-col>
+        <v-col cols="12" sm="2" md="2" lg="2">
+          <v-img src="../assets/undraw-images/undraw_authentication.svg" />
+        </v-col>
+        <v-spacer />
+      </v-row>
     </v-container>
+
     <v-overlay v-model="overlay">
       <v-progress-circular indeterminate size="80"></v-progress-circular>
     </v-overlay>

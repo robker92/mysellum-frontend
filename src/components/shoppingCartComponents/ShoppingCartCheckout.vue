@@ -675,7 +675,7 @@ export default {
           billingAddress: this.getBillingAddress(),
         };
       }
-
+      console.log(orderData);
       this.saveOrderDataToState(orderData);
     },
   },

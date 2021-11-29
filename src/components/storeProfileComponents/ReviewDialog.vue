@@ -7,7 +7,9 @@
   >
     <v-card>
       <v-card-title>
-        <span class="reviewDialogHeadline">Add Review</span>
+        <span class="reviewDialogHeadline">
+          {{ $t("storeProfile.reviewDialog.addReviewButtonLabel") }}
+        </span>
       </v-card-title>
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
@@ -25,7 +27,7 @@
               <v-textarea
                 v-model="reviewText"
                 :counter="1000"
-                label="Review Text"
+                :label="$t('storeProfile.reviewDialog.textAreaLabel')"
                 :error-messages="reviewTextErrors"
                 required
                 @input="$v.reviewText.$touch()"
@@ -37,13 +39,16 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="indigo" text @click="cancel">Close</v-btn>
+        <v-btn color="indigo" text @click="cancel">
+          {{ $t("storeProfile.reviewDialog.closeButtonLabel") }}
+        </v-btn>
         <v-btn
           color="primary"
           :disabled="buttonIsDisabled"
           @click="submitReview"
-          >Submit</v-btn
         >
+          {{ $t("storeProfile.reviewDialog.submitButtonLabel") }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -51,7 +56,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { storeService, reviewService } from "../../services";
+import { reviewService } from "../../services";
 
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
@@ -149,7 +154,9 @@ export default {
         //
       } else if (this.reviewToEdit !== null) {
         this.$emit("overlay-start");
-        data["reviewId"] = this.reviewToEdit.reviewId;
+        data["reviewId"] = this.reviewToEdit._id;
+        console.log(this.reviewToEdit);
+        console.log(data);
         let updatedReview;
         try {
           updatedReview = await reviewService.editReview(data);

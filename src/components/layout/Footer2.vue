@@ -1,5 +1,5 @@
 <template>
-  <v-footer dark padless color="primary">
+  <v-footer dark padless color="grey darken-1">
     <v-container fluid style="width: 100%">
       <v-btn
         class="mx-2"
@@ -9,7 +9,7 @@
         right
         fab
         small
-        color="primary"
+        :color="mysellum_main_green_name"
         @click="$vuetify.goTo(0)"
       >
         <v-icon dark>
@@ -17,7 +17,7 @@
         </v-icon>
       </v-btn>
 
-      <v-card flat tile color="primary">
+      <v-card flat tile color="grey darken-1">
         <v-container>
           <!-- <v-card-text style="width: 85%" class="text-center"> -->
           <!-- <v-container fluid style="width: 85%" color="primary"> -->
@@ -36,7 +36,7 @@
           <!-- <v-container fluid> -->
           <v-row dense justify="center">
             <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
-              <v-list dense color="primary">
+              <v-list dense color="grey darken-1">
                 <v-list-item>
                   <v-list-item-content class="text-left">
                     <v-list-item-title
@@ -57,7 +57,7 @@
             </v-col>
 
             <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
-              <v-list dense color="primary">
+              <v-list dense color="grey darken-1">
                 <v-list-item>
                   <v-list-item-content class="text-left">
                     <v-list-item-title
@@ -78,7 +78,7 @@
             </v-col>
 
             <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
-              <v-list dense color="primary">
+              <v-list dense color="grey darken-1">
                 <v-list-item>
                   <v-list-item-content class="text-left">
                     <v-list-item-title
@@ -99,7 +99,7 @@
             </v-col>
 
             <v-col cols="12" xs="12" sm="6" md="3" lg="3" xl="3">
-              <v-list dense color="primary">
+              <v-list dense color="grey darken-1">
                 <v-list-item>
                   <v-list-item-content class="text-left">
                     <v-list-item-title
@@ -123,7 +123,7 @@
         </v-container>
       </v-card>
 
-      <v-card flat color="primary">
+      <v-card flat color="grey darken-1">
         <v-container>
           <v-row align="center" class="text-caption">
             <v-col cols="12" lg="8" xl="8">
@@ -167,6 +167,8 @@
 <script>
 //import LanguageSwitcher from "../LanguageSwitcherDeprecated";
 //import { i18n } from "../../main.js";
+
+import { MysellumColors } from "../../helpers";
 
 export default {
   components: {
@@ -234,6 +236,9 @@ export default {
       // },
     ],
     links: ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"],
+
+    // Colors
+    mysellum_main_green_name: MysellumColors.MYSELLUM_MAIN_GREEN_NAME,
   }),
   methods: {
     printData() {

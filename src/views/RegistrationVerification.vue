@@ -1,15 +1,22 @@
 <template>
   <div>
     <v-container v-if="pageState === 'idle'">
-      <div class="text-h5 mb-5">
-        {{ $t("registrationVerification.header") }}
-      </div>
-      <div class="text-body-1 mb-2">
-        {{ $t("registrationVerification.body1") }}
-      </div>
-      <div class="text-body-1">
-        {{ $t("registrationVerification.body2") }}
-      </div>
+      <v-row>
+        <v-col cols="12" sm="6" md="6" lg="6">
+          <v-img src="../assets/image_sheep.jpg" />
+        </v-col>
+        <v-col cols="12" sm="6" md="6" lg="6">
+          <div class="text-h5 mb-5">
+            {{ $t("registrationVerification.header") }}
+          </div>
+          <div class="text-body-1 mb-2">
+            {{ $t("registrationVerification.body1") }}
+          </div>
+          <div class="text-body-1">
+            {{ $t("registrationVerification.body2") }}
+          </div>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-container v-if="pageState === 'failure'">
@@ -20,21 +27,38 @@
       <div class="text-body-1 mb-2">
         Please try to refresh the page or resend the verification e-mail.
       </div>
-      <v-btn @click="resendVerificationMail">
-        <v-icon dark left color="primary">
+      <!-- <v-btn
+        class="mt-2"
+        outline
+        color="primary"
+        @click="resendVerificationMail"
+      >
+        <v-icon dark left color="white">
           mdi-email
         </v-icon>
         Resend
-      </v-btn>
+      </v-btn> -->
     </v-container>
 
     <v-container v-if="pageState === 'success'">
-      <div class="text-h5 mb-5">
-        Your e-mail verification was successful!
-      </div>
-      <div class="text-body-1 mb-2">
-        Enjoy our platform :)
-      </div>
+      <v-row>
+        <v-col cols="12" sm="6" md="6" lg="6">
+          <div class="text-h5 mb-5">
+            Your e-mail was successfully verified!
+          </div>
+          <div class="text-body-1">
+            If you have questions or if you need support, feel free to contact
+            us anytime via our contact form. Also, please see the footer for
+            further information.
+          </div>
+          <div class="text-body-1 mb-2">
+            Enjoy our platform :)
+          </div>
+        </v-col>
+        <v-col cols="12" sm="6" md="6" lg="6">
+          <v-img src="../assets/image_squirrel.jpg" />
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -90,10 +114,10 @@ export default {
     ...mapActions("account", ["verifyRegistration"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
-    resendVerificationMail() {
-      // TODO
-      console.log(`Resend verification e-mail!`);
-    },
+    // resendVerificationMail() {
+    //   // TODO
+    //   console.log(`Resend verification e-mail!`);
+    // },
   },
 };
 </script>

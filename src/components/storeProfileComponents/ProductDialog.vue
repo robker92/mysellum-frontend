@@ -7,9 +7,21 @@
     @click:outside="cancel"
   >
     <v-card>
-      <v-card-title>
+      <v-toolbar flat color="primary" dark>
+        <v-toolbar-title v-if="!modeEdit">
+          {{ $t("storeProfile.productDialog.headlineCreate") }}
+        </v-toolbar-title>
+        <v-toolbar-title v-else>
+          {{ $t("storeProfile.productDialog.headlineEdit") }}
+        </v-toolbar-title>
+        <v-spacer />
+        <v-btn icon @click="cancel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <!-- <v-card-title>
         <span class="addProductHeadline">Create Product</span>
-      </v-card-title>
+      </v-card-title> -->
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
           <v-row>
@@ -17,7 +29,7 @@
               <v-text-field
                 v-model="title"
                 :counter="30"
-                label="Title"
+                :label="$t('storeProfile.productDialog.title.label')"
                 required
                 :error-messages="titleErrors"
                 @input="$v.title.$touch()"
@@ -30,7 +42,10 @@
               <v-textarea
                 v-model="description"
                 :counter="200"
-                label="Description"
+                :label="$t('storeProfile.productDialog.description.label')"
+                :placeholder="
+                  $t('storeProfile.productDialog.description.placeholder')
+                "
                 rows="2"
                 auto-grow
                 required
@@ -42,12 +57,30 @@
           </v-row>
           <v-row>
             <v-col>
+              <v-textarea
+                v-model="longDescription"
+                :counter="1000"
+                :label="$t('storeProfile.productDialog.longDescription.label')"
+                :placeholder="
+                  $t('storeProfile.productDialog.longDescription.placeholder')
+                "
+                rows="2"
+                auto-grow
+                required
+                :error-messages="longDescriptionErrors"
+                @input="$v.longDescription.$touch()"
+                @blur="$v.longDescription.$touch()"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
               <v-text-field
                 v-model="price"
                 class="inputPrice"
                 :error-messages="priceErrors"
                 placeholder="Format: ##.##"
-                label="Price"
+                :label="$t('storeProfile.productDialog.price.label')"
                 required
                 :prefix="pricePrefix"
                 type="number"
@@ -58,17 +91,20 @@
                 @blur="$v.price.$touch()"
               />
             </v-col>
+            <!-- @change="getImageBuffer()" -->
+            <!-- @change="onFileChange($event)" -->
+            <!-- @input="$v.image.$touch()" -->
             <v-col>
               <v-file-input
                 v-model="image"
                 prepend-icon="mdi-camera"
                 accept="image/*"
-                :label="imageLabel"
+                :label="$t('storeProfile.productDialog.image.label')"
                 show-size
                 truncate-length="15"
                 required
                 :error-messages="imageErrors"
-                @change="getImageBuffer()"
+                @change="onFileChange($event)"
                 @input="$v.image.$touch()"
                 @blur="$v.image.$touch()"
               />
@@ -79,7 +115,7 @@
               <v-combobox
                 v-model="quantityType"
                 :items="quantityTypeItems"
-                label="Quantity type"
+                :label="$t('storeProfile.productDialog.quantityType.label')"
                 required
                 :error-messages="quantityTypeErrors"
                 @input="$v.quantityType.$touch()"
@@ -89,7 +125,7 @@
             <v-col>
               <v-text-field
                 v-model="quantityValue"
-                label="Quantity"
+                :label="$t('storeProfile.productDialog.quantityValue.label')"
                 class="inputQuantityValue"
                 required
                 type="number"
@@ -101,38 +137,128 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-radio-group v-model="radioGroup" mandatory>
-                <v-radio label="Delivery only" value="delivery"></v-radio>
-                <v-radio label="Pickup only" value="pickup"></v-radio>
+              <div class="text-h6 text-left">
+                {{
+                  $t("storeProfile.productDialog.distributionOptions.headline")
+                }}:
+              </div>
+              <!-- <v-radio-group v-model="radioGroup" mandatory>
                 <v-radio
-                  label="Pickup and delivery"
+                  :label="
+                    $t(
+                      'storeProfile.productDialog.distributionOptions.radios.deliveryOnly'
+                    )
+                  "
+                  value="delivery"
+                ></v-radio>
+                <v-radio
+                  :label="
+                    $t(
+                      'storeProfile.productDialog.distributionOptions.radios.pickupOnly'
+                    )
+                  "
+                  value="pickup"
+                ></v-radio>
+                <v-radio
+                  :label="
+                    $t(
+                      'storeProfile.productDialog.distributionOptions.radios.pickupAndDelivery'
+                    )
+                  "
                   value="pickupAndDelivery"
                 ></v-radio>
-              </v-radio-group>
+              </v-radio-group> -->
+
+              <v-checkbox
+                v-model="deliveryCheckbox"
+                :label="
+                  $t(
+                    'storeProfile.productDialog.distributionOptions.deliveryCheckbox'
+                  )
+                "
+                hide-details
+                :error-messages="distributionErrors"
+                @change="
+                  $v.deliveryCheckbox.$touch();
+                  checkboxesTouched = true;
+                "
+              ></v-checkbox>
+              <v-checkbox
+                v-model="pickupCheckbox"
+                :label="
+                  $t(
+                    'storeProfile.productDialog.distributionOptions.pickupCheckbox'
+                  )
+                "
+                :error-messages="distributionErrors"
+                @change="
+                  $v.pickupCheckbox.$touch();
+                  checkboxesTouched = true;
+                "
+              ></v-checkbox>
+            </v-col>
+
+            <!-- Date Info -->
+            <v-col>
+              <div class="text-h6 text-left">
+                {{ $t("storeProfile.productDialog.info.headline") }}:
+              </div>
+
+              <v-row>
+                <v-col cols="12" xs="4" sm="4" md="3" lg="3" xl="3">
+                  <div class="text-body-2 text-left mt-5">
+                    {{ $t("storeProfile.productDialog.info.createdLabel") }}:
+                  </div>
+                </v-col>
+                <v-col>
+                  <div
+                    v-if="datetimeCreated"
+                    class="text-body-2 text-left mt-5"
+                  >
+                    {{ datetimeCreated }}
+                  </div>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" xs="4" sm="4" md="3" lg="3" xl="3">
+                  <div class="text-body-2 text-left">
+                    {{ $t("storeProfile.productDialog.info.editedLabel") }}:
+                  </div>
+                </v-col>
+                <v-col>
+                  <div v-if="datetimeEdited" class="text-body-2 text-left">
+                    {{ datetimeEdited }}
+                  </div>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" text @click="cancel">Close</v-btn>
+        <!-- <v-btn color="primary" text @click="cancel">Close</v-btn> -->
         <v-btn color="primary" text @click="printData">Print</v-btn>
         <v-btn color="primary" text @click="fill">Fill</v-btn>
         <v-spacer />
+        <v-btn color="primary" text @click="cancel">
+          {{ $t("storeProfile.productDialog.actions.closeButton") }}
+        </v-btn>
         <v-btn
           color="primary"
           right
-          dark
+          :dark="!buttonIsDisabled"
           :disabled="buttonIsDisabled"
           @click="submitProduct"
-          >Save</v-btn
         >
+          {{ $t("storeProfile.productDialog.actions.saveButton") }}
+          <!-- <v-icon>mdi-content-save</v-icon> -->
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-//v-model="price"
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
@@ -140,15 +266,26 @@ import { mapActions } from "vuex";
 
 import { productService, storeService } from "../../services";
 
+import {
+  getDateFormatDDMMYYYY,
+  getTimeFromIsoDate,
+  getImgBuffer,
+} from "../../helpers";
+
 const file_size_validation = (file) => {
+  // console.log(file);
   if (!file) {
     return true;
   }
-  console.log(file);
-  console.log(file.size);
+  // console.log(file);
+  // console.log(file.size);
   const maxFileSize = 3000000;
   return file.size <= maxFileSize; //4000000 = 4mb
   //return file.size < 100; // 100 = 100byte
+};
+
+const checked = (value) => {
+  return value === true;
 };
 
 export default {
@@ -172,44 +309,42 @@ export default {
       minLength: minLength(20),
       maxLength: maxLength(200),
     },
+    longDescription: {
+      maxLength: maxLength(1000),
+    },
     price: { required },
     image: { required, file_size_validation },
     quantityType: { required },
     quantityValue: { required },
-    delivery2: { required },
-    isDelivery: {
-      delivery: (val) => val === true,
+    deliveryCheckbox: {
+      checked: checked,
     },
-    isPickup: {
-      pickup: (val) => val === true,
-    },
-    checkboxDelivery: {
-      checked(val) {
-        return val;
-      },
-    },
-    checkboxPickup: {
-      checked(val) {
-        return val;
-      },
+    pickupCheckbox: {
+      checked: checked,
     },
   },
 
   data() {
     return {
       dialog: false,
+      modeEdit: false,
       title: "",
       description: "",
+      longDescription: "",
       price: "",
       pricePrefix: "€ ",
       image: null,
-      imageLabel: "Upload Image*",
       imageBuffer: "",
       imageDetails: {},
       quantityType: "Kilograms",
       quantityTypeItems: ["Kilograms", "Grams", "Pieces"],
       quantityValue: "",
       radioGroup: "delivery",
+      deliveryCheckbox: false,
+      pickupCheckbox: false,
+      checkboxesTouched: false,
+      datetimeCreated: "",
+      datetimeEdited: "",
     };
   },
 
@@ -227,10 +362,17 @@ export default {
       var title = this.$v.title;
       if (!title.$dirty) return errors;
       !title.maxLength &&
-        errors.push("The product title must be at most 30 characters long.");
+        errors.push(
+          this.$t("storeProfile.productDialog.title.errors.maxLength")
+        );
       !title.minLength &&
-        errors.push("The product title must be at least 5 characters long.");
-      !title.required && errors.push("The product title is required.");
+        errors.push(
+          this.$t("storeProfile.productDialog.title.errors.minLength")
+        );
+      !title.required &&
+        errors.push(
+          this.$t("storeProfile.productDialog.title.errors.required")
+        );
       return errors;
     },
     descriptionErrors() {
@@ -238,55 +380,95 @@ export default {
       if (!this.$v.description.$dirty) return errors;
       !this.$v.description.maxLength &&
         errors.push(
-          "The product description must be at most 1000 characters long."
+          this.$t("storeProfile.productDialog.description.errors.maxLength")
         );
       !this.$v.description.minLength &&
         errors.push(
-          "The product description must be at least 20 characters long."
+          this.$t("storeProfile.productDialog.description.errors.minLength")
         );
       !this.$v.description.required &&
-        errors.push("The product description is required.");
+        errors.push(
+          this.$t("storeProfile.productDialog.description.errors.required")
+        );
+      return errors;
+    },
+    longDescriptionErrors() {
+      const errors = [];
+      if (!this.$v.longDescription.$dirty) return errors;
+      !this.$v.longDescription.maxLength &&
+        errors.push(
+          this.$t("storeProfile.productDialog.longDescription.errors.maxLength")
+        );
       return errors;
     },
     priceErrors() {
       const errors = [];
       if (!this.$v.price.$dirty) return errors;
-      !this.$v.price.required && errors.push("The price is required.");
+      !this.$v.price.required &&
+        errors.push(
+          this.$t("storeProfile.productDialog.price.errors.required")
+        );
       return errors;
     },
     imageErrors() {
       const errors = [];
       if (!this.$v.image.$dirty) return errors;
       !this.$v.image.required &&
-        errors.push("An image of the product is required.");
+        errors.push(
+          this.$t("storeProfile.productDialog.image.errors.required")
+        );
       !this.$v.image.file_size_validation &&
-        errors.push("The image is too large");
+        errors.push(
+          this.$t("storeProfile.productDialog.image.errors.fileSize")
+        );
       return errors;
     },
     quantityTypeErrors() {
       const errors = [];
       if (!this.$v.quantityType.$dirty) return errors;
       !this.$v.quantityType.required &&
-        errors.push("The quantity type of the product is required.");
+        errors.push(
+          this.$t("storeProfile.productDialog.quantityType.errors.required")
+        );
       return errors;
     },
     quantityValueErrors() {
       const errors = [];
       if (!this.$v.quantityValue.$dirty) return errors;
       !this.$v.quantityValue.required &&
-        errors.push("The quantity value of the product is required.");
+        errors.push(
+          this.$t("storeProfile.productDialog.quantityValue.errors.required")
+        );
+      return errors;
+    },
+    distributionErrors() {
+      const errors = [];
+
+      if (!this.$v.pickupCheckbox.$dirty && !this.$v.deliveryCheckbox.$dirty)
+        return errors;
+      // if (this.$v.pickupCheckbox.checked || this.$v.deliveryCheckbox.checked)
+      //   return errors;
+      if (
+        !this.$v.pickupCheckbox.checked &&
+        !this.$v.deliveryCheckbox.checked &&
+        this.checkboxesTouched
+      ) {
+        errors.push("You have to choose either delivery or pick-up.");
+      }
       return errors;
     },
     buttonIsDisabled() {
       if (
         !this.$v.title.$invalid &&
         !this.$v.description.$invalid &&
+        !this.$v.longDescription.$invalid &&
         !this.$v.price.$invalid &&
-        //!this.$v.image.$invalid &&
+        !this.$v.image.$invalid &&
         !this.$v.quantityType.$invalid &&
-        !this.$v.quantityValue.$invalid
+        !this.$v.quantityValue.$invalid &&
+        (!this.$v.deliveryCheckbox.$invalid || !this.$v.pickupCheckbox.$invalid)
       ) {
-        //Register User with input data
+        // Button is not disabled
         return false;
       } else {
         return true;
@@ -297,10 +479,12 @@ export default {
   watch: {
     productToEdit: function(newVal) {
       if (newVal !== null) {
+        console.log(newVal);
+        this.modeEdit = true;
         this.title = newVal.title;
         this.description = newVal.description;
+        this.longDescription = newVal.longDescription;
         this.price = newVal.price;
-        this.imageLabel = "Update Image*";
         this.imageBuffer = newVal.imgSrc;
         this.imageDetails = newVal.imageDetails;
         this.image = {
@@ -310,11 +494,22 @@ export default {
           name: newVal.imageDetails.name,
         };
         //this.image = newVal.imgSrc;
-        this.delivery = newVal.delivery;
-        this.pickup = newVal.pickup;
+        this.pickupCheckbox = newVal.pickup;
+        this.deliveryCheckbox = newVal.delivery;
+        // this.delivery = newVal.delivery;
+        // this.pickup = newVal.pickup;
         this.quantityType = newVal.quantityType;
         this.quantityValue = newVal.quantityValue;
-        this.setRadioGroup(newVal.delivery, newVal.pickup);
+        // this.setRadioGroup(newVal.delivery, newVal.pickup);
+        this.datetimeCreated =
+          getDateFormatDDMMYYYY(newVal.datetimeCreated) +
+          " " +
+          getTimeFromIsoDate(newVal.datetimeCreated);
+        this.datetimeEdited = newVal.datetimeAdjusted
+          ? getDateFormatDDMMYYYY(newVal.datetimeAdjusted) +
+            " " +
+            getTimeFromIsoDate(newVal.datetimeAdjusted)
+          : "/";
       }
     },
   },
@@ -323,33 +518,20 @@ export default {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
     submitProduct: async function() {
-      let pickup = false;
-      let delivery = false;
-      if (this.radioGroup === "pickupAndDelivery") {
-        pickup = true;
-        delivery = true;
-      }
-      if (this.radioGroup === "delivery") {
-        delivery = true;
-      }
-      if (this.radioGroup === "pickup") {
-        pickup = true;
-      }
-      //console.log(this.image);
       let payload = {
         storeId: this.$route.params.id,
         title: this.title,
         description: this.description,
+        longDescription: this.longDescription,
         imgSrc: this.imageBuffer,
         imageDetails: this.imageDetails,
         price: this.price,
         currency: "EUR",
         currencySymbol: "€",
-        //datetime: new Date(),
         quantityType: this.quantityType,
         quantityValue: this.quantityValue,
-        delivery: delivery,
-        pickup: pickup,
+        delivery: this.deliveryCheckbox,
+        pickup: this.pickupCheckbox,
         stockAmount: 1,
       };
 
@@ -402,51 +584,49 @@ export default {
       }
     },
 
-    async getImageBuffer() {
-      let result;
-      if (!this.image) {
+    async onFileChange(file) {
+      console.log(file);
+      if (!file) {
+        this.image = null;
+        this.imageBuffer = "";
+        this.imageDetails = {};
         return;
       }
-      try {
-        result = await storeService.getImageBuffer(this.image);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-      //console.log(buffer);
-      this.imageBuffer = result.buffer;
-      this.imageDetails = result.imageDetails;
-      console.log(this.imageDetails);
-    },
 
-    setRadioGroup(delivery, pickup) {
-      if (delivery === true && pickup === true) {
-        this.radioGroup = "pickupAndDelivery";
+      let buffer;
+      try {
+        // buffer = await getImgBuffer(file);
+        const result = await storeService.getImageBuffer(this.image);
+        buffer = result.buffer;
+        // console.log(buffer);
+      } catch (error) {
         return;
       }
-      if (delivery === true && pickup === false) {
-        this.radioGroup = "delivery";
-        return;
-      }
-      if (delivery === false && pickup === true) {
-        this.radioGroup = "pickup";
-        return;
-      }
+
+      this.imageBuffer = buffer;
+      this.imageDetails = {
+        size: file.size,
+        originalname: file.name,
+        name: file.name,
+      };
     },
 
     cancel() {
       this.$v.$reset();
       this.title = "";
       this.description = "";
+      this.longDescription = "";
       this.price = "";
       this.image = null;
       this.imageBuffer = "";
       this.imageDetails = {};
-      this.imageLabel = "Upload Image*";
       this.quantityType = "Kilograms";
       this.quantityValue = "";
       this.imageBuffer = "";
       this.radioGroup = "delivery";
+      this.pickupCheckbox = false;
+      this.deliveryCheckbox = false;
+      this.modeEdit = false;
       this.$emit("productToEdit-to-null");
       this.show = false;
     },
@@ -454,19 +634,25 @@ export default {
     fill() {
       this.title = "Product 1";
       this.description = "Test Test Test Test Test ";
+      this.longDescription =
+        "Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test ";
       this.price = "1.50";
       this.pricePrefix = "€ ";
       this.quantityType = "Kilograms";
       this.quantityValue = "2";
+      this.deliveryCheckbox = true;
     },
 
     printData() {
       console.log(this.productToEdit);
       console.log(this.description);
+      console.log(this.longDescription);
       console.log(this.image);
       console.log(this.productToEdit.imgSrc);
       console.log(this.quantityType);
       console.log(this.quantityValue);
+      console.log(this.pickupCheckbox);
+      console.log(this.deliveryCheckbox);
     },
   },
 };

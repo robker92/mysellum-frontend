@@ -1,187 +1,97 @@
 <template>
-  <v-container fluid>
-    <!-- height="80" -->
+  <v-container>
     <SearchArea />
-
-    <div class="text-h4 mb-6">
+    <!-- 
+    <div class="text-h4 mt-8  mb-6">
       Willkommen bei <strong>Mysellum</strong> - deiner Online Markthalle
-    </div>
-    <v-container>
-      <div class="mb-6 ">
-        Dies ist eine unfertige Vorabversion, die kostenlos gehostet ist.
-        Dadurch kann es sein, dass das erste Laden der Seite, wenn sie eine Zeit
-        lang nicht geladen wurde, einen kurzen Moment dauert, danach läuft sie
-        allerdings flüssig. (Das gilt ebenfalls für den Server, d.h. es kann
-        sein, dass die erste Server-Anfrage etwas dauert, aber sobald er wieder
-        erreichbar ist funktioniert alles flüssig).Ebenfalls bitte folgende
-        Übersicht beachten
-      </div>
-    </v-container>
-
-    <v-row>
-      <v-spacer />
-      <v-col cols="12" xs="4" sm="4" md="4" lg="4" xl="4">
-        <div class="text-left">Folgendes ist nahezu fertig:</div>
-        <ul class="text-left">
-          <li>Registrierung mit E-Mail Verifikation</li>
-          <li>An- und abmeldung</li>
-          <li>Passwortzurücksetzung</li>
-          <li>
-            Erstellung eines Ladens (noch ohne Paypal Onboarding)
-          </li>
-          <li>Erstellung von Produkten & Update des Lagerbestands</li>
-          <li>Lieferkosten und -information</li>
-          <li>Angabe der Öffnungszeiten</li>
-          <li>Hinzufügen von Produkten zum Shopping Cart</li>
-          <li>Speicherung des Shopping Carts & Wiederherstellung bei Login</li>
-          <li>
-            E-Mail Benachrichtigung, sobald ein Produkt wieder verfügbar ist
-          </li>
-          <li>
-            Bewertung: Hinzufügung (eine pro Kunde & Laden), Löschung, Anpassung
-          </li>
-          <li>
-            Suche mit Schlagworten (& Lieferung: Filter, Abholung: Auswahl des
-            Kartenausschnitts und Suche in diesem)
-          </li>
-          <li>Anpassung der Sprache, allerdings noch nicht für alle Texte</li>
-        </ul>
-      </v-col>
-      <v-col cols="12" xs="4" sm="4" md="4" lg="4" xl="4">
-        <div class="text-left">Folgendes ist noch nicht fertig:</div>
-        <ul class="text-left">
-          <li>
-            Grundsätzlich: Design und Gestaltung der Website
-          </li>
-          <li>
-            Suchlogik: Aufhebung der aktuellen Aufteilung in Lieferungs- und
-            Abholungssuche
-          </li>
-          <li>Lieferungssuche: Sortierung</li>
-          <li>Suche nach spezifischen Produkten</li>
-          <li>Identitätsüberprüfung bei Ladeneigentümern</li>
-          <li>Prüfung rechtlicher Themen</li>
-          <li>Erneutes Senden der Verifikationsemail zur Registrierung</li>
-        </ul>
-      </v-col>
-      <v-spacer />
-    </v-row>
+    </div> -->
 
     <v-row dense class="mt-3">
       <v-spacer />
+      <div class="text-center">
+        <v-img src="@/assets/mysellum_text_with_subtitle.png" width="800" />
+      </div>
+      <v-spacer />
+    </v-row>
+
+    <div class="text-h4 mt-8">
+      Explore Popular Categories In Your Region
+    </div>
+    <ProductCategories class="mt-3" />
+
+    <!-- <div>
+      Landing Page Content:
+      <ul class="text-left">
+        <li>What is mysellum?</li>
+        <li>Why you should use it</li>
+        <li>How to become a store owner</li>
+      </ul>
+    </div> -->
+
+    <div class="text-h4 mt-8">
+      Reasons to buy via Mysellum
+    </div>
+    <Reasons type="buy" class="mt-3" />
+
+    <div class="text-h4 mt-8">
+      Reasons to sell via Mysellum
+    </div>
+    <Reasons type="sell" class="mt-3" />
+
+    <div class="text-h4 mt-8">
+      Experiences by others
+    </div>
+    <Testimonials class="mt-3" />
+
+    <v-row dense class="mt-8">
+      <v-spacer />
       <v-col cols="12" xs="12" sm="12" md="6" lg="5" xl="4">
         <v-hover v-slot:default="{ hover }">
-          <v-card :class="{ 'on-hover': hover }" :elevation="hover ? 16 : 2">
-            <v-carousel
-              cycle
-              show-arrows-on-hover
-              hide-delimiters
-              hide-delimiter-background
-              :height="imgHeight"
-            >
-              <v-carousel-item
-                :to="{
-                  name: 'SearchDelivery',
-                  params: { locale: $i18n.locale },
-                }"
+          <v-card
+            :class="{ 'on-hover': hover }"
+            :elevation="hover ? 16 : 0"
+            flat
+            :to="{
+              name: 'SearchDelivery',
+            }"
+          >
+            <v-container>
+              <div class="text-h5 mb-3">
+                Explore stores that deliver
+              </div>
+              <v-img
+                src="../assets/home_searchDelivery3.jpg"
+                :height="imgHeight"
                 eager
               >
-                <v-img
-                  src="../assets/home_searchDelivery1.jpg"
-                  :height="imgHeight"
-                  eager
-                >
-                </v-img>
-              </v-carousel-item>
-              <v-carousel-item
-                :to="{
-                  name: 'SearchDelivery',
-                  params: { locale: $i18n.locale },
-                }"
-                eager
-              >
-                <v-img
-                  src="../assets/home_searchDelivery2.jpg"
-                  :height="imgHeight"
-                  eager
-                >
-                </v-img>
-              </v-carousel-item>
-              <v-carousel-item
-                :to="{
-                  name: 'SearchDelivery',
-                  params: { locale: $i18n.locale },
-                }"
-                eager
-              >
-                <v-img
-                  src="../assets/home_searchDelivery3.jpg"
-                  :height="imgHeight"
-                  eager
-                >
-                </v-img>
-              </v-carousel-item>
-            </v-carousel>
-
-            <router-link
-              :to="{
-                name: 'SearchDelivery',
-                params: { locale: $i18n.locale },
-              }"
-              style="text-decoration: none; color: inherit"
-            >
-              <v-card-title>Delivery</v-card-title>
-            </router-link>
+              </v-img>
+            </v-container>
           </v-card>
         </v-hover>
       </v-col>
 
-      <!-- style="width:700px;" -->
       <v-col cols="12" xs="12" sm="12" md="6" lg="5" xl="4">
         <v-hover v-slot:default="{ hover }">
-          <v-card :class="{ 'on-hover': hover }" :elevation="hover ? 16 : 2">
-            <v-carousel
-              cycle
-              show-arrows-on-hover
-              hide-delimiters
-              hide-delimiter-background:height="imgHeight"
-            >
-              <v-carousel-item :to="{ name: 'SearchPickup' }" eager>
-                <v-img
-                  src="../assets/home_searchPickup1.jpg"
-                  :height="imgHeight"
-                  eager
-                >
-                </v-img>
-              </v-carousel-item>
-              <v-carousel-item :to="{ name: 'SearchPickup' }" eager>
-                <v-img
-                  src="../assets/home_searchPickup2.jpg"
-                  :height="imgHeight"
-                  eager
-                >
-                </v-img>
-              </v-carousel-item>
-              <v-carousel-item :to="{ name: 'SearchPickup' }" eager>
-                <v-img
-                  src="../assets/home_searchPickup3.jpg"
-                  :height="imgHeight"
-                  eager
-                >
-                </v-img>
-              </v-carousel-item>
-            </v-carousel>
-
-            <router-link
-              :to="{ name: 'SearchPickup' }"
-              style="text-decoration: none; color: inherit"
-            >
-              <v-card-title>Pick-up</v-card-title>
-            </router-link>
+          <v-card
+            :class="{ 'on-hover': hover }"
+            :elevation="hover ? 16 : 0"
+            :to="{ name: 'SearchPickup' }"
+            flat
+          >
+            <v-container>
+              <div class="text-h5 mb-3">
+                Explore stores in your region
+              </div>
+              <v-img
+                src="../assets/home_searchPickup1.jpg"
+                :height="imgHeight"
+                eager
+              >
+              </v-img>
+            </v-container>
           </v-card>
         </v-hover>
       </v-col>
-
       <v-spacer />
     </v-row>
   </v-container>
@@ -189,11 +99,17 @@
 
 <script>
 import SearchArea from "../components/homeComponents/SearchArea";
+import ProductCategories from "../components/homeComponents/ProductCategories";
+import Testimonials from "../components/aboutComponents/Testimonials.vue";
+import Reasons from "../components/aboutComponents/Reasons.vue";
 
 export default {
   name: "HomeView",
   components: {
     SearchArea: SearchArea,
+    ProductCategories: ProductCategories,
+    Testimonials: Testimonials,
+    Reasons: Reasons,
   },
   data() {
     return {

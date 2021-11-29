@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card rounded="xl" elevation="6" class="mb-6 ">
+    <v-card rounded="xl" elevation="6" height="80">
       <v-container>
         <!--  height="100" -->
         <!-- <div height=""> -->
@@ -37,7 +37,13 @@
           </v-col>
 
           <v-col cols="12" sm="1" md="1" lg="1" xl="1">
-            <v-btn color="primary" dark fab class="mr-4" @click="search">
+            <v-btn
+              :color="mysellum_main_green_name"
+              dark
+              fab
+              class="mr-4"
+              @click="search"
+            >
               <v-icon>
                 mdi-magnify
               </v-icon>
@@ -52,6 +58,8 @@
 </template>
 
 <script>
+import { MysellumColors } from "../../helpers";
+
 export default {
   name: "SearchAreaComponent",
   components: {},
@@ -62,6 +70,8 @@ export default {
       searchTerm: "",
       selectedDistributionItem: "",
       distributionItems: ["delivery", "pickup"],
+      // Colors
+      mysellum_main_green_name: MysellumColors.MYSELLUM_MAIN_GREEN_NAME,
     };
   },
   computed: {},

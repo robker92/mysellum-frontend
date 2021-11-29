@@ -8,6 +8,7 @@ export const userService = {
   login,
   logout,
   register,
+  resendVerificationEmail,
   verifyRegistration,
   addToShoppingCart,
   removeFromShoppingCart,
@@ -149,6 +150,18 @@ async function updateShoppingCart(data) {
   }
 
   return { shippingCosts: response.shippingCosts };
+}
+
+async function resendVerificationEmail(data) {
+  let response;
+  try {
+    response = await baseClient.post(`/auth/resend-verification-email`, data);
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+
+  return response.data;
 }
 
 async function sendResetPasswordMail(data) {

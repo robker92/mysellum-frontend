@@ -72,9 +72,8 @@
             </div>
           </v-card-text>
         </v-card>
-      </v-col>
-      <v-col v-if="orderData.billingAddress" cols="12" sm="6" lg="4" xl="4">
-        <v-card>
+
+        <v-card v-if="orderData.billingAddress" class="mt-3">
           <v-card-title>
             <div class="text-xl-h6">Billing Address</div>
           </v-card-title>
@@ -92,6 +91,26 @@
           </v-card-text>
         </v-card>
       </v-col>
+
+      <!-- <v-col v-if="orderData.billingAddress" cols="12" sm="6" lg="4" xl="4">
+        <v-card v-if="orderData.billingAddress">
+          <v-card-title>
+            <div class="text-xl-h6">Billing Address</div>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="text-left text-body-1 black--text">
+            <div>
+              {{ orderData.billingAddress.firstName }}
+              {{ orderData.billingAddress.lastName }}
+            </div>
+            <div>
+              {{ orderData.billingAddress.addressLine1 }},
+              {{ orderData.billingAddress.postcode }}
+              {{ orderData.billingAddress.city }}
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col> -->
     </v-row>
   </div>
 </template>

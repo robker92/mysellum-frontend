@@ -5,7 +5,7 @@
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Monday
+            {{ $t("storeProfile.openingHoursDisplay.mondayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -14,14 +14,14 @@
             {{ openingHours.monday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Tuesday
+            {{ $t("storeProfile.openingHoursDisplay.tuesdayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -30,14 +30,14 @@
             {{ openingHours.tuesday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Wednesday
+            {{ $t("storeProfile.openingHoursDisplay.wednesdayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -49,14 +49,14 @@
             {{ openingHours.wednesday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Thursday
+            {{ $t("storeProfile.openingHoursDisplay.thursdayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -68,14 +68,14 @@
             {{ openingHours.thursday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Friday
+            {{ $t("storeProfile.openingHoursDisplay.fridayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -84,14 +84,14 @@
             {{ openingHours.friday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Saturday
+            {{ $t("storeProfile.openingHoursDisplay.saturdayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -103,14 +103,14 @@
             {{ openingHours.saturday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="4" md="4" lg="4">
           <div class="text-left text-body-1">
-            Sunday
+            {{ $t("storeProfile.openingHoursDisplay.sundayLabel") }}
           </div>
         </v-col>
         <v-col cols="12" sm="8" md="8" lg="8">
@@ -119,7 +119,7 @@
             {{ openingHours.sunday.times.close }}
           </div>
           <div v-else class="text-left text-body-1">
-            closed
+            {{ $t("storeProfile.openingHoursDisplay.closedLabel") }}
           </div>
         </v-col>
       </v-row>

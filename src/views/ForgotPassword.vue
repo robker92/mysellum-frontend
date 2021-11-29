@@ -66,9 +66,19 @@
       </v-card>
     </div>
     <div v-else>
-      <div text-body-1>
-        {{ this.$t("forgotPassword.successfullySentBody") }}
-      </div>
+      <v-row align="center">
+        <v-spacer />
+        <v-col cols="12" sm="2" md="2" lg="2">
+          <v-img src="../assets/undraw-images/undraw_Mail_sent.svg" />
+          <!-- <v-icon color="primary">mdi-lock-check</v-icon> -->
+        </v-col>
+        <v-col cols="12" sm="6" md="6" lg="6">
+          <div class="text-body-1 text-left">
+            {{ this.$t("forgotPassword.successfullySentBody") }}
+          </div>
+        </v-col>
+        <v-spacer />
+      </v-row>
     </div>
     <v-overlay v-model="overlay">
       <v-progress-circular indeterminate size="80"></v-progress-circular>

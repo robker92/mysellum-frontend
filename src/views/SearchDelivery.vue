@@ -6,7 +6,8 @@
         v-model="searchTerm"
         :append-outer-icon="'mdi-magnify'"
         type="text"
-        label="Search"
+        :label="$t('searchDelivery.searchbox.label')"
+        :placeholder="$t('searchDelivery.searchbox.placeholder')"
         clear-icon="mdi-close"
         clearable
         outlined
@@ -24,14 +25,31 @@
         offset-y
         :close-on-content-click="false"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs" v-on="on" outlined color="primary" class="ml-6">
-            <v-icon color="primary">mdi-filter-menu</v-icon>
-          </v-btn>
+        <template v-slot:activator="{ on: onMenu, attrs: attrsMenu }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on: onTooltip, attrs: attrsTooltip }">
+              <v-btn
+                v-bind="{ ...attrsMenu, ...attrsTooltip }"
+                outlined
+                color="primary"
+                class="ml-6"
+                v-on="{ ...onMenu, ...onTooltip }"
+              >
+                <v-icon color="primary">mdi-filter-menu</v-icon>
+              </v-btn>
+            </template>
+
+            <span>
+              {{ $t("searchDelivery.filters.tooltip") }}
+            </span>
+          </v-tooltip>
         </template>
+
         <v-card>
           <v-container>
-            <div class="text-left text-h6">Filters:</div>
+            <div class="text-left text-h6">
+              {{ $t("searchDelivery.filters.headline") }}:
+            </div>
             <v-autocomplete
               v-model="selectedCountries"
               :items="countries"
@@ -39,17 +57,18 @@
               dense
               chips
               small-chips
-              label="Countries"
+              :label="$t('searchDelivery.filters.countryFilterLabel')"
               multiple
               clearable
-              @change="filterChanged = true"
               style="width:300px"
+              @change="filterChanged = true"
               ><template v-slot:selection="{ item, index }">
                 <v-chip v-if="index === 0" small>
                   <span>{{ item }}</span>
                 </v-chip>
                 <span v-if="index === 1" class="grey--text caption">
-                  (+{{ selectedCountries.length - 1 }} others)
+                  (+{{ selectedCountries.length - 1 }}
+                  {{ $t("searchDelivery.filters.othersLabel") }})
                 </span>
               </template>
             </v-autocomplete>
@@ -60,17 +79,18 @@
               dense
               chips
               small-chips
-              label="States"
+              :label="$t('searchDelivery.filters.stateFilterLabel')"
               multiple
               clearable
-              @change="filterChanged = true"
               style="width:300px"
+              @change="filterChanged = true"
               ><template v-slot:selection="{ item, index }">
                 <v-chip v-if="index === 0" small>
                   <span>{{ item }}</span>
                 </v-chip>
                 <span v-if="index === 1" class="grey--text caption">
-                  (+{{ selectedStates.length - 1 }} others)
+                  (+{{ selectedStates.length - 1 }}
+                  {{ $t("searchDelivery.filters.othersLabel") }})
                 </span>
               </template>
             </v-autocomplete>
@@ -81,31 +101,32 @@
               dense
               chips
               small-chips
-              label="Cities"
+              :label="$t('searchDelivery.filters.cityFilterLabel')"
               multiple
               clearable
-              @change="filterChanged = true"
               style="width:300px"
+              @change="filterChanged = true"
               ><template v-slot:selection="{ item, index }">
                 <v-chip v-if="index === 0" small>
                   <span>{{ item }}</span>
                 </v-chip>
                 <span v-if="index === 1" class="grey--text caption">
-                  (+{{ selectedCities.length - 1 }} others)
+                  (+{{ selectedCities.length - 1 }}
+                  {{ $t("searchDelivery.filters.othersLabel") }})
                 </span>
               </template>
             </v-autocomplete>
             <v-checkbox
               v-model="checkBoxPickup"
-              label="Pick-Up"
-              @change="filterChanged = true"
+              :label="$t('searchDelivery.filters.pickupCheckbox')"
               hide-details
+              @change="filterChanged = true"
             ></v-checkbox>
             <v-checkbox
               v-model="checkBoxDelivery"
-              label="Delivery"
-              @change="filterChanged = true"
+              :label="$t('searchDelivery.filters.deliveryCheckbox')"
               hide-details
+              @change="filterChanged = true"
             ></v-checkbox>
           </v-container>
           <v-card-actions>
@@ -114,27 +135,43 @@
               color="primary"
               :disabled="filterChanged ? false : true"
               @click="searchFilterSort(true)"
-              >Set</v-btn
             >
+              {{ $t("searchDelivery.filters.setButton") }}
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-menu>
 
       <!-- SORT MENU -->
       <v-menu bottom left :nudge-bottom="10" offset-y max-width="250px">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs" v-on="on" outlined color="primary" class="ml-3">
-            <v-icon color="primary">mdi-sort</v-icon>
-          </v-btn>
+        <template v-slot:activator="{ on: onMenu, attrs: attrsMenu }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on: onTooltip, attrs: attrsTooltip }">
+              <v-btn
+                v-bind="{ ...attrsMenu, ...attrsTooltip }"
+                outlined
+                color="primary"
+                class="ml-3"
+                v-on="{ ...onMenu, ...onTooltip }"
+              >
+                <v-icon color="primary">mdi-sort</v-icon>
+              </v-btn>
+            </template>
+
+            <span>
+              {{ $t("searchDelivery.sort.tooltip") }}
+            </span>
+          </v-tooltip>
         </template>
+
         <v-card>
           <v-list dense nav>
             <v-list-item-group v-model="selectedSort" color="primary">
               <v-list-item
                 v-for="(item, index) in sortTypes"
                 :key="index"
-                @click="sortListClicked(index)"
                 link
+                @click="sortListClicked(index)"
               >
                 <v-list-item-icon>
                   <v-icon>{{ item.icon }}</v-icon>
@@ -165,24 +202,21 @@
         {{ tag[1] }}
       </v-chip>
     </v-row>
-    <div v-if="storeData && storeData.length == 0">
-      <p>
-        We are sorry, we could not find a suitable store for your search
-        criteria.
-      </p>
+    <div v-if="storeData && storeData.length == 0" class="text-body-1 my-5">
+      {{ $t("searchDelivery.noStoresError") }}
     </div>
     <div v-if="loadingStoreData === false">
       <v-row>
         <v-col
+          v-for="(store, index) in storeData"
+          :key="index"
           cols="12"
           xs="12"
           sm="6"
           md="4"
           lg="3"
           xl="2"
-          v-for="(store, index) in this.storeData"
-          v-bind:key="index"
-          v-bind:store="store"
+          :store="store"
         >
           <!-- <router-link :to="{ path: `/storeprofile/${store._id}` }"> -->
           <!--height="200px"
@@ -193,19 +227,21 @@
       </v-row>
       <v-row align="baseline">
         <v-spacer />
-        <v-tooltip bottom>
+        <v-tooltip bottom nudge-bottom="20">
           <template v-slot:activator="{ on, attrs }">
             <div style="width:100px; height:15px;" v-bind="attrs" v-on="on">
               <v-select
-                :items="pageSizes"
                 v-model="selectedPageSize"
+                :items="pageSizes"
                 label=""
                 outlined
                 dense
               ></v-select>
             </div>
           </template>
-          <span>Stores per Page</span>
+          <span>
+            {{ $t("searchDelivery.pagination.storesPerPageTooltip") }}
+          </span>
         </v-tooltip>
         <v-pagination v-model="currentPage" :length="numOfPages" class="py-5" />
         <v-spacer />
@@ -214,14 +250,14 @@
     <div v-else>
       <v-row>
         <v-col
+          v-for="n in numSkeletonLoaders"
+          :key="n"
           cols="12"
           xs="12"
           sm="6"
           md="4"
           lg="3"
           xl="2"
-          v-for="n in numSkeletonLoaders"
-          :key="n"
         >
           <v-skeleton-loader
             elevation="2"
@@ -242,7 +278,7 @@ import { storeService, searchService } from "../services";
 export default {
   name: "SearchDeliveryView",
   components: {
-    SearchStoreListItem: SearchStoreListItem
+    SearchStoreListItem: SearchStoreListItem,
   },
   data() {
     return {
@@ -253,7 +289,7 @@ export default {
         // ["test", "test2"] //Array Aufbau: [Quelle/Art des Filterbegriffs, Filterbegriff]
       ],
       filterObject: {
-        tags: []
+        tags: [],
       },
       selectedSort: 0,
       sortTypes: [
@@ -264,13 +300,13 @@ export default {
         {
           type: "Completion",
           icon: "mdi-sort-bool-ascending-variant",
-          tooltip: ""
+          tooltip: "",
         },
         {
           type: "Completion",
           icon: "mdi-sort-bool-descending-variant",
-          tooltip: ""
-        }
+          tooltip: "",
+        },
       ],
       filterChanged: false,
       selectedCountries: [],
@@ -289,8 +325,21 @@ export default {
       //storesPerPage: 3,
       numSkeletonLoaders: 10,
 
-      loadingStoreData: true
+      loadingStoreData: true,
     };
+  },
+
+  computed: {
+    numberOfRows: {
+      get() {
+        return Math.ceil(this.storeData.length / 4);
+      },
+    },
+
+    //Pagination:
+    numOfPages() {
+      return Math.ceil(this.totalStoreCount / parseInt(this.selectedPageSize));
+    },
   },
   watch: {
     filterArray() {
@@ -301,24 +350,11 @@ export default {
     },
     selectedPageSize() {
       this.searchFilterSort(true);
-    }
+    },
   },
   async mounted() {
     this.setStartUpQueryParams();
     this.searchFilterSort(false);
-  },
-
-  computed: {
-    numberOfRows: {
-      get() {
-        return Math.ceil(this.storeData.length / 4);
-      }
-    },
-
-    //Pagination:
-    numOfPages() {
-      return Math.ceil(this.totalStoreCount / parseInt(this.selectedPageSize));
-    }
   },
 
   methods: {
@@ -332,7 +368,7 @@ export default {
         pickup: this.checkBoxPickup,
         delivery: this.checkBoxDelivery,
         pageSize: parseInt(this.selectedPageSize),
-        pageNum: this.currentPage
+        pageNum: this.currentPage,
       };
       console.log(this.currentPage);
       return payload;
@@ -484,7 +520,7 @@ export default {
 
     addQueryParam(queryObject) {
       this.$router.push({
-        query: Object.assign({}, this.$route.query, queryObject)
+        query: Object.assign({}, this.$route.query, queryObject),
       });
     },
 
@@ -492,8 +528,8 @@ export default {
       let query = Object.assign({}, this.$route.query);
       delete query[param];
       this.$router.replace({ query });
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -11,3 +11,13 @@ export function getDateFormatDDMMYYYY(date) {
 
   return days + "-" + month + "-" + year;
 }
+
+export function getTimeFromIsoDate(date) {
+  const time = new Date(date).toLocaleTimeString("en", {
+    timeStyle: "short",
+    hour12: false,
+    timeZone: "UTC",
+  });
+
+  return time;
+}

@@ -5,7 +5,7 @@
         <v-btn
           v-bind="attrs"
           width="60px"
-          color="primary"
+          color="grey darken-4"
           dark
           text
           tile
@@ -13,15 +13,15 @@
           class="rounded-xl"
           v-on="on"
         >
-          <v-icon color="primary">mdi-earth</v-icon>
-          <v-icon color="primary">mdi-chevron-down</v-icon>
+          <v-icon color="grey darken-4">mdi-earth</v-icon>
+          <v-icon color="grey darken-4">mdi-chevron-down</v-icon>
         </v-btn>
       </template>
       <v-card>
         <v-list dense nav>
           <v-list-item-group
-            :value="this.getCurrentLocale().index"
-            color="primary"
+            :value="getCurrentLocale().index"
+            color="grey darken-4"
           >
             <v-list-item
               v-for="(item, index) in supportedLanguages"
@@ -54,7 +54,7 @@ export default {
   name: "LanguageSwitcherComponent",
 
   components: {
-    CountryFlag
+    CountryFlag,
   },
 
   data() {
@@ -67,15 +67,15 @@ export default {
         {
           name: "English",
           flag: "gb",
-          locale: "en"
+          locale: "en",
         },
         {
           name: "German",
           flag: "de",
-          locale: "de"
-        }
+          locale: "de",
+        },
       ],
-      supportedLanguages: supportedLanguages
+      supportedLanguages: supportedLanguages,
     };
   },
 
@@ -90,7 +90,7 @@ export default {
       //console.log(chosenLocale);
       if (chosenLocale !== "en") {
         import(`@/locale/translations/${chosenLocale}.json`)
-          .then(msgs => {
+          .then((msgs) => {
             i18n.setLocaleMessage(chosenLocale, msgs.default || msgs); //add Messages from new language file
             i18n.locale = chosenLocale; // set locale
             // if (chosenLocale !== this.$router.currentRoute.params.locale) {
@@ -98,7 +98,7 @@ export default {
             //   this.pushToRouter(chosenLocale);
             // }
           })
-          .catch(error => {
+          .catch((error) => {
             //Chosen language not yet included -> Fallback: En
             console.log("Language not contained!");
             console.log(error);
@@ -130,7 +130,7 @@ export default {
       console.log(this.chosenLocale2);
       console.log(this.currentLocaleComputed);
       console.log(this.getCurrentLocale());
-    }
-  }
+    },
+  },
 };
 </script>

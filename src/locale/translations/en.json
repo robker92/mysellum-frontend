@@ -28,6 +28,7 @@
         "passwordFieldRequiredError": "A password is required.",
 
         "forgotPasswordLabel": "Forgot your password?",
+        "resendVerificationEmailLabel": "Resend verification e-mail?",
         "requiredFieldDescription": "indicates required field",
         "showPasswordTooltip": "show password",
         "closeButton": "Close",
@@ -53,6 +54,10 @@
         "emailField": "E-mail",
         "emailFieldRequiredError": "The e-mail address is required.",
         "emailFieldValidError": "Must be a valid e-mail address.",
+
+        "phoneNumberField": "Phone number",
+        "phoneNumberRequiredError": "The phone number is required.",
+        "phoneNumberValidError": "Must be a valid phone number.",
 
         "birthdateField": "Birthdate",
         "birthdateFieldRequiredError": "The birthdate is required.",
@@ -96,8 +101,8 @@
 
     "registrationVerification": {
         "header": "Thank you for your registration!",
-        "body1": "We would like to welcome you on board of xx.",
-        "body2": "Please verify your e-mail address. We have sent you an e-mail containing a verification code.",
+        "body1": "We would like to welcome you on board of Mysellum.",
+        "body2": "Please verify your e-mail address to finish the onboarding process. We have sent you an e-mail containing a verification code.",
 
         "verifyRegSuccess": "Your registration was successful!",
         "verifyRegVerificationError": "E-Mail verification failed.",
@@ -123,10 +128,314 @@
 
         "successfullyChangedBody": "Your password was successfully changed! You can now login with your new password. Have fun on our platform!",
         "successfullyChanged": "Password was successfully changed. You can now login with your new password.",
-        "checkInvalidError": "Password reset link is invalid or has expired.",
+        "checkInvalidError": "Password reset link is invalid or has expired. Please request the passwort reset e-mail again or contact our customer support via the contact form.",
 
         "resetFailureError": "Password reset failed.",
         "resetOtherError": "An error occurred, we are sorry."
+    },
+
+    "searchPickup": {
+        "headline": "Stores in your area",
+        "searchbox": {
+            "label": "Search",
+            "placeholder": "What are you looking for?"
+        },
+        "items": {
+            "favoritesAddTooltip": "Add to favorites",
+            "favoritesRemoveTooltip": "Remove from favorites",
+            "pickupTooltip": "Offers self pickup",
+            "deliveryTooltip": "Offers delivery",
+            "opening": {
+                "labelClosed": "Closed",
+                "tooltipClosed": "This store is currently closed",
+                "labelOpened": "Opened",
+                "tooltipOpened": "This store is currently opened"
+            }
+        },
+        "noStoresError": "We are sorry, we could not find a suitable store for your search criteria."
+    },
+
+    "searchDelivery": {
+        "searchbox": {
+            "label": "Search",
+            "placeholder": "What are you looking for?"
+        },
+        "filters": {
+            "headline": "Filters",
+            "tooltip": "Filter",
+            "countryFilterLabel": "Countries",
+            "stateFilterLabel": "States",
+            "cityFilterLabel": "Cities",
+            "othersLabel": "others",
+            "pickupCheckbox": "Pick-Up",
+            "deliveryCheckbox": "Delivery",
+            "setButton": "Set"
+        },
+        "sort": {
+            "tooltip": "Sort"
+        },
+        "pagination": {
+            "storesPerPageTooltip": "Stores per page"
+        },
+        "noStoresError": "We are sorry, we could not find a suitable store for your search criteria."
+    },
+
+    "storeProfile": {
+        "administrationHeadline": "Administration",
+        "editStoreButtonLabel": "Edit Store",
+        "openedBadge": "Opened",
+        "openedBadgeTooltip": "This store is currently opened",
+        "closedBadge": "Closed",
+        "closedBadgeTooltip": "This store is currently closed",
+        "pickupBadgeLabel": "Pick-Up",
+        "pickupBadgeTooltip": "Available for pick-up",
+        "deliveryBadgeLabel": "Delivery",
+        "deliveryBadgeTooltip": "Available for delivery",
+
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+
+        "productsTabHeadline": "Products",
+        "reviewsTabHeadline": "Reviews",
+
+        "createProductButtonTooltip": "Create new product",
+        "productsTableButtonTooltip": "Products table view",
+
+        "productsLoadingError": "We could not load the store's products, we're sorry.",
+
+        "addReviewButton": "Add Review",
+        "emptyReviewList": "There are no reviews for this store yet. Why don't you leave the first one?",
+        "reviewsLoadingError": "We are sorry, apparently there was an error on our side during loading the store's reviews.",
+
+        "paymentMethodsHeadline": "Payment Methods",
+        "shippingHeadline": "Shipping",
+        "freeShippingText": "Always free",
+        "fixedShippingText": "Fixed costs of",
+        "thresholdShippingText1": "Costs of",
+        "thresholdShippingText2": "but free from a purchase value of",
+
+        "openingHoursHeadline": "Opening Hours",
+        "currentlyClosedLabel": "Currently closed",
+        "todayOpenedLabel": "Open today",
+
+        "addressHeadline": "Address",
+
+        "contactHeadline": "Contact",
+
+        "planRouteButtonLabel": "Plan route",
+
+        "storeLoadingError": "We could not load the store, we're sorry.",
+
+        "reviewDialog": {
+            "addReviewButtonLabel": "Add Review",
+            "closeButtonLabel": "Close",
+            "submitButtonLabel": "Submit",
+            "textAreaLabel": "Review Text"
+        },
+        "openingHoursDisplay": {
+            "closedLabel": "closed",
+            "mondayLabel": "Monday",
+            "tuesdayLabel": "Tuesday",
+            "wednesdayLabel": "Wednesday",
+            "thursdayLabel": "Thursday",
+            "fridayLabel": "Friday",
+            "saturdayLabel": "Saturday",
+            "sundayLabel": "Sunday"
+        },
+
+        "reviewListItem": {
+            "userLabel1": "By",
+            "userLabel2": "on"
+        },
+
+        "activationSteps": {
+            "headline": "Activation",
+            "notActivatedLabel": "Your store is not activated yet and therefore not visible to customers.",
+            "activatedLabel": " Congratulations! Your store is activated and visible to customers.",
+            "profileStep": {
+                "headline": "Profile",
+                "activatedLabel": "The profile information of your store is complete.",
+                "notActivatedLabel": "You need to completeley fill out your stores profile in order to activate your store."
+            },
+            "productsStep":{
+                "headline": "Products",
+                "activatedLabel": "You have registered at least one product in your store.",
+                "notActivatedLabel": "You have to register at least one product in order to be visible to customers."
+            },
+            "shippingStep":{
+                "headline": "Shipping",
+                "activatedLabel": "You did register shipping information.",
+                "notActivatedLabel": "You did not register shipping information yet."
+            },
+            "paymentStep":{
+                "headline": "Payment",
+                "activatedLabel": "You have registered a payment method for your store.",
+                "notActivatedLabel": "You did not register a payment method for your store yet."
+            }
+        },
+
+        "productListItem": {
+            "notificationTooltip": "Get a notification when the product is available again",
+            "pickupBadge": "Available for pick-up",
+            "deliveryBadge": "Available for delivery",
+            "addToCartButton": "Add to shopping cart",
+            "taxShippingLabel": "incl. VAT, plus shipping costs",
+            "inStock": {
+                "label": "In stock",
+                "units": "units"
+            }
+        },
+
+        "productDialog": {
+            "headlineCreate": "Create Product",
+            "headlineEdit": "Edit Product",
+            "title": {
+                "label": "Title",
+                "errors": {
+                    "maxLength": "The product title must be at most 30 characters long.",
+                    "minLength": "The product title must be at least 5 characters long.",
+                    "required": "The product title is required."
+                }
+            },
+            "description": {
+                "label": "Short Description",
+                "placeholder": "Will be shown in the store profile",
+                "errors": {
+                    "maxLength": "The product description must be at most 200 characters long.",
+                    "minLength": "The product description must be at least 20 characters long.",
+                    "required": "The product description is required."
+                }
+            },
+            "longDescription":{
+                "label": "Long Description",
+                "placeholder": "Will be shown in the product details view",
+                "errors": {
+                    "maxLength": "The product long description must be at most 1000 characters long."
+                }
+            },
+            "price": {
+                "label": "Price",
+                "errors": {
+                    "required": "The product price is required."
+                }
+            },
+            "image": {
+                "label": "Upload Image",
+                "errors": {
+                    "required": "The product image is required.",
+                    "fileSize": "The image file is too large."
+                }
+            },
+            "quantityType": {
+                "label": "Quantity Type",
+                "errors": {
+                    "required": "The quantity type of the product is required."
+                }
+            },
+            "quantityValue": {
+                "label": "Quantity Value",
+                "errors": {
+                    "required": "The quantity value of the product is required."
+                }
+            },
+            "distributionOptions": {
+                "headline": "Distribution Options",
+                "radios": {
+                    "deliveryOnly": "Delivery only",
+                    "pickupOnly": "Pick-Up only",
+                    "pickupAndDelivery": "Pick-Up and delivery"
+                },
+                "deliveryCheckbox": "Delivery",
+                "pickupCheckbox": "Pick-Up"
+            },
+            "info": {
+                "headline": "Info",
+                "createdLabel": "Created",
+                "editedLabel": "Edited"
+            },
+            "actions": {
+                "saveButton": "Save",
+                "closeButton": "Close"
+            }
+        },
+
+        "productDetailDialog": {
+            "shortDescHeadline": "Short Description",
+            "longDescHeadline": "Long Description",
+            "quantityHeadline": "Quantity",
+            "pickupTooltip": "Available for pick-up",
+            "deliveryTooltip": "Available for delivery",
+            "taxDeliveryLabel": "incl. VAT, plus shipping costs",
+            "quantityComboLabel": "Quantity",
+            "addToCartTooltip": "Add to shopping cart",
+
+            "inStockLabel1": "In Stock",
+            "inStockLabel2": "units",
+
+            "updateStockLabel": "Update Stock",
+            "updateStockPlaceholder": "Number of units in stock"
+         },
+
+        "availableStatusLabel": "available",
+        "fewInStockStatusLabel": "only few left",
+        "outOfStockStatusLabel": "out of stock",
+
+        "editStoreDialog": {
+            "headline": "Edit Your Store",
+            "tabs": {
+                "storeProfile": {
+                    "headline": "Store Profile",
+                    "info": "Here you can edit the basic information of your store. Click on the save button at the bottom, when you are done.",
+                    "images": {
+                        "label": "Images",
+                        "dialog": {
+                            "headline": "Add Image",
+                            "inputLabel": "Upload Image",
+                            "titleLabel": "Image Title",
+                            "saveButton": "Save",
+                            "closeButton": "Close"
+                        }
+                    },
+                    "storeTitleLabel": "Store Title",
+                    "storeTagsLabel": "Store Tags",
+                    "descriptionHeadline": "Store Description"
+
+                },
+                "location": {
+                    "headline": "Location",
+                    "info": "Here you can edit the address of your store. Please be aware that stores addresses have to be unique. Click on the save button at the bottom, when you are done.",
+                    "addresslineLabel": "Address Line 1",
+                    "postcodeLabel": "Postcode",
+                    "cityLabel": "City",
+                    "countryLabel": "Country",
+                    "iconLabel": "Choose your map icon",
+                    "iconInfo": "You need to refresh the page to see your updated marker icon in the map.",
+                    "iconHelp": "Choose an icon that most accurately symbolizes your store. This will be used to display it on the map."
+                },
+                "openingHours": {
+                    "headline": "Opening Hours"
+                },
+                "notifications": {
+                    "headline": "Notifications"
+                },
+                "payment": {
+                    "headline": "Payment"
+                },
+                "shipping": {
+                    "headline": "Shipping"
+                },
+                "security": {
+                    "headline": "Security"
+                },
+                "settings": {
+                    "headline": "Settings"
+                }
+            },
+            "actions": {
+                "saveButton": "Save",
+                "closeButton": "Close"
+            }
+        }
     },
 
     "footer": {

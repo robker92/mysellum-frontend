@@ -9,42 +9,31 @@
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
           <v-row>
-            <v-col cols="12" sm="6" md="6">
+            <v-col cols="12" sm="4" md="4" lg="4">
               <v-text-field
                 v-model="firstName"
                 :error-messages="firstNameErrors"
                 :counter="20"
                 :label="$t('registerDialog.firstNameField') + '*'"
                 required
+                dense
                 @input="$v.firstName.$touch()"
                 @blur="$v.firstName.$touch()"
               />
             </v-col>
-            <v-col cols="12" sm="6" md="6">
+            <v-col cols="12" sm="4" md="4" lg="4">
               <v-text-field
                 v-model="lastName"
                 :error-messages="lastNameErrors"
                 :counter="20"
                 :label="$t('registerDialog.lastNameField') + '*'"
                 required
+                dense
                 @input="$v.lastName.$touch()"
                 @blur="$v.lastName.$touch()"
               />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12" sm="6" md="6">
-              <v-text-field
-                prepend-icon="mdi-email"
-                v-model="email"
-                :error-messages="emailErrors"
-                :label="$t('registerDialog.emailField') + '*'"
-                required
-                @input="$v.email.$touch()"
-                @blur="$v.email.$touch()"
-              />
-            </v-col>
-            <v-col cols="12" sm="6" md="6">
+            <v-col cols="12" sm="4" md="4" lg="4">
               <v-menu
                 v-model="birthDateMenu"
                 :close-on-content-click="false"
@@ -60,6 +49,7 @@
                     :label="$t('registerDialog.birthdateField') + '*'"
                     prepend-icon="mdi-calendar"
                     readonly
+                    dense
                     :value="birthdateFormatted"
                     :error-messages="birthDateErrors"
                     @input="$v.birthDate.$touch()"
@@ -68,26 +58,56 @@
                   />
                 </template>
                 <v-date-picker
-                  locale="de-de"
                   v-model="birthDate"
+                  locale="de-de"
                   no-title
-                  @input="birthDateMenu = false"
                   first-day-of-week="1"
+                  @input="birthDateMenu = false"
                 ></v-date-picker>
               </v-menu>
             </v-col>
           </v-row>
 
+          <v-row class="mt-3">
+            <v-col cols="12" sm="6" md="6">
+              <v-text-field
+                v-model="email"
+                prepend-icon="mdi-email"
+                :error-messages="emailErrors"
+                :label="$t('registerDialog.emailField') + '*'"
+                required
+                dense
+                @input="$v.email.$touch()"
+                @blur="$v.email.$touch()"
+              />
+            </v-col>
+            <v-col cols="12" sm="6" md="6">
+              <v-text-field
+                v-model="phoneNumber"
+                prepend-icon="mdi-phone"
+                :error-messages="phoneNumberErrors"
+                :label="$t('registerDialog.phoneNumberField') + '*'"
+                required
+                dense
+                @input="$v.phoneNumber.$touch()"
+                @blur="$v.phoneNumber.$touch()"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row> </v-row>
+
           <v-row>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
-                prepend-icon="mdi-lock-question"
                 v-model="password"
+                prepend-icon="mdi-lock-question"
                 :error-messages="passwordErrors"
                 :label="$t('registerDialog.passwordField') + '*'"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 required
+                dense
                 @input="$v.password.$touch()"
                 @blur="$v.password.$touch()"
                 @click:append="showPassword = !showPassword"
@@ -95,8 +115,8 @@
             </v-col>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
-                prepend-icon="mdi-lock-question"
                 v-model="passwordConfirmation"
+                prepend-icon="mdi-lock-question"
                 :error-messages="passwordConfirmationErrors"
                 :label="$t('registerDialog.passwordConfField') + '*'"
                 :append-icon="
@@ -104,6 +124,7 @@
                 "
                 :type="showPasswordConfirmation ? 'text' : 'password'"
                 required
+                dense
                 @input="$v.passwordConfirmation.$touch()"
                 @blur="$v.passwordConfirmation.$touch()"
                 @click:append="
@@ -112,7 +133,7 @@
               />
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="mt-3">
             <v-col>
               <v-text-field
                 v-model="addressLine1"
@@ -120,6 +141,7 @@
                 :counter="40"
                 :label="$t('registerDialog.addressLine1Field') + '*'"
                 required
+                dense
                 @input="$v.addressLine1.$touch()"
                 @blur="$v.addressLine1.$touch()"
               />
@@ -133,6 +155,7 @@
                 :label="$t('registerDialog.postcodeField') + '*'"
                 class="inputPostcode"
                 required
+                dense
                 type="number"
                 maxlength="5"
                 oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
@@ -147,6 +170,7 @@
                 :counter="20"
                 :label="$t('registerDialog.cityField') + '*'"
                 required
+                dense
                 @input="$v.city.$touch()"
                 @blur="$v.city.$touch()"
               />
@@ -160,36 +184,35 @@
             @change="$v.checkboxTermsConditions.$touch()"
             @blur="$v.checkboxTermsConditions.$touch()"
           ></v-checkbox>
-          <v-autocomplete
+          <!-- <v-autocomplete
             id="googleAddressAutocomplete"
-            label="Address Autocomplete"
             ref="myid"
-            hide-no-data
             v-model="addressAutocompleteModel"
+            label="Address Autocomplete"
+            hide-no-data
             :items="itemsAutocomplete"
             :search-input.sync="addressAutocompleteSearch"
           />
           <input
-            ref="myid2"
             id="googleAddressAutocomplete2"
+            ref="myid2"
             placeholder="Enter your address"
             onFocus="geolocate()"
             type="text"
-          />
+          /> -->
         </v-container>
         <small>* {{ $t("registerDialog.requiredFieldDescription") }}</small>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="fill">Fill</v-btn>
-        <v-btn color="blue darken-1" text @click="cancel">{{
+        <v-btn color="primary" text @click="fill">Fill</v-btn>
+        <v-btn color="primary" text @click="cancel">{{
           $t("registerDialog.closeButton")
         }}</v-btn>
         <v-btn
-          color="blue darken-1"
-          text
-          @click="submitRegistration"
+          color="primary"
           :disabled="buttonIsDisabled"
+          @click="submitRegistration"
           >{{ $t("registerDialog.submitButton") }}</v-btn
         >
       </v-card-actions>
@@ -206,7 +229,7 @@ import {
   maxLength,
   email,
   minLength,
-  sameAs
+  sameAs,
 } from "vuelidate/lib/validators";
 //import passwordValidator from './customValidators/passwordValidator'
 import { helpers } from "vuelidate/lib/validators";
@@ -226,19 +249,20 @@ export default {
     firstName: { required, maxLength: maxLength(20) },
     lastName: { required, maxLength: maxLength(20) },
     email: { required, email },
+    phoneNumber: { required },
     birthDate: { required },
     password: {
       required,
       passwordRegexValidation,
       minLength: minLength(8),
-      maxLength: maxLength(40)
+      maxLength: maxLength(40),
     },
     passwordConfirmation: {
       required,
       passwordRegexValidation,
       minLength: minLength(8),
       maxLength: maxLength(40),
-      sameAsPassword: sameAs("password")
+      sameAsPassword: sameAs("password"),
     },
     city: { required, maxLength: maxLength(20) },
     postcode: { required },
@@ -246,45 +270,13 @@ export default {
     checkboxTermsConditions: {
       checked(val) {
         return val;
-      }
+      },
     },
-    select: { required }
+    select: { required },
   },
 
   props: {
-    value: Boolean
-  },
-  watch: {
-    value() {
-      // this.$nextTick(function() {
-      //   console.log("changed");
-      //   let refs = this.$refs;
-      //   console.log(refs.myid3);
-      //   var autocompleteInput = document.querySelector(
-      //     "#googleAddressAutocomplete2"
-      //   );
-      //   // eslint-disable-next-line no-undef
-      //   this.autocomplete = new google.maps.places.Autocomplete(
-      //     //this.$refs.myid2,
-      //     /** @type {!HTMLInputElement} */ (autocompleteInput),
-      //     { types: ["geocode"] }
-      //   );
-      //   this.autocomplete.setFields(["address_component"]);
-      // });
-    },
-    async addressAutocompleteSearch() {
-      if (this.addressAutocompleteSearch === "") {
-        this.itemsAutocomplete = [];
-      }
-      console.log(this.addressAutocompleteSearch);
-      let result = await this.service.getQueryPredictions(
-        {
-          input: this.addressAutocompleteSearch
-        },
-        this.callbackFct
-      );
-      console.log(result);
-    }
+    value: Boolean,
   },
 
   data() {
@@ -293,6 +285,7 @@ export default {
       firstName: "",
       lastName: "",
       email: "",
+      phoneNumber: "",
       password: "",
       showPassword: false,
       passwordConfirmation: "",
@@ -316,13 +309,8 @@ export default {
       addressAutocompleteModel: null,
       addressAutocompleteSearch: null,
       autocomplete: null,
-      service: null
+      service: null,
     };
-  },
-
-  mounted() {
-    // eslint-disable-next-line no-undef
-    this.service = new google.maps.places.AutocompleteService();
   },
   computed: {
     show: {
@@ -331,7 +319,7 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
+      },
     },
     firstNameErrors() {
       const errors = [];
@@ -360,6 +348,13 @@ export default {
         errors.push(this.$t("registerDialog.emailFieldRequiredError"));
       return errors;
     },
+    phoneNumberErrors() {
+      const errors = [];
+      if (!this.$v.phoneNumber.$dirty) return errors;
+      !this.$v.phoneNumber.required &&
+        errors.push(this.$t("registerDialog.phoneNumberFieldRequiredError"));
+      return errors;
+    },
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
@@ -386,7 +381,7 @@ export default {
         errors.push(this.$t("registerDialog.passwordConfFieldRegexError"));
       !this.$v.passwordConfirmation.minLength &&
         errors.push(this.$t("registerDialog.passwordConfFieldMinLengthError"), {
-          n: 8
+          n: 8,
         });
       !this.$v.password.maxLength &&
         errors.push(
@@ -456,6 +451,7 @@ export default {
         !this.$v.lastName.$invalid &&
         !this.$v.email.$invalid &&
         !this.$v.birthDate.$invalid &&
+        !this.$v.phoneNumber.$invalid &&
         !this.$v.password.$invalid &&
         !this.$v.passwordConfirmation.$invalid &&
         !this.$v.addressLine1.$invalid &&
@@ -468,7 +464,44 @@ export default {
       } else {
         return true;
       }
-    }
+    },
+  },
+  watch: {
+    value() {
+      // this.$nextTick(function() {
+      //   console.log("changed");
+      //   let refs = this.$refs;
+      //   console.log(refs.myid3);
+      //   var autocompleteInput = document.querySelector(
+      //     "#googleAddressAutocomplete2"
+      //   );
+      //   // eslint-disable-next-line no-undef
+      //   this.autocomplete = new google.maps.places.Autocomplete(
+      //     //this.$refs.myid2,
+      //     /** @type {!HTMLInputElement} */ (autocompleteInput),
+      //     { types: ["geocode"] }
+      //   );
+      //   this.autocomplete.setFields(["address_component"]);
+      // });
+    },
+    async addressAutocompleteSearch() {
+      if (this.addressAutocompleteSearch === "") {
+        this.itemsAutocomplete = [];
+      }
+      console.log(this.addressAutocompleteSearch);
+      let result = await this.service.getQueryPredictions(
+        {
+          input: this.addressAutocompleteSearch,
+        },
+        this.callbackFct
+      );
+      console.log(result);
+    },
+  },
+
+  mounted() {
+    // eslint-disable-next-line no-undef
+    this.service = new google.maps.places.AutocompleteService();
   },
 
   methods: {
@@ -480,7 +513,7 @@ export default {
       console.log(this.addressAutocompleteSearch);
       let result = await this.service.getQueryPredictions(
         {
-          input: this.addressAutocompleteSearch
+          input: this.addressAutocompleteSearch,
         },
         this.callbackFct
       );
@@ -503,11 +536,12 @@ export default {
         firstName: this.firstName,
         lastName: this.lastName,
         email: this.email,
+        phoneNumber: this.phoneNumber,
         birthdate: this.birthdateFormatted,
         password: this.password,
         city: this.city,
         postcode: this.postcode.toString(),
-        addressLine1: this.addressLine1
+        addressLine1: this.addressLine1,
       };
       console.log(user);
       try {
@@ -536,6 +570,7 @@ export default {
       this.lastName = "";
       this.email = "";
       this.password = "";
+      this.phoneNumber = "";
       this.showPassword = false;
       this.passwordConfirmation = "";
       this.showPasswordConfirmation = false;
@@ -552,6 +587,7 @@ export default {
       this.firstName = "TestFirstName";
       this.lastName = "TestLastName";
       this.email = "TestEmail@web.de";
+      this.phoneNumber = "0049 10101010";
       this.password = "TestPassword1!";
       this.passwordConfirmation = "TestPassword1!";
       this.birthDate = "1997-12-09";
@@ -559,26 +595,27 @@ export default {
       this.addressLine1 = "TestAddressLine2";
       this.city = "TestCity";
       this.postcode = 12345;
+      this.checkboxTermsConditions = true;
       this.$v.$touch();
     },
 
     geolocate() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
+        navigator.geolocation.getCurrentPosition((position) => {
           const geolocation = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           };
           // eslint-disable-next-line no-undef
           const circle = new google.maps.Circle({
             center: geolocation,
-            radius: position.coords.accuracy
+            radius: position.coords.accuracy,
           });
           this.autocomplete.setBounds(circle.getBounds());
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

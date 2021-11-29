@@ -18,4 +18,12 @@ module.exports = {
   // publicPath: "/project-frontend/"
   publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
   //process.env.NODE_ENV === "production" ? "/my-project/" : "/"
+
+  // configureWebpack: {
+  //   resolve: {
+  //     alias: {
+  //       fs: "pdfkit/js/virtual-fs.js",
+  //     },
+  //   },
+  // },
 };

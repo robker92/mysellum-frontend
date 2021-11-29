@@ -15,6 +15,7 @@ import SearchPickup from "../views/SearchPickup.vue";
 import ShoppingCart from "../views/ShoppingCart.vue";
 import SuccessfulOrder from "../views/SuccessfulOrder.vue";
 import StoreOrderOverview from "../views/StoreOrderOverview.vue";
+import ResendVerificationEmail from "../views/ResendVerificationEmail";
 import ForgotPassword from "../views/ForgotPassword.vue";
 import PasswordReset from "../views/PasswordReset.vue";
 import RegistrationVerification from "../views/RegistrationVerification.vue";
@@ -98,6 +99,11 @@ const routes = [
     component: PasswordReset,
   },
   {
+    path: "/resend-verification-email",
+    name: "ResendVerificationEmail",
+    component: ResendVerificationEmail,
+  },
+  {
     path: "/registration-verification/:verificationToken?",
     name: "RegistrationVerification",
     component: RegistrationVerification,
@@ -161,6 +167,7 @@ router.beforeEach((to, from, next) => {
     "About",
     "ForgotPassword",
     "PasswordReset",
+    "ResendVerificationEmail",
     "SearchDelivery",
     "SearchPickup",
     "StoreProfile",

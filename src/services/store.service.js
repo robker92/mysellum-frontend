@@ -10,6 +10,7 @@ export const storeService = {
   createStore,
   editStore,
   getImageBuffer,
+  getImageUrl,
 };
 
 async function getSingleStore(storeId) {
@@ -97,6 +98,23 @@ async function getImageBuffer(file) {
   let response;
   try {
     response = await baseClient.post(`/stores/image-buffer-resized`, formData, {
+      "Content-Type": "multipart/form-data",
+      headers: authHeader(),
+    });
+  } catch (error) {
+    errorHandler(error, "getImageBuffer");
+    throw error;
+  }
+
+  return response.data;
+}
+
+async function getImageUrl(file) {
+  let formData = new FormData();
+  formData.append("image", file);
+  let response;
+  try {
+    response = await baseClient.post(`/stores/blob`, formData, {
       "Content-Type": "multipart/form-data",
       headers: authHeader(),
     });

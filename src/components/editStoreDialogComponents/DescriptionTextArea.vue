@@ -2,7 +2,11 @@
   <v-card class="ma-3">
     <v-container>
       <div class="text-caption text-left grey--text text--darken-1 mx-0">
-        Store Description*
+        {{
+          $t(
+            "storeProfile.editStoreDialog.tabs.storeProfile.descriptionHeadline"
+          )
+        }}*
       </div>
       <v-row class="mx-0 mt-1 mb-3">
         <v-card flat class="mr-3 my-1">
@@ -184,7 +188,9 @@ export default {
   methods: {
     onInput(e) {
       //console.log(e.target.innerHTML);
-      this.editedHtmlText = e.target.innerHTML;
+      this.editedHtmlText = this.$sanitize(e.target.innerHTML);
+      // console.log(this.editedHtmlText);
+      // this.$sanitize(e.target.innerHTML);
       this.$v.storeDescription.$touch();
       this.$emit("description-text-changed", this.editedHtmlText);
     },

@@ -26,14 +26,16 @@
           <v-row dense>
             <v-col cols="12" xs="12" sm="12" md="12" lg="12" xl="12">
               <div class="text-body-2 text-left">
-                By {{ reviewUserName }} on
+                {{ $t("storeProfile.reviewListItem.userLabel1") }}
+                {{ reviewUserName }}
+                {{ $t("storeProfile.reviewListItem.userLabel2") }}
                 {{ reviewDateTimeComputed }}
               </div>
             </v-col>
           </v-row>
         </v-col>
         <v-col
-          v-if="this.user.email === this.review.userEmail"
+          v-if="user.email === review.userEmail"
           cols="12"
           xs="4"
           sm="3"
@@ -135,7 +137,7 @@ export default {
     deleteReview: async function() {
       const data = {
         storeId: this.$route.params.id,
-        reviewId: this.review.reviewId,
+        reviewId: this.review._id,
       };
       this.$emit("overlay-start");
       let response;
@@ -151,7 +153,7 @@ export default {
       console.log(response);
 
       this.$emit("remove-review", {
-        reviewId: response.reviewId,
+        reviewId: response._id,
         avgRating: response.avgRating,
       });
       this.$emit("overlay-end");

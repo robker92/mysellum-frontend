@@ -28,8 +28,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="cancel">Cancel</v-btn>
-        <v-btn color="blue darken-1" dark @click="submit">Submit</v-btn>
+        <v-btn color="primary" text @click="cancel">Cancel</v-btn>
+        <v-btn color="primary" dark @click="submit">Submit</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -41,16 +41,18 @@ import ShowHelpDialog from "../ShowHelpDialog";
 export default {
   name: "",
   components: {
-    ShowHelpDialog: ShowHelpDialog
+    ShowHelpDialog: ShowHelpDialog,
   },
   mixins: [],
   props: {
-    value: Boolean
+    value: Boolean,
   },
   data() {
     return {
       trackingId: "",
-      showShowHelpDialog: false
+      helpDialogTitle: "",
+      helpDialogMessage: "",
+      showShowHelpDialog: false,
     };
   },
   computed: {
@@ -60,8 +62,8 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
-    }
+      },
+    },
   },
   watch: {},
   methods: {
@@ -69,7 +71,7 @@ export default {
       console.log(this.trackingId);
       let data = {
         trackingId: this.trackingId,
-        step: "inDelivery"
+        step: "inDelivery",
       };
       this.$emit("set-status", data);
       this.show = false;
@@ -82,8 +84,8 @@ export default {
       this.helpDialogTitle = title;
       this.helpDialogMessage = message;
       this.showShowHelpDialog = true;
-    }
-  }
+    },
+  },
 };
 </script>
 

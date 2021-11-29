@@ -6,9 +6,16 @@
     @click:outside="cancel"
   >
     <v-card>
-      <v-card-title>
-        <span class="addProductHeadline">Products - Table View</span>
+      <v-toolbar flat color="primary" dark>
+        <v-toolbar-title>Products - Table View</v-toolbar-title>
         <v-spacer />
+        <v-btn icon @click="cancel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-title>
+        <!-- <span class="addProductHeadline">Products - Table View</span> -->
+
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
@@ -17,9 +24,23 @@
           hide-details
           class="mb-3"
         />
-        <v-btn color="pink" dark outlined class="ml-3" @click.stop="addProduct">
-          <v-icon> mdi-plus </v-icon></v-btn
-        >
+        <v-spacer />
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="editStore"
+              dark
+              outlined
+              class="ml-3"
+              v-bind="attrs"
+              v-on="on"
+              @click.stop="addProduct"
+            >
+              <v-icon> mdi-plus </v-icon></v-btn
+            >
+          </template>
+          <span>Produkt hinzufügen</span>
+        </v-tooltip>
       </v-card-title>
       <v-card-text>
         <v-container fluid class="ma-0 pa-0">
@@ -37,13 +58,21 @@
                 large
                 @save="updateStock(props.item)"
               >
-                <v-chip
-                  :color="getColor(props.item.stockAmount)"
-                  dark
-                  @click="emptyFunction"
-                >
-                  {{ props.item.stockAmount }}
-                </v-chip>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-chip
+                      :color="getColor(props.item.stockAmount)"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="emptyFunction"
+                    >
+                      {{ props.item.stockAmount }}
+                    </v-chip>
+                  </template>
+                  <span>Lagerbestand aktualisieren</span>
+                </v-tooltip>
+
                 <template v-slot:input>
                   <div class="mt-4 title">
                     Update Stock Amount
@@ -60,24 +89,42 @@
               </v-edit-dialog>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon
-                small
-                color="orange"
-                class="mr-2"
-                @click="editProduct(item)"
-              >
-                mdi-pencil
-              </v-icon>
-              <v-icon small color="pink" @click="deleteProduct(item)">
-                mdi-delete
-              </v-icon>
-            </template></v-data-table
-          >
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    small
+                    color="orange"
+                    class="mr-2"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="editProduct(item)"
+                  >
+                    mdi-pencil
+                  </v-icon>
+                </template>
+                <span>Produkt bearbeiten</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    small
+                    color="red"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="deleteProduct(item)"
+                  >
+                    mdi-delete
+                  </v-icon>
+                </template>
+                <span>Produkt löschen</span>
+              </v-tooltip>
+            </template>
+          </v-data-table>
         </v-container>
       </v-card-text>
-      <v-card-actions>
+      <!-- <v-card-actions>
         <v-btn color="indigo" text @click="cancel">Close</v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
   </v-dialog>
 </template>
@@ -91,7 +138,7 @@ export default {
 
   props: {
     value: Boolean,
-    productList: Array
+    productList: Array,
   },
 
   data() {
@@ -104,7 +151,7 @@ export default {
           text: "Title",
           align: "start",
           sortable: true,
-          value: "title"
+          value: "title",
         },
         { text: "Description", value: "description" },
         { text: "Created", value: "datetimeCreated" },
@@ -112,8 +159,8 @@ export default {
         { text: "Quantity Value", value: "quantityValue" },
         { text: "Stock Amount", value: "stockAmount" },
         { text: "Price", value: "price" },
-        { text: "Actions", value: "actions", sortable: false }
-      ]
+        { text: "Actions", value: "actions", sortable: false },
+      ],
     };
   },
 
@@ -124,8 +171,8 @@ export default {
       },
       set(value) {
         this.$emit("input", value);
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -137,7 +184,7 @@ export default {
     deleteProduct: async function(product) {
       let data = {
         storeId: product.storeId,
-        productId: product._id
+        productId: product._id,
       };
       this.$emit("overlay-start");
       let response = await productService.deleteProduct(data);
@@ -155,7 +202,7 @@ export default {
       var data = {
         storeId: this.$route.params.id,
         _id: product._id,
-        stockAmount: parseInt(product.stockAmount)
+        stockAmount: parseInt(product.stockAmount),
       };
       this.$emit("overlay-start");
       try {
@@ -177,8 +224,8 @@ export default {
       }
       return "red";
     },
-    emptyFunction() {}
-  }
+    emptyFunction() {},
+  },
 };
 </script>
 

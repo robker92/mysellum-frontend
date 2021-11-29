@@ -37,11 +37,20 @@
             <router-link
               :to="{
                 name: 'ForgotPassword',
-                params: { locale: $i18n.locale },
               }"
               @click.native="cancel"
             >
               {{ $t("loginDialog.forgotPasswordLabel") }}
+            </router-link>
+          </div>
+          <div class="text-left ml-8 text-caption">
+            <router-link
+              :to="{
+                name: 'ResendVerificationEmail',
+              }"
+              @click.native="cancel"
+            >
+              {{ $t("loginDialog.resendVerificationEmailLabel") }}
             </router-link>
           </div>
         </v-container>
@@ -51,12 +60,11 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="cancel">{{
-          $t("loginDialog.closeButton")
-        }}</v-btn>
+        <v-btn color="primary" text @click="cancel">
+          {{ $t("loginDialog.closeButton") }}
+        </v-btn>
         <v-btn
-          color="blue darken-1"
-          text
+          color="primary"
           :disabled="buttonIsDisabled"
           @click="submitLogin"
           >{{ $t("loginDialog.submitButton") }}</v-btn

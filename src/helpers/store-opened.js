@@ -4,6 +4,7 @@ export function checkIfStoreOpened(openingHours) {
   }
   const now = new Date();
   const todaysDay = getTodaysDay(now.getDay());
+  // console.log(todaysDay);
   const currentHours = now.getHours();
   const currentMinutes = now.getMinutes();
 
@@ -55,7 +56,7 @@ function getTodaysDay(dayCounter) {
       day = "tuesday";
       break;
     case 3:
-      day = "wendesday";
+      day = "wednesday";
       break;
     case 4:
       day = "thursday";

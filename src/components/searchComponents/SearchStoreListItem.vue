@@ -13,6 +13,7 @@
           :hide-delimiters="store.profileData.images.length < 2"
           height="200px"
           style="width:400px;"
+          class="mouse-pointer"
         >
           <!-- :to="{
               name: 'StoreProfile',
@@ -50,7 +51,9 @@
                       <v-icon color="pink">mdi-heart-outline</v-icon>
                     </v-btn>
                   </template>
-                  <span>Add to favorites</span>
+                  <span>
+                    {{ $t("searchPickup.items.favoritesAddTooltip") }}
+                  </span>
                 </v-tooltip>
 
                 <v-tooltip
@@ -68,7 +71,9 @@
                       <v-icon color="pink">mdi-heart</v-icon>
                     </v-btn>
                   </template>
-                  <span>Remove from favorites</span>
+                  <span>
+                    {{ $t("searchPickup.items.favoritesRemoveTooltip") }}
+                  </span>
                 </v-tooltip>
               </v-row>
             </v-img>
@@ -78,7 +83,7 @@
         <router-link
           :to="{
             name: 'StoreProfile',
-            params: { id: store._id, locale: $i18n.locale },
+            params: { id: store._id },
           }"
           style="text-decoration: none; color: inherit;"
         >
@@ -146,7 +151,7 @@
                 <v-icon color="primary">mdi-hand-heart</v-icon>
               </v-chip>
             </template>
-            <span>Offers self pickup</span>
+            <span>{{ $t("searchPickup.items.pickupTooltip") }}</span>
           </v-tooltip>
 
           <v-tooltip v-if="store.delivery" bottom>
@@ -164,7 +169,7 @@
                 <v-icon color="primary">mdi-truck-delivery</v-icon>
               </v-chip>
             </template>
-            <span>Offers delivery</span>
+            <span>{{ $t("searchPickup.items.deliveryTooltip") }}</span>
           </v-tooltip>
 
           <v-spacer></v-spacer>
@@ -183,7 +188,7 @@
                 }"
                 v-on="on"
               >
-                Opened
+                {{ $t("searchPickup.items.opening.labelOpened") }}
               </v-chip>
               <v-chip
                 v-else
@@ -195,13 +200,16 @@
                 }"
                 v-on="on"
               >
-                Closed
+                {{ $t("searchPickup.items.opening.labelClosed") }}
               </v-chip>
             </template>
-            <span v-if="getStoreOpened(store)"
-              >This store is currently opened</span
-            >
-            <span v-else>This store is currently closed</span>
+            <span v-if="getStoreOpened(store)">
+              {{ $t("searchPickup.items.opening.tooltipOpened") }}
+            </span>
+
+            <span v-else>
+              {{ $t("searchPickup.items.opening.tooltipClosed") }}
+            </span>
           </v-tooltip>
         </v-card-actions>
       </v-card>
@@ -317,32 +325,8 @@ export default {
   float: left;
   width: 50%;
 }
-.btnNoHover:before {
-  display: none;
-}
-.btnNoHover input {
-  cursor: pointer;
-}
-.btnNoHover:hover:before {
-  cursor: pointer;
-}
-.btnNoHover:hover {
-  cursor: pointer;
-}
-.btnNoHover:focus:before {
-  cursor: pointer;
-}
-.btnNoHover:hover:after {
-  cursor: pointer;
-}
 
-.btnNoHover2:hover {
-  transition: box-shadow 0.4s ease-in-out;
-  cursor: pointer;
-}
-.btnNoHover2:hover:after {
-  box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 100px inset;
-  transition: box-shadow 0.1s ease-in-out;
+.mouse-pointer {
   cursor: pointer;
 }
 </style>

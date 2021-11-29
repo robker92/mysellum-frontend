@@ -4,7 +4,7 @@
 
     <v-main>
       <v-container fluid>
-        <v-container>
+        <div>
           <v-alert
             type="error"
             outlined
@@ -63,7 +63,7 @@
           <v-btn @click="addSuccessSnack()">SnackbarSucc</v-btn>
           <v-btn @click="addErrorSnack()">SnackbarErr</v-btn>
           <v-btn @click="clearSnack()">Snackbar clear</v-btn> -->
-        </v-container>
+        </div>
         <router-view></router-view>
       </v-container>
     </v-main>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <div v-if="checkAllSteps === true" class="mb-6 ml-3">
+      <!-- <div v-if="checkAllSteps === true" class="mb-6 ml-3">
         <v-row align="center">
           <v-icon color="green" large>mdi-checkbox-marked</v-icon>
           <div class="text-body-2 font-weight-bold text-left green--text">
@@ -11,16 +11,40 @@
             Congratulations! Your store is activated and visible to customers.
           </div>
         </v-row>
-      </div>
-      <div v-if="checkAllSteps === false" class="mb-6 ml-3">
+      </div> -->
+      <div class="mb-6 ml-3">
         <v-row align="center">
-          <v-icon color="red" large>mdi-close-box</v-icon>
-          <div class="text-body-2 font-weight-bold text-left red--text">
-            Activation:
+          <v-icon v-if="checkAllSteps === true" color="green" large>
+            mdi-checkbox-marked
+          </v-icon>
+          <v-icon v-if="checkAllSteps === false" color="red" large>
+            mdi-close-box
+          </v-icon>
+
+          <div
+            v-if="checkAllSteps === true"
+            class="text-body-2 font-weight-bold text-left green--text"
+          >
+            {{ $t("storeProfile.activationSteps.headline") }}:
           </div>
-          <div class="text-body-2 text-left red--text ml-3">
-            Your store is not activated yet and therefore not visible to
-            customers.
+          <div
+            v-if="checkAllSteps === false"
+            class="text-body-2 font-weight-bold text-left red--text"
+          >
+            {{ $t("storeProfile.activationSteps.headline") }}:
+          </div>
+
+          <div
+            v-if="checkAllSteps === true"
+            class="text-body-2 text-left green--text ml-3"
+          >
+            {{ $t("storeProfile.activationSteps.activatedLabel") }}
+          </div>
+          <div
+            v-if="checkAllSteps === false"
+            class="text-body-2 text-left red--text ml-3"
+          >
+            {{ $t("storeProfile.activationSteps.notActivatedLabel") }}
           </div>
         </v-row>
       </div>
@@ -28,21 +52,23 @@
     <v-row class="mb-3">
       <!-- STEP 1 -->
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.profileComplete === true &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Profile
+                {{ $t("storeProfile.activationSteps.profileStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                The information of your store is complete.
+                {{
+                  $t("storeProfile.activationSteps.profileStep.activatedLabel")
+                }}
               </div>
             </v-list-item-content>
 
@@ -53,22 +79,25 @@
         </v-card>
       </v-col>
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.profileComplete === false &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Profile
+                {{ $t("storeProfile.activationSteps.profileStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You need to completeley fill out your stores profile in order to
-                activate your store.
+                {{
+                  $t(
+                    "storeProfile.activationSteps.profileStep.notActivatedLabel"
+                  )
+                }}
               </div>
             </v-list-item-content>
 
@@ -81,20 +110,22 @@
 
       <!-- STEP 2 -->
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.minOneProduct === true && checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Products
+                {{ $t("storeProfile.activationSteps.productsStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You have registered at least one product in your store.
+                {{
+                  $t("storeProfile.activationSteps.productsStep.activatedLabel")
+                }}
               </div>
             </v-list-item-content>
 
@@ -105,22 +136,25 @@
         </v-card>
       </v-col>
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.minOneProduct === false &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Products
+                {{ $t("storeProfile.activationSteps.productsStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You have to register at least one product in order to be visible
-                to customers.
+                {{
+                  $t(
+                    "storeProfile.activationSteps.productsStep.notActivatedLabel"
+                  )
+                }}
               </div>
             </v-list-item-content>
 
@@ -133,21 +167,23 @@
 
       <!-- STEP 3 -->
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.shippingRegistered === true &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Shipping
+                {{ $t("storeProfile.activationSteps.shippingStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You did register shipping information.
+                {{
+                  $t("storeProfile.activationSteps.shippingStep.activatedLabel")
+                }}
               </div>
             </v-list-item-content>
 
@@ -158,21 +194,25 @@
         </v-card>
       </v-col>
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.shippingRegistered === false &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Shipping
+                {{ $t("storeProfile.activationSteps.shippingStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You did not register shipping information yet.
+                {{
+                  $t(
+                    "storeProfile.activationSteps.shippingStep.notActivatedLabel"
+                  )
+                }}
               </div>
             </v-list-item-content>
 
@@ -185,21 +225,23 @@
 
       <!-- STEP 4 -->
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.paymentMethodRegistered === true &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Payment
+                {{ $t("storeProfile.activationSteps.paymentStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You have registered a payment method for your store.
+                {{
+                  $t("storeProfile.activationSteps.paymentStep.activatedLabel")
+                }}
               </div>
             </v-list-item-content>
 
@@ -210,21 +252,25 @@
         </v-card>
       </v-col>
       <v-col
-        cols="12"
-        lg="3"
         v-if="
           storeActivationSteps.paymentMethodRegistered === false &&
             checkAllSteps === false
         "
+        cols="12"
+        lg="3"
       >
         <v-card outlined class="mx-auto">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title class="text-h6 mb-1 text-left">
-                Payment
+                {{ $t("storeProfile.activationSteps.paymentStep.headline") }}
               </v-list-item-title>
               <div class="text-body-2 text-left">
-                You did not register a payment method for your store yet.
+                {{
+                  $t(
+                    "storeProfile.activationSteps.paymentStep.notActivatedLabel"
+                  )
+                }}
               </div>
             </v-list-item-content>
 
@@ -242,16 +288,16 @@
 export default {
   name: "StoreProfileActivationSteps",
 
+  props: {
+    storeActivationSteps: Object,
+  },
+
   data() {
     return {
       stepProfileCompletionDone: false,
       stepMinOneProductDone: true,
-      stepPaymentMethodRegisterDone: false
+      stepPaymentMethodRegisterDone: false,
     };
-  },
-
-  props: {
-    storeActivationSteps: Object
   },
 
   computed: {
@@ -266,9 +312,9 @@ export default {
           return true;
         }
         return false;
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>
 

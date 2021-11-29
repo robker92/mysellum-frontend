@@ -1,7 +1,26 @@
 import { baseClient } from "./client";
 import { authHeader, errorHandler } from "../helpers";
 
-export const reviewService = { addReview, editReview, deleteReview };
+export const reviewService = {
+  getStoresReviews,
+  addReview,
+  editReview,
+  deleteReview,
+};
+
+async function getStoresReviews(data) {
+  let response;
+  try {
+    const url = `/stores/${data.storeId}/reviews`;
+    response = await baseClient.get(url);
+  } catch (error) {
+    errorHandler(error, "getStoresReviews");
+    throw error;
+  }
+  console.log(response.data);
+
+  return response.data;
+}
 
 async function addReview(data) {
   let response;

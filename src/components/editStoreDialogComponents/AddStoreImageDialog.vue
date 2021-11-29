@@ -1,10 +1,30 @@
 <template>
   <v-dialog v-model="show" max-width="600px">
     <v-card>
-      <v-card-title>
-        <span class="imageDialogHeadline">Add Image</span>
-      </v-card-title>
-      <v-card-text>
+      <v-toolbar flat color="primary" dark>
+        <v-toolbar-title>
+          {{
+            $t(
+              "storeProfile.editStoreDialog.tabs.storeProfile.images.dialog.headline"
+            )
+          }}
+        </v-toolbar-title>
+        <v-spacer />
+        <v-btn icon @click="cancel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <!-- <v-card-title>
+        <span class="imageDialogHeadline">
+          {{
+            $t(
+              "storeProfile.editStoreDialog.tabs.storeProfile.images.dialog.headline"
+            )
+          }}
+        </span>
+      </v-card-title> -->
+      <v-card-text class="mt-3">
         <v-container fluid class="ma-0 pa-0">
           <v-row>
             <v-col>
@@ -13,7 +33,11 @@
                 v-model="file"
                 prepend-icon="mdi-camera"
                 accept="image/*"
-                label="Upload Image*"
+                :label="
+                  $t(
+                    'storeProfile.editStoreDialog.tabs.storeProfile.images.dialog.inputLabel'
+                  ) + '*'
+                "
                 show-size
                 truncate-length="15"
                 required
@@ -24,7 +48,11 @@
               <!-- @change="Preview_image" -->
               <v-text-field
                 v-model="imageTitle"
-                label="Image Title*"
+                :label="
+                  $t(
+                    'storeProfile.editStoreDialog.tabs.storeProfile.images.dialog.titleLabel'
+                  ) + '*'
+                "
                 required
                 :error-messages="imageTitleErrors"
                 @keyup.enter="submitImage()"
@@ -38,13 +66,24 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="cancel">Close</v-btn>
+        <v-btn color="primary" text @click="cancel">
+          {{
+            $t(
+              "storeProfile.editStoreDialog.tabs.storeProfile.images.dialog.closeButton"
+            )
+          }}
+        </v-btn>
         <v-btn
           color="primary"
           :disabled="submitButtonDisabled"
-          @click="submitImage"
-          >Submit</v-btn
+          @click="submitImage()"
         >
+          {{
+            $t(
+              "storeProfile.editStoreDialog.tabs.storeProfile.images.dialog.saveButton"
+            )
+          }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -54,15 +93,16 @@
 import { storeService } from "../../services";
 import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
+import { getImgBuffer } from "../../helpers";
 
 //Custom validator
-//TODO custom validator for image dimensions
+// TODO custom validator for image dimensions
 const file_size_validation = (file) => {
   if (!file) {
     return true;
   }
-  console.log(file);
-  console.log(file.size);
+  // console.log(file);
+  // console.log(file.size);
   return file.size <= 4000000; //4mb
   //return file.size < 100; // 100 = 100byte
 };
@@ -124,31 +164,47 @@ export default {
   },
 
   methods: {
-    submitImage: async function() {
+    async submitImage() {
       //Another image preview method:
       //Note that URL may be prefixed in webkit-browsers, so use: var url = (URL || webkitURL).createObjectURL(...);
       //let imageURL = URL.createObjectURL(this.imageUpload);
       //console.log(imageURL);
       //URL.revokeObjectURL(imageURL); //"destroys" the blob url
       console.log(this.file.size);
-      let response = "";
+      console.log(this.file);
+
       if (!this.file) {
         return;
       }
+
+      let response = "";
       try {
+        const internBuffer = await getImgBuffer(this.file);
+        console.log(internBuffer.substr(0, 50));
+        console.log(Buffer.from(internBuffer, "base64"));
+        console.log(
+          Buffer.from(
+            internBuffer.substr("data:image/jpeg;base64,".length),
+            "base64"
+          )
+        );
+
         response = await storeService.getImageBuffer(this.file);
+        console.log(response.buffer.substr(0, 50));
+        // response = await storeService.getImageUrl(this.file);
       } catch (error) {
         console.log(error);
         return;
       }
-
-      let data = {
-        //src: this.imageSrc,
+      // console.log(response);
+      const data = {
         src: response.buffer,
         size: this.file.size,
-        //file: this.imageUpload,
         title: this.imageTitle,
+        name: this.file.name,
+        originalName: this.file.originalName,
       };
+
       this.$emit("add-store-image", data);
 
       //console.log(data);
@@ -159,6 +215,38 @@ export default {
       this.$v.$reset();
       this.show = false;
     },
+
+    async submitImage2() {
+      if (!this.file) {
+        return;
+      }
+
+      let buffer;
+      try {
+        buffer = await getImgBuffer(this.file);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+
+      const data = {
+        src: buffer,
+        size: this.file.size,
+        title: this.imageTitle,
+        name: this.file.name,
+        originalName: this.file.originalName,
+      };
+      console.log(data);
+
+      this.$emit("add-store-image", data);
+
+      this.imageTitle = "";
+      this.url = "";
+      this.file = null;
+      this.$v.$reset();
+      this.show = false;
+    },
+
     cancel() {
       this.$v.$reset();
       //this.imageSrc = "";

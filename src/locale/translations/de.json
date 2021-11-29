@@ -28,6 +28,7 @@
         "passwordFieldRequiredError": "Ein Passwort wird benötigt.",
 
         "forgotPasswordLabel": "Passwort vergessen?",
+        "resendVerificationEmailLabel": "Verifizierungs-E-Mail erneut senden?",
         "requiredFieldDescription": "kennzeichnet benötigte Felder",
         "showPasswordTooltip": "Passwort anzeigen",
         "closeButton": "Schließen",
@@ -53,6 +54,10 @@
         "emailField": "E-Mail",
         "emailFieldRequiredError": "Eine E-Mail Adresse wird benötigt.",
         "emailFieldValidError": "Es muss sich um eine valide E-Mail Adresse handeln.",
+
+        "phoneNumberField": "Telefonnummer",
+        "phoneNumberFieldRequiredError": "Eine Telefonnummer wird benötigt.",
+        "phoneNumberFieldValidError": "Es muss sich um eine gültige Telefonnummer handeln.",
 
         "birthdateField": "Geburtsdatum",
         "birthdateFieldRequiredError": "Ein Geburtsdatum wird benötigt.",
@@ -96,8 +101,8 @@
 
     "registrationVerification": {
         "header": "Thank you for your registration!",
-        "body1": "We would like to welcome you on board of xx.",
-        "body2": "Please verify your e-mail address. We have sent you an e-mail containing a verification code.",
+        "body1": "We would like to welcome you on board of Mysellum.",
+        "body2": "Please verify your e-mail address to finish the onboarding process. We have sent you an e-mail containing a verification code.",
 
         "verifyRegSuccess": "Your registration was successful!",
         "verifyRegVerificationError": "E-Mail verification failed.",
@@ -122,10 +127,56 @@
         "resetPasswordButtonLabel": "Speichern",
 
         "successfullyChangedBody": "Your password was successfully changed! You can now login with your new password. Have fun on our platform!",
-        "checkInvalidError": "Password reset link is invalid or has expired.",
+        "checkInvalidError": "Password reset link is invalid or has expired. Please request the passwort reset e-mail again or contact our customer support via the contact form.",
 
         "resetFailureError": "Password reset failed.",
         "resetOtherError": "An error occurred, we are sorry."
+    },
+
+    "searchPickup": {
+        "headline": "Läden in deiner Region",
+        "searchbox": {
+            "label": "Suche",
+            "placeholder": "Wonach suchen Sie gerade?"
+        },
+        "items": {
+            "favoritesAddTooltip": "Zu Favoriten hinzufügen",
+            "favoritesRemoveTooltip": "Remove from favorites",
+            "pickupTooltip": "Bietet Selbstabholung",
+            "deliveryTooltip": "Bietet Lieferung",
+            "opening": {
+                "labelClosed": "Geschlossen",
+                "tooltipClosed": "Dieser Laden hat aktuell geschlossen",
+                "labelOpened": "Geöffnet",
+                "tooltipOpened": "Dieser Laden hat aktuell geöffnet"
+            }
+        },
+        "noStoresError": "Es tut uns leid, wir konnten leider keine passenden Läden zu Ihrer Suche finden."
+    },
+
+    "searchDelivery": {
+        "searchbox": {
+            "label": "Suche",
+            "placeholder": "Wonach suchen Sie gerade?"
+        },
+        "filters": {
+            "headline": "Filter",
+            "tooltip": "Filtern",
+            "countryFilterLabel": "Länder",
+            "stateFilterLabel": "Bundesländer",
+            "cityFilterLabel": "Städte",
+            "othersLabel": "Andere",
+            "pickupCheckbox": "Abholung",
+            "deliveryCheckbox": "Lieferung",
+            "setButton": "Anwenden"
+        },
+        "sort": {
+            "tooltip": "Sortieren"
+        },
+        "pagination": {
+            "storesPerPageTooltip": "Läden pro Seite"
+        },
+        "noStoresError": "Es tut uns leid, wir konnten leider keine passenden Läden zu Ihrer Suche finden."
     },
     
     "footer": {

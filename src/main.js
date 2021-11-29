@@ -12,6 +12,17 @@ import supportedLanguages from "./locale/supportedLanguages.json";
 // Sharing
 import VueSocialSharing from "vue-social-sharing";
 
+// Sanitizing
+import VueSanitize from "vue-sanitize";
+const defaultOptions = {
+  allowedTags: ["b", "i", "u", "font", "div", "br", "ul", "ol", "li"],
+  allowedAttributes: {
+    font: ["size"],
+    div: ["style"],
+  },
+};
+Vue.use(VueSanitize, defaultOptions);
+
 Vue.config.productionTip = false;
 
 //i18n
@@ -30,33 +41,36 @@ function getStartingLocale() {
   console.log(browserLocale);
 
   //Check if browser lang is English
-  if (browserLocale === "en") {
-    console.log("lang == en");
-    return browserLocale;
-  }
+  // if (browserLocale === "en") {
+  //   console.log("lang == en");
+  //   return browserLocale;
+  // }
   //Check if Browser Lang is supported
   if (supportedLanguages.some((e) => e.locale === browserLocale)) {
+    // Lazy load locales
     // if (supportedLanguages.includes(browserLocale)) {
-    import(`@/locale/translations/${browserLocale}.json`).then((msgs) => {
-      i18n.setLocaleMessage(browserLocale, msgs.default || msgs);
-    });
-    let to = this.$router.resolve({
-      params: {
-        browserLocale,
-      },
-    });
-    this.$router.push(to.location.path);
-    console.log("true");
+    // import(`@/locale/translations/${browserLocale}.json`).then((msgs) => {
+    //   i18n.setLocaleMessage(browserLocale, msgs.default || msgs);
+    // });
+
+    // let to = this.$router.resolve({
+    //   params: {
+    //     browserLocale,
+    //   },
+    // });
+    // this.$router.push(to.location.path);
+    // console.log("true");
+    console.log(`Switched to the locale ${browserLocale}.`);
     return browserLocale;
   } else {
-    console.log("false");
+    console.log(`The locale ${browserLocale} is not supported yet.`);
     return "en";
   }
 }
 
 export const i18n = new VueI18n({
-  //locale: getStartingLocale(),
-  locale: "en",
+  locale: getStartingLocale(),
+  // locale: "en",
   fallbackLocale: "en",
   messages,
 });

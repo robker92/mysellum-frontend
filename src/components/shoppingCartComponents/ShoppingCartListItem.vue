@@ -1,28 +1,53 @@
 <template>
   <div>
     <v-row no-gutters height="60px" align="center">
-      <v-col sm="1">
-        <v-img :src="image" aspect-ratio="1.7" height="45px" width="45px">
+      <v-col sm="1" md="1" lg="1">
+        <v-img
+          :src="product.imgSrc"
+          aspect-ratio="1.7"
+          height="45px"
+          width="45px"
+        >
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="grey lighten-2"
-              ></v-progress-circular>
+              <v-progress-circular indeterminate color="grey lighten-2" />
             </v-row>
           </template>
         </v-img>
       </v-col>
-      <v-col sm="1">
+      <v-col sm="1" md="1" lg="1">
         <div class="text-left text-body-1 font-weight-bold">
           {{ product.title }}
         </div>
       </v-col>
-      <v-col sm="4">
-        <div class="text-left text-body-1">{{ product.description }}</div>
+
+      <v-col cols="12" xs="1" sm="1" md="1" lg="1" xl="1" />
+
+      <v-col sm="1" md="1" lg="1">
+        <!-- <div class="text-left text-body-1">{{ product.description }}</div> -->
+        <v-row>
+          <v-tooltip v-if="product.delivery === true" bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon color="primary" class="mr-1" v-bind="attrs" v-on="on">
+                mdi-truck-delivery
+              </v-icon>
+            </template>
+            <span>Available for delivery</span>
+          </v-tooltip>
+          <v-tooltip v-if="product.pickup === true" bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon color="primary" v-bind="attrs" v-on="on"
+                >mdi-hand-heart
+              </v-icon>
+            </template>
+            <span>Available for pick-up</span>
+          </v-tooltip>
+        </v-row>
       </v-col>
 
-      <v-col v-if="modifiable === true" sm="1">
+      <v-spacer />
+
+      <v-col v-if="modifiable === true" sm="1" md="1" lg="1">
         <v-btn
           class="mx-2"
           :dark="minusButtonDark"
@@ -45,11 +70,11 @@
         xl="1"
       />
 
-      <v-col sm="1">
-        <div class="text-body-1">{{ this.amount }}x</div>
+      <v-col sm="1" md="1" lg="1">
+        <div class="text-body-1">{{ amount }}x</div>
       </v-col>
 
-      <v-col v-if="modifiable == true" sm="1">
+      <v-col v-if="modifiable == true" sm="1" md="1" lg="1">
         <v-btn
           class="mx-2"
           x-small
@@ -62,7 +87,7 @@
         </v-btn>
       </v-col>
 
-      <v-col v-if="modifiable == true" sm="1">
+      <v-col v-if="modifiable == true" sm="1" md="1" lg="1">
         <v-btn
           icon
           class="mx-2"
@@ -85,13 +110,13 @@
       />
       <!-- <v-col v-else cols="12" sm="4"> </v-col> -->
 
-      <v-col sm="1">
+      <v-col sm="1" md="1" lg="1">
         <div class="text-right text-body-1">
           {{ product.price }}{{ product.currencySymbol }}
         </div>
       </v-col>
 
-      <v-col sm="1">
+      <v-col sm="1" md="1" lg="1">
         <div class="text-right text-body-1">{{ computedRowSum }}</div>
       </v-col>
     </v-row>
@@ -120,22 +145,22 @@ export default {
   data() {
     return {
       amountTextField: this.amount,
-      image: "",
+      // image: "",
     };
   },
 
   async mounted() {
-    let result;
-    try {
-      result = await productService.getProductImage(
-        this.product.storeId,
-        this.product._id
-      );
-    } catch (error) {
-      console.log(error);
-      this.addErrorSnackbar("An unexpected error has occurred, we are sorry.");
-    }
-    this.image = result.imgSrc;
+    // let result;
+    // try {
+    //   result = await productService.getProductImage(
+    //     this.product.storeId,
+    //     this.product._id
+    //   );
+    // } catch (error) {
+    //   console.log(error);
+    //   this.addErrorSnackbar("An unexpected error has occurred, we are sorry.");
+    // }
+    // this.image = result.imgSrc;
   },
 
   computed: {

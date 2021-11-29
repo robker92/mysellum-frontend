@@ -74,7 +74,9 @@ export default {
         //     that.deleteIdentifiedMarkers(markers);
         //   });
         this.addMarkers(newVal);
-        let markersToRemove = this.identifyMarkersToRemove(newVal);
+      }
+      let markersToRemove = this.identifyMarkersToRemove(newVal);
+      if (markersToRemove) {
         this.deleteIdentifiedMarkers(markersToRemove);
       }
     },

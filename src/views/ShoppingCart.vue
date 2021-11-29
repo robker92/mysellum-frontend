@@ -5,8 +5,8 @@
     </v-overlay>
     <LoginDialog v-model="showLoginDialog" />
 
-    <v-container v-if="this.shoppingCart">
-      <v-stepper v-model="e1">
+    <v-container v-if="shoppingCart">
+      <v-stepper v-model="e1" flat>
         <v-stepper-header>
           <v-stepper-step :complete="e1 > 1" step="1" editable>
             Your Shopping Cart
@@ -27,13 +27,13 @@
 
         <v-stepper-items>
           <v-stepper-content step="1">
-            <v-card flat>
-              <v-container v-if="this.shoppingCart">
+            <v-card flat min-height="500">
+              <v-container v-if="shoppingCart">
                 <div class="text-h5 text-left font-weight-medium mb-5">
                   Your Shopping Cart
                 </div>
                 <div
-                  v-if="this.shoppingCart.length == 0"
+                  v-if="shoppingCart.length == 0"
                   class="text-left text-body-1 mb-5"
                 >
                   <v-alert text dense type="warning" border="left">
@@ -41,7 +41,12 @@
                   </v-alert>
                 </div>
 
-                <v-row no-gutters height="60px" align="center">
+                <v-row
+                  v-if="shoppingCart.length > 0"
+                  no-gutters
+                  height="60px"
+                  align="center"
+                >
                   <v-col sm="7"> </v-col>
                   <v-col sm="1">
                     <div class="text-center font-weight-bold">
@@ -108,7 +113,12 @@
                 </div>
 
                 <v-divider />
-                <v-row no-gutters height="60px" class="mt-2">
+                <v-row
+                  v-if="this.shoppingCart.length > 0"
+                  no-gutters
+                  height="60px"
+                  class="mt-2"
+                >
                   <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
                     <div class="text-left text-body-1">Shipping costs:</div>
                   </v-col>
@@ -119,7 +129,11 @@
                   </v-col>
                 </v-row>
 
-                <v-row no-gutters height="60px">
+                <v-row
+                  v-if="this.shoppingCart.length > 0"
+                  no-gutters
+                  height="60px"
+                >
                   <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
                     <div class="text-left text-body-1">Total costs:</div>
                   </v-col>
@@ -128,6 +142,16 @@
                       {{ computedTotalSum }}€
                     </div>
                   </v-col>
+                </v-row>
+                <v-row
+                  v-if="this.shoppingCart.length > 0"
+                  no-gutters
+                  height="60px"
+                >
+                  <v-spacer />
+                  <div class="text-caption text-right">
+                    incl. VAT
+                  </div>
                 </v-row>
 
                 <v-card-actions class="mt-3">
@@ -266,6 +290,8 @@ export default {
 
   async mounted() {
     console.log(this.shoppingCart);
+    console.log(typeof this.shippingCosts);
+    console.log(this.loggedIn);
   },
 
   computed: {

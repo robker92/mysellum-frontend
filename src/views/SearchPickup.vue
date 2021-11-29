@@ -1,20 +1,21 @@
 <template>
   <v-container>
     <!-- SEARCH -->
-    <div class="text-left text-h4 mb-3">Stores in your area</div>
+    <div class="text-left text-h4 mb-3">{{ $t("searchPickup.headline") }}</div>
     <v-text-field
       v-model="searchTerm"
       :append-outer-icon="'mdi-magnify'"
       type="text"
-      label="Search"
+      :label="$t('searchPickup.searchbox.label')"
+      :placeholder="$t('searchPickup.searchbox.placeholder')"
       clear-icon="mdi-close"
       clearable
       outlined
       dense
       class="mb-1"
       @click:clear="clearMessage"
-      @click:append-outer="fetchStores()"
-      @keyup.enter="fetchStores()"
+      @click:append-outer="clickSearchStores()"
+      @keyup.enter="clickSearchStores()"
     >
       <!-- <template slot="append-outer">
         <v-icon @click="fetchStores()">mdi-magnify</v-icon>
@@ -59,7 +60,7 @@
     <!-- v-bind:mapBoundries="mapBoundaries" -->
 
     <div v-if="storeData && storeData.length == 0" class="text-body-1 my-5">
-      We are sorry, we could not find a suitable store for your search criteria.
+      {{ $t("searchPickup.noStoresError") }}
     </div>
 
     <!-- LIST -->
@@ -122,11 +123,6 @@ export default {
     };
   },
 
-  // async mounted() {
-  //   this.setStartUpQueryParams();
-  //   this.fetchStores();
-  // },
-
   computed: {
     numberOfRows: {
       get() {
@@ -153,9 +149,14 @@ export default {
   watch: {
     mapBoundaries: function(newVal) {
       console.log(newVal);
-      // this.setStartUpQueryParams();
       this.fetchStores();
+      this.setQueryUrlParams();
     },
+  },
+
+  async mounted() {
+    this.setStartUpQueryParams();
+    // this.fetchStores();
   },
 
   methods: {
@@ -169,6 +170,11 @@ export default {
 
     getCutDescription(description) {
       return description.substr(0, 100) + "\u2026";
+    },
+
+    async clickSearchStores() {
+      await this.fetchStores();
+      this.updateParam({ param: "searchTerm", value: this.searchTerm });
     },
 
     async fetchStores() {
@@ -185,23 +191,10 @@ export default {
         this.mapBoundaries,
         data
       );
-      this.setQueryUrlParams();
       this.storeData = fetchResult.stores;
-      this.setElevationArray();
     },
 
-    setStartUpQueryParams() {
-      if (this.$route.query.searchTerm) {
-        this.searchTerm = this.$route.query.searchTerm;
-      }
-      if (this.$route.query.delivery) {
-        this.checkBoxDelivery = this.$route.query.delivery;
-      }
-      if (this.$route.query.pickup) {
-        this.checkBoxPickup = this.$route.query.pickup;
-      }
-    },
-
+    // TAG ARRAY ###########################################################################################################
     addTermToTagArray(type) {
       if (this.searchTerm !== "") {
         this.filterArray.push([type, this.searchTerm]);
@@ -233,16 +226,14 @@ export default {
       this.fetchStores();
     },
 
-    getFilteredStores: async function() {
-      const result = await storeService.getFilteredStores2(this.filterObject);
-      this.storeData = result.stores;
-    },
-
     clearMessage() {
       this.searchTerm = "";
+      this.updateParam({ param: "searchTerm", value: this.searchTerm });
       this.fetchStores();
     },
+    // ###########################################################################################################
 
+    // ELEVATION ###########################################################################################################
     setElevationArray() {
       if (!this.storeData) {
         this.elevationArray = [];
@@ -286,12 +277,26 @@ export default {
         this.elevationArray.splice(index, 1, false);
       }
     },
+    // ###########################################################################################################
+
+    // QUERY PARAMS ###########################################################################################################
+    setStartUpQueryParams() {
+      if (this.$route.query.searchTerm) {
+        this.searchTerm = this.$route.query.searchTerm;
+      }
+      if (this.$route.query.delivery) {
+        this.checkBoxDelivery = this.$route.query.delivery;
+      }
+      if (this.$route.query.pickup) {
+        this.checkBoxPickup = this.$route.query.pickup;
+      }
+    },
 
     setQueryUrlParams() {
       // this.updateParam(this.searchTerm, "sort");
-      this.updateParam({ param: "searchTerm", value: this.searchTerm });
-      this.updateParam({ param: "delivery", value: true });
-      this.updateParam({ param: "pickup", value: true });
+      // this.updateParam({ param: "searchTerm", value: this.searchTerm });
+      // this.updateParam({ param: "delivery", value: true });
+      // this.updateParam({ param: "pickup", value: true });
       this.updateParam({ param: "min_lat", value: this.mapBoundaries.min_lat });
       this.updateParam({ param: "max_lat", value: this.mapBoundaries.max_lat });
       this.updateParam({ param: "min_lng", value: this.mapBoundaries.min_lng });
@@ -332,6 +337,7 @@ export default {
       delete query[param];
       this.$router.replace({ query });
     },
+    // ###########################################################################################################
   },
 };
 </script>

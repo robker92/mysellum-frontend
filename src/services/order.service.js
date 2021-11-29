@@ -3,24 +3,24 @@ import { authHeader, errorHandler } from "../helpers";
 
 export const orderService = {
   getAllOrders,
-  createOrder,
+  // createOrder,
   getStoresOrders,
   setStepStatus,
   searchOrderByTerm,
 };
 
-async function createOrder(data) {
-  let response;
-  try {
-    response = await baseClient.post("/orders/createOrder", data, {
-      headers: authHeader(),
-    });
-  } catch (error) {
-    errorHandler(error, "createOrder");
-    throw error;
-  }
-  return response.data;
-}
+// async function createOrder(data) {
+//   let response;
+//   try {
+//     response = await baseClient.post("/orders/createOrder", data, {
+//       headers: authHeader(),
+//     });
+//   } catch (error) {
+//     errorHandler(error, "createOrder");
+//     throw error;
+//   }
+//   return response.data;
+// }
 
 async function getAllOrders() {
   // console.log(credentials)

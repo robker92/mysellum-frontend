@@ -1,15 +1,61 @@
 <template>
   <v-container>
-    <div class="text-left text-h4">
-      Your Received Orders
-    </div>
+    <PdfDialog
+      v-model="showPdfDialog"
+      :pdf-src-url="pdfSrcUrl"
+      :pdf-dialog-title="pdfDialogTitle"
+      :selected-order="selectedOrderComputed"
+    />
+    <v-row class="mb-4" no-gutters>
+      <div class="text-left text-h4">
+        Your Received Orders
+      </div>
+      <v-spacer />
+      <v-progress-circular
+        v-if="reloadingStores"
+        indeterminate
+        color="primary"
+      ></v-progress-circular>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            outlined
+            color="primary"
+            class="ml-3"
+            v-bind="attrs"
+            v-on="on"
+            @click="reloadOrders"
+          >
+            <v-icon color="primary">mdi-refresh</v-icon>
+          </v-btn>
+        </template>
+        <span>Reload orders</span>
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            outlined
+            color="primary"
+            class="ml-3"
+            v-bind="attrs"
+            v-on="on"
+            @click="console.log('hi')"
+          >
+            <v-icon color="primary">mdi-dots-vertical</v-icon>
+          </v-btn>
+        </template>
+        <span>Actions</span>
+      </v-tooltip>
+    </v-row>
 
     <!-- CARD FOR SEARCH AND SORT -->
-    <v-row v-if="orderList.length > 0">
-      <v-col cols="12" md="5" lg="4" xl="3">
+    <v-row v-if="orderList.length > 0" no-gutters>
+      <v-col cols="12" sm="4" md="4" lg="3" xl="3">
         <v-card flat>
           <v-row no-gutters>
-            <v-col cols="12" md="10" lg="10" xl="10">
+            <v-col cols="12" sm="9" md="9" lg="9" xl="9">
               <v-text-field
                 v-model="searchTerm"
                 type="text"
@@ -17,17 +63,17 @@
                 :append-outer-icon="'mdi-send'"
                 clear-icon="mdi-close-circle"
                 clearable
+                dense
+                class="mr-2"
                 @click:clear="clearMessage"
                 @keyup.enter="searchOrder"
                 @click:append-outer="searchOrder"
-                dense
-                class="mr-3"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="2" lg="2" xl="2">
+            <v-col cols="12" sm="2" md="2" lg="2" xl="2">
               <v-menu bottom left :nudge-bottom="10" offset-y max-width="250px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" outlined color="primary">
+                  <v-btn v-bind="attrs" outlined color="primary" v-on="on">
                     <v-icon color="primary">mdi-sort</v-icon>
                   </v-btn>
                 </template>
@@ -37,8 +83,8 @@
                       <v-list-item
                         v-for="(item, index) in sortTypes"
                         :key="index"
-                        @click="sortListClicked(index)"
                         link
+                        @click="sortListClicked(index)"
                       >
                         <v-list-item-icon>
                           <v-icon>{{ item.icon }}</v-icon>
@@ -53,6 +99,7 @@
                   </v-list>
                 </v-card>
               </v-menu>
+              <!-- </div> -->
             </v-col>
           </v-row>
         </v-card>
@@ -62,7 +109,7 @@
           <v-list max-height="600" class="overflow-y-auto" shaped>
             <v-list-item-group v-model="selectedOrder" color="primary">
               <template v-for="(order, index) in orderList">
-                <v-list-item three-line class="my-1" :key="index">
+                <v-list-item :key="index" three-line class="my-1">
                   <v-list-item-content>
                     <v-list-item-title class="text-left">
                       {{ getStoreTitles(order.products) }}
@@ -115,7 +162,10 @@
             </v-list-item-group>
           </v-list>
         </v-card>
-        <div v-if="loadingOrderData === false" class="text-center">
+        <div
+          v-if="loadingOrderData === false && numOfPages > 1"
+          class="text-center"
+        >
           <v-pagination
             v-model="currentPage"
             :length="numOfPages"
@@ -124,7 +174,7 @@
       </v-col>
 
       <!-- CARD FOR ORDER DETAIL VIEW -->
-      <v-col cols="12" md="7" lg="8" xl="9">
+      <v-col cols="12" sm="8" md="8" lg="9" xl="9">
         <v-card v-if="orderList.length > 0">
           <v-row>
             <v-col cols="12" xs="4" sm="10" md="10" lg="10" xl="11">
@@ -141,18 +191,18 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     v-bind="attrs"
-                    v-on="on"
                     class="mt-3"
                     fab
                     outlined
                     color="primary"
+                    v-on="on"
                   >
                     <v-icon large color="primary">mdi-printer</v-icon>
                   </v-btn>
                 </template>
                 <v-card>
                   <v-list dense nav>
-                    <v-list-item link>
+                    <v-list-item link @click="createPdf('orderLabel')">
                       <v-list-item-icon>
                         <v-icon>mdi-email-newsletter</v-icon>
                       </v-list-item-icon>
@@ -163,13 +213,13 @@
                       </v-list-item-content>
                     </v-list-item>
 
-                    <v-list-item link>
+                    <v-list-item link @click="createPdf('orderInvoice')">
                       <v-list-item-icon>
                         <v-icon>mdi-text-box-search</v-icon>
                       </v-list-item-icon>
                       <v-list-item-content>
                         <v-list-item-title class="text-left">
-                          Order Overview</v-list-item-title
+                          Order Invoice</v-list-item-title
                         >
                       </v-list-item-content>
                     </v-list-item>
@@ -206,7 +256,7 @@
             <StoreOrderOverviewStatusTimeline
               :status="selectedOrderComputed.status"
               :type="selectedOrderComputed.shippingType"
-              v-on:set-status="setOrderStatus"
+              @set-status="setOrderStatus"
             />
 
             <div
@@ -217,13 +267,13 @@
             </div>
 
             <StoreOrderOverviewProductTable
-              :products="this.computedProductArray"
-              :totalSum="selectedOrderComputed.totalSum"
-              :totalTax="selectedOrderComputed.totalTax"
-              :platformFee="selectedOrderComputed.platformFee"
-              :transferAmount="selectedOrderComputed.transferAmount"
-              :shippingCosts="selectedOrderComputed.shippingCosts"
-              :currencySymbol="
+              :products="computedProductArray"
+              :total-sum="selectedOrderComputed.totalSum"
+              :total-tax="selectedOrderComputed.totalTax"
+              :platform-fee="selectedOrderComputed.platformFee"
+              :transfer-amount="selectedOrderComputed.transferAmount"
+              :shipping-costs="selectedOrderComputed.shippingCosts"
+              :currency-symbol="
                 getCurrencySymbol(selectedOrderComputed.currencyCode)
               "
             />
@@ -277,12 +327,13 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+              icon
+              :disabled="selectedOrder === 0"
               @click="
                 selectedOrder > 0
                   ? (selectedOrder = selectedOrder - 1)
                   : selectedOrder
               "
-              icon
             >
               <v-icon color="primary">
                 mdi-arrow-left-bold
@@ -290,6 +341,7 @@
             </v-btn>
             <v-btn
               icon
+              :disabled="selectedOrder + 1 === orderList.length"
               @click="
                 selectedOrder + 1 < orderList.length
                   ? (selectedOrder = selectedOrder + 1)
@@ -304,14 +356,18 @@
         </v-card>
       </v-col>
     </v-row>
-    <div v-else>
+    <div v-if="loadingError">
       We are sorry, we could not fetch your oders. Please try again later.
+    </div>
+    <div v-if="loadingOrderData && !loadingError" class="mt-5">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
     </div>
   </v-container>
 </template>
 
 <script>
 import { orderService } from "../services";
+import { mapState, mapActions } from "vuex";
 import StoreOrderOverviewStatusTimeline from "../components/storeOrderOverviewComponents/StoreOrderOverviewStatusTimeline";
 import StoreOrderOverviewProductTable from "../components/storeOrderOverviewComponents/StoreOrderOverviewProductTable";
 import {
@@ -319,34 +375,42 @@ import {
   compareArrayDesc,
   getCurrencySymbolHelper,
   getDateFormatDDMMYYYY,
-  truncateString
+  truncateString,
 } from "../helpers";
+
+// pdf
+import PdfDialog from "../components/PdfDialog";
+import jsPDF from "jspdf";
+import { orderInvoiceTemplate } from "../helpers/pdf/templates/order-invoice";
 
 export default {
   name: "StoreOrderOverviewView",
 
   components: {
     StoreOrderOverviewStatusTimeline: StoreOrderOverviewStatusTimeline,
-    StoreOrderOverviewProductTable: StoreOrderOverviewProductTable
+    StoreOrderOverviewProductTable: StoreOrderOverviewProductTable,
+    PdfDialog: PdfDialog,
   },
 
   data() {
     return {
       loadingOrderData: true,
+      loadingError: false,
       orderList: [],
       searchTerm: "",
       selectedOrder: 0,
       selectedSort: 0,
+      reloadingStores: false,
       tableHeaders: [
         {
           text: "Product",
           align: "start",
-          value: "title"
+          value: "title",
         },
         { text: "Quantity Type", value: "quantityValueType" },
         { text: "Price", value: "computedPrice" },
         { text: "Order Quantity", value: "quantity" },
-        { text: "Total", value: "totalRowSum" }
+        { text: "Total", value: "totalRowSum" },
       ],
       sortTypes: [
         { type: "Date", icon: "mdi-sort-calendar-ascending", tooltip: "" },
@@ -356,25 +420,33 @@ export default {
         {
           type: "Completion",
           icon: "mdi-sort-bool-ascending-variant",
-          tooltip: ""
+          tooltip: "",
         },
         {
           type: "Completion",
           icon: "mdi-sort-bool-descending-variant",
-          tooltip: ""
-        }
+          tooltip: "",
+        },
       ],
       totalOrderCount: 0,
       pageSize: 20,
-      currentPage: 1
+      currentPage: 1,
+
+      // pdf
+      pdfSrcUrl: "",
+      showPdfDialog: false,
+      pdfDialogTitle: "",
+      currentOrder: {},
     };
   },
-  watch: {
-    currentPage() {
-      this.searchFilterSort(false);
-    }
-  },
   computed: {
+    ...mapState("account", [
+      "user",
+      "loggedIn",
+      "shoppingCart",
+      "productCounter",
+    ]),
+
     selectedOrderComputed: {
       get() {
         if (this.orderList.length > 0) {
@@ -382,7 +454,7 @@ export default {
         } else {
           return "";
         }
-      }
+      },
     },
 
     computedProductArray: {
@@ -417,7 +489,7 @@ export default {
         } else {
           return [];
         }
-      }
+      },
     },
 
     computedDateTime: {
@@ -429,7 +501,7 @@ export default {
         } else {
           return "";
         }
-      }
+      },
     },
     computedTotalSum: {
       get() {
@@ -438,7 +510,7 @@ export default {
         } else {
           return "";
         }
-      }
+      },
     },
     statusAsIntValue: {
       get() {
@@ -447,11 +519,16 @@ export default {
         } else {
           return -1;
         }
-      }
+      },
     },
     numOfPages() {
       return Math.ceil(this.totalOrderCount / parseInt(this.pageSize));
-    }
+    },
+  },
+  watch: {
+    currentPage() {
+      this.searchFilterSort(false);
+    },
   },
 
   async mounted() {
@@ -459,13 +536,38 @@ export default {
 
     // const storeId = this.$route.params.id;
     // const response = await orderService.getStoresOrders(storeId);
-    this.searchFilterSort();
+    try {
+      await this.searchFilterSort();
+    } catch (error) {
+      console.log(error);
+      this.loadingError = true;
+      return;
+    }
+
     this.loadingOrderData = false;
     // console.log(response);
     // this.orderList = response.orders;
   },
 
   methods: {
+    ...mapActions("snackbar", [
+      "addSuccessSnackbar",
+      "addErrorSnackbar",
+      "addCloseSnackbar",
+    ]),
+
+    async reloadOrders() {
+      this.reloadingStores = true;
+      try {
+        await this.searchFilterSort();
+      } catch (error) {
+        console.log(error);
+        this.loadingError = true;
+        return;
+      }
+      this.reloadingStores = false;
+    },
+
     print() {
       console.log(this.$i18n.locale);
     },
@@ -477,8 +579,6 @@ export default {
     // },
 
     getComputedDate(orderDate) {
-      //console.log(orderDate);
-
       if (orderDate) {
         let date = new Date(orderDate);
         console.log(date.getMonth().toString() + "." + date.getFullYear());
@@ -521,7 +621,7 @@ export default {
         // sort: "",
         // status: "",
         pageSize: this.pageSize,
-        pageNum: this.currentPage
+        pageNum: this.currentPage,
       };
       console.log(this.currentPage);
       return payload;
@@ -540,7 +640,7 @@ export default {
         queryResult = await orderService.getStoresOrders(payload);
       } catch (error) {
         console.log(error);
-        return;
+        throw "Error while loading";
       }
       this.setQueryUrlParams();
       this.orderList = queryResult.orders;
@@ -558,9 +658,10 @@ export default {
         this.currentPage = parseInt(this.$route.query.pageNum);
       }
       if (this.$route.query.pageSize) {
-        this.currentPage = parseInt(this.$route.query.pageSize);
+        this.pageSize = parseInt(this.$route.query.pageSize);
       }
     },
+
     setQueryUrlParams() {
       // this.updateParam(this.searchTerm, "sort");
       // this.updateParam({ param: "searchTerm", value: this.searchTerm });
@@ -572,6 +673,7 @@ export default {
       this.updateParam({ param: "pageSize", value: this.pageSize });
       this.updateParam({ param: "pageNum", value: this.currentPage });
     },
+
     updateParam(objct) {
       // console.log(objct.value);
       // console.log(objct.param);
@@ -595,7 +697,7 @@ export default {
     },
     addQueryParam(queryObject) {
       this.$router.push({
-        query: Object.assign({}, this.$route.query, queryObject)
+        query: Object.assign({}, this.$route.query, queryObject),
       });
     },
     removeQueryParam(param) {
@@ -653,7 +755,7 @@ export default {
         step: data.step,
         type: data.type,
         value: data.value,
-        trackingId: data.trackingId
+        trackingId: data.trackingId,
       };
       console.log(this.orderList[this.selectedOrder]._id);
       console.log(payload);
@@ -674,14 +776,48 @@ export default {
         this.orderList[this.selectedOrder].status.successfully = true;
       }
 
+      this.addSuccessSnackbar("Oder status successfully set.");
       return;
     },
 
     clearMessage() {
       this.searchTerm = "";
       this.searchOrder();
-    }
-  }
+    },
+
+    createPdf(type) {
+      console.log(this.selectedOrderComputed);
+      console.log(this.computedProductArray);
+      let doc;
+      if (type === "orderInvoice") {
+        doc = orderInvoiceTemplate(
+          this.selectedOrderComputed,
+          this.computedProductArray
+        );
+        this.pdfDialogTitle = "Order Invoice";
+      }
+
+      const url = doc.output("bloburl");
+      this.pdfSrcUrl = url;
+      this.showPdfDialog = true;
+
+      // const doc = new jsPDF();
+      // const contentHtml = "<html><p>Hi, this is a test</p></html>";
+
+      // doc.html(contentHtml, {
+      //   callback: (doc) => {
+      //     // doc.save();
+      //     const url = doc.output("bloburl");
+      //     this.pdfSrcUrl = url;
+      //     this.showPdfDialog = true;
+      //     this.pdfDialogTitle = "Delivery Note";
+      //     this.selectedOrder = this.selectedOrderComputed;
+      //   },
+      //   x: 10,
+      //   y: 10,
+      // });
+    },
+  },
 };
 </script>
 

@@ -26,6 +26,7 @@ const state = loggedIn
       productCounter: vuexObjct.account.productCounter,
       shippingCosts: vuexObjct.account.shippingCosts,
       favoriteStores: vuexObjct.account.favoriteStores,
+      orderCounterOwner: vuexObjct.account.orderCounterOwner,
     }
   : {
       loggedIn: false,
@@ -33,8 +34,9 @@ const state = loggedIn
       shoppingCart: [],
       loadedCart: [],
       productCounter: 0,
-      shippingCosts: 0,
+      shippingCosts: "0",
       favoriteStores: [],
+      orderCounterOwner: 0,
     };
 
 const getters = {
@@ -52,11 +54,13 @@ const actions = {
       userService
         .login(credentials)
         .then((data) => {
+          console.log(`order count: ${data.orderCount}`);
           commit("loginSuccess", {
             user: data.user,
             shoppingCart: data.shoppingCart,
             shippingCosts: data.shippingCosts,
             favoriteStores: data.favoriteStores,
+            orderCounterOwner: data.orderCount,
           });
           resolve(data.message);
         })
@@ -230,6 +234,7 @@ const mutations = {
     }
     state.shippingCosts = data.shippingCosts;
     state.favoriteStores = data.favoriteStores;
+    state.orderCounterOwner = data.orderCounterOwner;
     // concatenate shopping carts
     calculateProductCounter(state);
   },
@@ -249,6 +254,7 @@ const mutations = {
     state.productCounter = 0;
     state.shippingCosts = 0;
     state.favoriteStores = [];
+    state.orderCounterOwner = 0;
   },
 
   registerSuccess(state, data) {

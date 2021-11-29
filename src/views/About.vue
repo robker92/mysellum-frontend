@@ -91,20 +91,23 @@
     </div>
     <Reasons type="sell" class="mt-3" />
     <v-divider class="my-4" />
+    <HowToBecomeStoreOwner class="mt-3" />
   </v-container>
 </template>
 
 <script>
 //import GoogleMap from "../components/GoogleMap.vue";
-import Testimonials from "../components/Testimonials.vue";
-import Reasons from "../components/Reasons.vue";
+import Testimonials from "../components/aboutComponents/Testimonials.vue";
+import Reasons from "../components/aboutComponents/Reasons.vue";
 import fakeBackendData from "../fakeBackend/retailerMapInfo.json";
+import HowToBecomeStoreOwner from "../components/aboutComponents/HowToBecomeStoreOwner.vue";
 
 export default {
   name: "AboutView",
   components: {
     Testimonials: Testimonials,
     Reasons: Reasons,
+    HowToBecomeStoreOwner: HowToBecomeStoreOwner,
   },
   data() {
     return {

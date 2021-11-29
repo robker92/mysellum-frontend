@@ -27,6 +27,14 @@
           </v-stepper-step>
 
           <v-stepper-content step="1">
+            <div class="text-body-1 text-left mb-2">
+              Congratulations! You are about to create your very own new store.
+              First, you need to add a title, description and an image in this
+              dialog. Your store's information can always be edited once it is
+              initially created. Please also keep in mind that there is more
+              informatio needed in order to be visible to customers. You will
+              find more information on your store's profile.
+            </div>
             <v-card class="mb-4 mx-3 my-1">
               <v-container>
                 <v-text-field
@@ -135,7 +143,8 @@
                       menu-props="auto"
                       @click:append-outer="
                         showHelp(
-                          'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.'
+                          'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.',
+                          'Map Icon'
                         )
                       "
                     >
@@ -473,11 +482,11 @@ export default {
       this.editedHtmlText = newDescription;
     },
 
-    showHelp(message) {
+    showHelp(message, title) {
       console.log(message);
       //this.chosenIcon = "fish";
       console.log(this.mapIcon);
-      this.helpDialogTitle = "Title";
+      this.helpDialogTitle = title;
       this.helpDialogMessage = message;
       this.showShowHelpDialog = true;
     },

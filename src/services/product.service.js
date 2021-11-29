@@ -6,7 +6,7 @@ export const productService = {
   editProduct,
   deleteProduct,
   updateStockAmount,
-  getProductImage,
+  // getProductImage,
 };
 
 async function createProduct(data) {
@@ -56,7 +56,7 @@ async function deleteProduct(data) {
     errorHandler(error, "deleteProduct");
     throw error;
   }
-  console.log(response.data);
+  // console.log(response.data);
 
   return response.data;
 }
@@ -76,22 +76,22 @@ async function updateStockAmount(data) {
     errorHandler(error, "updateStockAmount");
     throw error;
   }
-  console.log(response.data);
+  // console.log(response.data);
 
   return response.data;
 }
 
-async function getProductImage(storeId, productId) {
-  let response;
+// async function getProductImage(storeId, productId) {
+//   let response;
 
-  try {
-    response = await baseClient.get(
-      `/stores/${storeId}/products/${productId}/images`
-    );
-  } catch (error) {
-    errorHandler(error, "getProductImage");
-    return error;
-  }
+//   try {
+//     response = await baseClient.get(
+//       `/stores/${storeId}/products/${productId}/images`
+//     );
+//   } catch (error) {
+//     errorHandler(error, "getProductImage");
+//     return error;
+//   }
 
-  return response.data;
-}
+//   return response.data;
+// }

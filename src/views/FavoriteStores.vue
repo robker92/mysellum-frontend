@@ -4,6 +4,10 @@
       <div class="text-h4 text-left">
         Your Favorite Stores
       </div>
+      <div class="text-body-1 text-left mb-2 mt-2">
+        Find your saved favorite stores here. You can have a maximum number of
+        20 stores.
+      </div>
       <v-row>
         <v-col
           v-for="(store, index) in stores"

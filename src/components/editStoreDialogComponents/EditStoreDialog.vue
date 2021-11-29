@@ -2,7 +2,9 @@
   <v-dialog v-model="show" max-width="85%" @click:outside="cancel">
     <v-card>
       <v-toolbar flat color="primary" dark>
-        <v-toolbar-title>Edit Your Store</v-toolbar-title>
+        <v-toolbar-title>
+          {{ $t("storeProfile.editStoreDialog.headline") }}
+        </v-toolbar-title>
         <v-spacer />
         <v-btn icon @click="cancel">
           <v-icon>mdi-close</v-icon>
@@ -13,63 +15,67 @@
           <v-icon left>
             mdi-store
           </v-icon>
-          Store Profile
+          {{ $t("storeProfile.editStoreDialog.tabs.storeProfile.headline") }}
         </v-tab>
         <v-tab class="text-left">
           <v-icon left>
             mdi-map-marker-radius
           </v-icon>
-          Location
+          {{ $t("storeProfile.editStoreDialog.tabs.location.headline") }}
         </v-tab>
         <v-tab class="text-left">
           <v-icon left>
             mdi-clock-time-four-outline
           </v-icon>
-          Opening Hours
+          {{ $t("storeProfile.editStoreDialog.tabs.openingHours.headline") }}
         </v-tab>
         <v-tab>
           <v-icon left>
             mdi-bell-ring
           </v-icon>
-          Notifications
+          {{ $t("storeProfile.editStoreDialog.tabs.notifications.headline") }}
         </v-tab>
         <v-tab>
           <v-icon left>
             mdi-credit-card-outline
           </v-icon>
-          Payment
+          {{ $t("storeProfile.editStoreDialog.tabs.payment.headline") }}
         </v-tab>
         <v-tab>
           <v-icon left>
             mdi-truck
           </v-icon>
-          Shipping
+          {{ $t("storeProfile.editStoreDialog.tabs.shipping.headline") }}
         </v-tab>
         <v-tab>
           <v-icon left>
             mdi-lock
           </v-icon>
-          Security
+          {{ $t("storeProfile.editStoreDialog.tabs.security.headline") }}
         </v-tab>
         <v-tab>
           <v-icon left>
             mdi-cog
           </v-icon>
-          Settings
+          {{ $t("storeProfile.editStoreDialog.tabs.settings.headline") }}
         </v-tab>
 
+        <!-- Store Profile -->
         <v-tab-item>
           <div class="ma-3">
-            <v-alert type="info" text dense class="text-left"
-              >Here you can edit the basic information of your store. Click on
-              the save button at the bottom, when you are done.</v-alert
-            >
+            <v-alert type="info" text dense class="text-left">
+              {{ $t("storeProfile.editStoreDialog.tabs.storeProfile.info") }}
+            </v-alert>
           </div>
           <!-- <div class="text-h6 text-left ml-3">Store Profile:</div> -->
           <v-card class="ma-3">
             <v-container>
               <div class="text-caption text-left grey--text text--darken-1">
-                Images*
+                {{
+                  $t(
+                    "storeProfile.editStoreDialog.tabs.storeProfile.images.label"
+                  )
+                }}*
               </div>
 
               <AddStoreImageDialog
@@ -85,7 +91,7 @@
 
               <v-row>
                 <v-col
-                  v-for="(img, index) in this.storeImages"
+                  v-for="(img, index) in storeImages"
                   :key="index"
                   cols="12"
                   xs="6"
@@ -198,7 +204,11 @@
                 v-model="storeTitle"
                 :counter="storeTitleMax"
                 :error-messages="storeTitleErrors"
-                label="Store Title*"
+                :label="
+                  $t(
+                    'storeProfile.editStoreDialog.tabs.storeProfile.storeTitleLabel'
+                  ) + '*'
+                "
                 required
                 @input="$v.storeTitle.$touch()"
                 @blur="$v.storeTitle.$touch()"
@@ -213,7 +223,11 @@
                 :items="tagsComboBoxItems"
                 :counter="tagsComboBoxModelMax"
                 :error-messages="storeTagsErrors"
-                label="Store Tags*"
+                :label="
+                  $t(
+                    'storeProfile.editStoreDialog.tabs.storeProfile.storeTagsLabel'
+                  ) + '*'
+                "
                 multiple
                 chips
                 deletable-chips
@@ -246,9 +260,11 @@
         <v-tab-item>
           <div class="ma-3">
             <v-alert type="info" text dense class="text-left">
-              Here you can edit the address of your store. Please be aware that
-              stores addresses have to be unique. Click on the save button at
-              the bottom, when you are done.
+              {{
+                $t(
+                  "storeProfile.editStoreDialog.tabs.location.info"
+                )
+              }}
             </v-alert>
           </div>
           <!-- <div class="text-h6 text-left ml-3">Store Address:</div> -->
@@ -259,7 +275,11 @@
                   <v-text-field
                     v-model="addressLine1"
                     :counter="40"
-                    label="Address Line 1*"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.location.addresslineLabel'
+                      ) + '*'
+                    "
                     required
                     :error-messages="addressLine1Errors"
                     @input="$v.addressLine1.$touch()"
@@ -271,7 +291,11 @@
                 <v-col cols="12" sm="2" md="2">
                   <v-text-field
                     v-model="postcode"
-                    label="Postcode*"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.location.postcodeLabel'
+                      ) + '*'
+                    "
                     class="inputPostcode"
                     required
                     type="number"
@@ -285,7 +309,11 @@
                 <v-col cols="12" sm="10" md="10">
                   <v-text-field
                     v-model="city"
-                    label="City*"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.location.cityLabel'
+                      ) + '*'
+                    "
                     :counter="20"
                     required
                     :error-messages="cityErrors"
@@ -309,11 +337,17 @@
                     :items="mapIconList"
                     :prepend-icon="'mdi-' + mapIcon"
                     append-outer-icon="mdi-information"
-                    label="Choose your map icon"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.location.iconLabel'
+                      )
+                    "
                     menu-props="auto"
                     @click:append-outer="
                       showHelp(
-                        'Choose an icon that most accurately symbolizes your store. This will be used to display it on the map.'
+                        $t(
+                          'storeProfile.editStoreDialog.tabs.location.iconHelp'
+                        )
                       )
                     "
                   >
@@ -328,8 +362,9 @@
                 </v-col>
                 <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
                   <v-alert type="info" text>
-                    You need to refresh the page to see your updated marker icon
-                    in the map.
+                    {{
+                      $t("storeProfile.editStoreDialog.tabs.location.iconInfo")
+                    }}
                   </v-alert>
                 </v-col>
               </v-row>
@@ -419,7 +454,7 @@
               when you are done.
             </v-alert>
           </div>
-          <v-card min-height="300px" class="ma-3">
+          <v-card height="50vh" class="ma-3">
             <v-container>
               <div class="text-left text-h5">
                 PayPal
@@ -613,8 +648,12 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="cancel">Close</v-btn>
-        <v-btn color="primary" dark @click="submitEditStore">Save</v-btn>
+        <v-btn color="primary" text @click="cancel">
+          {{ $t("storeProfile.editStoreDialog.actions.closeButton") }}
+        </v-btn>
+        <v-btn color="primary" dark @click="submitEditStore">
+          {{ $t("storeProfile.editStoreDialog.actions.saveButton") }}
+        </v-btn>
       </v-card-actions>
     </v-card>
     <v-overlay v-model="overlay">
@@ -910,6 +949,7 @@ export default {
     },
     ...mapState("account", ["user", "loggedIn"]),
   },
+
   methods: {
     ...mapActions("stores", ["createStore"]),
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
@@ -946,7 +986,7 @@ export default {
     },
 
     showHelp(message) {
-      this.helpDialogTitle = "Title";
+      this.helpDialogTitle = "Map Icon";
       this.helpDialogMessage = message;
       this.showShowHelpDialog = true;
     },
