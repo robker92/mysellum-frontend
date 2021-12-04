@@ -6,6 +6,11 @@
     @keyup.enter="submitProduct()"
     @click:outside="cancel"
   >
+    <ShowHelpDialog
+      v-model="showShowHelpDialog"
+      :title="helpDialogTitle"
+      :text="helpDialogMessage"
+    />
     <v-card>
       <v-toolbar flat color="primary" dark>
         <v-toolbar-title v-if="!modeEdit">
@@ -23,7 +28,7 @@
         <span class="addProductHeadline">Create Product</span>
       </v-card-title> -->
       <v-card-text>
-        <v-container fluid class="ma-0 pa-0">
+        <v-container fluid class="ma-0 pa-0 mt-3">
           <v-row>
             <v-col>
               <v-text-field
@@ -231,6 +236,30 @@
                   </div>
                 </v-col>
               </v-row>
+              <v-row>
+                <!-- <v-col cols="12" xs="4" sm="4" md="3" lg="3" xl="3">
+                  <div class="text-body-2 text-left">
+                    {{ $t("storeProfile.productDialog.info.activeLabel") }}:
+                  </div>
+                </v-col>
+                <v-col> -->
+                <!-- <div v-if="datetimeEdited" class="text-body-2 text-left">
+                    {{ datetimeEdited }}
+                    :label="`Switch 1: ${switch1.toString()}`"
+                  </div> -->
+                <v-switch
+                  v-model="activeSwitch"
+                  :label="$t('storeProfile.productDialog.info.activeLabel')"
+                  append-icon="mdi-information"
+                  @click:append="
+                    showHelp(
+                      'Product Activation Switch',
+                      'Using the switch you can control if a product can be seen by customers.'
+                    )
+                  "
+                ></v-switch>
+                <!-- </v-col> -->
+              </v-row>
             </v-col>
           </v-row>
         </v-container>
@@ -261,15 +290,14 @@
 <script>
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
-
 import { mapActions } from "vuex";
-
-import { productService, storeService } from "../../services";
+import ShowHelpDialog from "../ShowHelpDialog";
+import { productService } from "../../services";
 
 import {
   getDateFormatDDMMYYYY,
   getTimeFromIsoDate,
-  getImgBuffer,
+  getImgBase64,
 } from "../../helpers";
 
 const file_size_validation = (file) => {
@@ -290,6 +318,10 @@ const checked = (value) => {
 
 export default {
   name: "AddProductDialog",
+
+  components: {
+    ShowHelpDialog: ShowHelpDialog,
+  },
 
   mixins: [validationMixin],
 
@@ -345,6 +377,12 @@ export default {
       checkboxesTouched: false,
       datetimeCreated: "",
       datetimeEdited: "",
+      activeSwitch: false,
+
+      // Help Dialog
+      showShowHelpDialog: false,
+      helpDialogTitle: "",
+      helpDialogMessage: "",
     };
   },
 
@@ -496,6 +534,7 @@ export default {
         //this.image = newVal.imgSrc;
         this.pickupCheckbox = newVal.pickup;
         this.deliveryCheckbox = newVal.delivery;
+        this.activeSwitch = newVal.active;
         // this.delivery = newVal.delivery;
         // this.pickup = newVal.pickup;
         this.quantityType = newVal.quantityType;
@@ -532,6 +571,7 @@ export default {
         quantityValue: this.quantityValue,
         delivery: this.deliveryCheckbox,
         pickup: this.pickupCheckbox,
+        active: this.activeSwitch,
         stockAmount: 1,
       };
 
@@ -548,7 +588,6 @@ export default {
           this.$emit("overlay-end");
           return;
         }
-        //payload["_id"] = response.product._id;
         this.$emit("add-new-product", response.product);
         this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully added!");
@@ -595,9 +634,9 @@ export default {
 
       let buffer;
       try {
-        // buffer = await getImgBuffer(file);
-        const result = await storeService.getImageBuffer(this.image);
-        buffer = result.buffer;
+        buffer = await getImgBase64(file);
+        // const result = await storeService.getImageBuffer(this.image);
+        // buffer = result.buffer;
         // console.log(buffer);
       } catch (error) {
         return;
@@ -609,6 +648,12 @@ export default {
         originalname: file.name,
         name: file.name,
       };
+    },
+
+    showHelp(title, message) {
+      this.helpDialogTitle = title;
+      this.helpDialogMessage = message;
+      this.showShowHelpDialog = true;
     },
 
     cancel() {
@@ -626,7 +671,10 @@ export default {
       this.radioGroup = "delivery";
       this.pickupCheckbox = false;
       this.deliveryCheckbox = false;
+      this.activeSwitch = false;
       this.modeEdit = false;
+      this.helpDialogTitle = "";
+      this.helpDialogMessage = "";
       this.$emit("productToEdit-to-null");
       this.show = false;
     },
@@ -641,6 +689,7 @@ export default {
       this.quantityType = "Kilograms";
       this.quantityValue = "2";
       this.deliveryCheckbox = true;
+      this.activeSwitch = true;
     },
 
     printData() {
@@ -653,6 +702,7 @@ export default {
       console.log(this.quantityValue);
       console.log(this.pickupCheckbox);
       console.log(this.deliveryCheckbox);
+      console.log(this.activeSwitch);
     },
   },
 };

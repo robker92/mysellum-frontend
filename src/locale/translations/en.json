@@ -351,7 +351,8 @@
             "info": {
                 "headline": "Info",
                 "createdLabel": "Created",
-                "editedLabel": "Edited"
+                "editedLabel": "Edited",
+                "activeLabel": "Active"
             },
             "actions": {
                 "saveButton": "Save",
@@ -411,6 +412,13 @@
                     "iconLabel": "Choose your map icon",
                     "iconInfo": "You need to refresh the page to see your updated marker icon in the map.",
                     "iconHelp": "Choose an icon that most accurately symbolizes your store. This will be used to display it on the map."
+                },
+                "contact": {
+                    "headline": "Contact",
+                    "info": "Edit your store's contact information.",
+                    "phoneNumberLabel": "Phone Number",
+                    "emailLabel": "E-Mail Address",
+                    "websiteLabel": "Website"
                 },
                 "openingHours": {
                     "headline": "Opening Hours"

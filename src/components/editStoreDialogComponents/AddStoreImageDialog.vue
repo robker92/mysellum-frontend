@@ -93,7 +93,7 @@
 import { storeService } from "../../services";
 import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
-import { getImgBuffer } from "../../helpers";
+import { getImgBase64 } from "../../helpers";
 
 //Custom validator
 // TODO custom validator for image dimensions
@@ -177,28 +177,24 @@ export default {
         return;
       }
 
-      let response = "";
+      let buffer;
       try {
-        const internBuffer = await getImgBuffer(this.file);
-        console.log(internBuffer.substr(0, 50));
-        console.log(Buffer.from(internBuffer, "base64"));
-        console.log(
-          Buffer.from(
-            internBuffer.substr("data:image/jpeg;base64,".length),
-            "base64"
-          )
-        );
-
-        response = await storeService.getImageBuffer(this.file);
-        console.log(response.buffer.substr(0, 50));
-        // response = await storeService.getImageUrl(this.file);
+        console.log(this.file);
+        buffer = await getImgBase64(this.file);
+        console.log(buffer.substr(0, 50));
+        // console.log(Buffer.from(buffer, "base64"));
+        // console.log(
+        //   Buffer.from(buffer.substr("data:image/jpeg;base64,".length), "base64")
+        // );
+        // response = await storeService.getImageBuffer(this.file);
+        // console.log(response.buffer.substr(0, 50));
       } catch (error) {
         console.log(error);
         return;
       }
       // console.log(response);
       const data = {
-        src: response.buffer,
+        src: buffer,
         size: this.file.size,
         title: this.imageTitle,
         name: this.file.name,
@@ -216,36 +212,36 @@ export default {
       this.show = false;
     },
 
-    async submitImage2() {
-      if (!this.file) {
-        return;
-      }
+    // async submitImage2() {
+    //   if (!this.file) {
+    //     return;
+    //   }
 
-      let buffer;
-      try {
-        buffer = await getImgBuffer(this.file);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
+    //   let buffer;
+    //   try {
+    //     buffer = await getImgBuffer(this.file);
+    //   } catch (error) {
+    //     console.log(error);
+    //     return;
+    //   }
 
-      const data = {
-        src: buffer,
-        size: this.file.size,
-        title: this.imageTitle,
-        name: this.file.name,
-        originalName: this.file.originalName,
-      };
-      console.log(data);
+    //   const data = {
+    //     src: buffer,
+    //     size: this.file.size,
+    //     title: this.imageTitle,
+    //     name: this.file.name,
+    //     originalName: this.file.originalName,
+    //   };
+    //   console.log(data);
 
-      this.$emit("add-store-image", data);
+    //   this.$emit("add-store-image", data);
 
-      this.imageTitle = "";
-      this.url = "";
-      this.file = null;
-      this.$v.$reset();
-      this.show = false;
-    },
+    //   this.imageTitle = "";
+    //   this.url = "";
+    //   this.file = null;
+    //   this.$v.$reset();
+    //   this.show = false;
+    // },
 
     cancel() {
       this.$v.$reset();

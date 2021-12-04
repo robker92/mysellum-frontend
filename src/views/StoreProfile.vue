@@ -754,14 +754,10 @@
               {{ $t("storeProfile.contactHeadline") }}
             </v-card-title>
             <v-card-text class="text-body-1 text-left ml-2 black--text">
-              <div>
-                E-Mail: producer@gmx.de
-              </div>
-              <div>
-                Tel.num.: 0123 456789
-              </div>
-              <div class="mt-3">
-                <v-btn color="primary" @click="console.log('hi1')">
+              <div>E-Mail: producer@gmx.de {{ contactData.emailAddress }}</div>
+              <div>Tel.num.: 0123 456789 {{ contactData.phoneNumber }}</div>
+              <div v-if="contactData.website" class="mt-3">
+                <v-btn color="primary" @click="linkToProducerWebsite()">
                   <v-icon>mdi-web</v-icon>
                 </v-btn>
               </div>
@@ -863,6 +859,7 @@ export default {
       mapData: {},
       profileData: {},
       shippingData: {},
+      contactData: {},
       openingHoursData: {},
       avgRating: 0,
       addButtonHidden: false,
@@ -1143,6 +1140,7 @@ export default {
     this.mapData = responseStore.mapData;
     this.profileData = responseStore.profileData;
     this.shippingData = responseStore.shipping;
+    this.contactData = responseStore.contact;
     this.openingHoursData = responseStore.openingHours;
     this.tagsString = this.dataset.profileData.tags.join(", ");
     // console.log(JSON.stringify(responseStore.openingHours));
@@ -1302,6 +1300,10 @@ export default {
       this.shippingData.method = data.shippingMethod;
       this.shippingData.costs = data.shippingCosts;
       this.shippingData.thresholdValue = data.shippingThresholdValue;
+
+      this.contactData.emailAddress = data.emailAddress;
+      this.contactData.phoneNumber = data.phoneNumber;
+      this.contactData.website = data.website;
 
       this.openingHoursData = data.openingHours;
       // this.dataset.openingHours = data.openingHours;
@@ -1481,6 +1483,10 @@ export default {
       }
       this.addSuccessSnackbar("Store was added to favorites.");
       return;
+    },
+
+    linkToProducerWebsite() {
+      window.open("www.google.de", "_blank");
     },
 
     print() {

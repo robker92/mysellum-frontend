@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" max-width="85%" @click:outside="cancel">
+  <v-dialog
+    v-model="show"
+    max-width="85%"
+    :fullscreen="$vuetify.breakpoint.xsOnly"
+    @click:outside="cancel"
+  >
     <v-card>
       <v-toolbar flat color="primary" dark>
         <v-toolbar-title>
@@ -22,6 +27,12 @@
             mdi-map-marker-radius
           </v-icon>
           {{ $t("storeProfile.editStoreDialog.tabs.location.headline") }}
+        </v-tab>
+        <v-tab class="text-left">
+          <v-icon left>
+            mdi-card-account-phone
+          </v-icon>
+          {{ $t("storeProfile.editStoreDialog.tabs.contact.headline") }}
         </v-tab>
         <v-tab class="text-left">
           <v-icon left>
@@ -260,11 +271,7 @@
         <v-tab-item>
           <div class="ma-3">
             <v-alert type="info" text dense class="text-left">
-              {{
-                $t(
-                  "storeProfile.editStoreDialog.tabs.location.info"
-                )
-              }}
+              {{ $t("storeProfile.editStoreDialog.tabs.location.info") }}
             </v-alert>
           </div>
           <!-- <div class="text-h6 text-left ml-3">Store Address:</div> -->
@@ -338,9 +345,7 @@
                     :prepend-icon="'mdi-' + mapIcon"
                     append-outer-icon="mdi-information"
                     :label="
-                      $t(
-                        'storeProfile.editStoreDialog.tabs.location.iconLabel'
-                      )
+                      $t('storeProfile.editStoreDialog.tabs.location.iconLabel')
                     "
                     menu-props="auto"
                     @click:append-outer="
@@ -366,6 +371,52 @@
                       $t("storeProfile.editStoreDialog.tabs.location.iconInfo")
                     }}
                   </v-alert>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-tab-item>
+
+        <v-tab-item>
+          <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              {{ $t("storeProfile.editStoreDialog.tabs.contact.info") }}
+            </v-alert>
+          </div>
+          <v-card class="ma-3">
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="phoneNumber"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.contact.phoneNumberLabel'
+                      )
+                    "
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="emailAddress"
+                    :label="
+                      $t('storeProfile.editStoreDialog.tabs.contact.emailLabel')
+                    "
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="website"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.contact.websiteLabel'
+                      )
+                    "
+                  />
                 </v-col>
               </v-row>
             </v-container>
@@ -792,6 +843,11 @@ export default {
       lat: "",
       lng: "",
       //htmlText: "Hello <strong>this</strong> is a test", //Variable for Input Store Description
+
+      // Contact
+      website: "",
+      emailAddress: "",
+      phoneNumber: "",
 
       showShowHelpDialog: false,
       helpDialogTitle: "",

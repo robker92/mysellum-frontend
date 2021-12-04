@@ -1,4 +1,4 @@
-export async function getImgBuffer(file) {
+export async function getImgBase64(file) {
   return new Promise(function(resolve, reject) {
     let buffer;
     const reader = new FileReader();
