@@ -1,6 +1,10 @@
 <template>
   <v-container>
-    <v-container v-if="alreadyReset === false">
+    <v-container v-if="pageLoading === true">
+      <v-progress-circular indeterminate size="80"></v-progress-circular>
+    </v-container>
+
+    <v-container v-if="alreadyReset === false && pageLoading === false">
       <v-row
         v-if="passwordResetTokenValid === true"
         align="center"
@@ -48,7 +52,7 @@
                 <v-spacer />
                 <v-btn
                   color="primary"
-                  dark
+                  :dark="!buttonIsDisabled"
                   right
                   :disabled="buttonIsDisabled"
                   @click="resetPassword"
@@ -75,7 +79,7 @@
       </v-row>
     </v-container>
 
-    <v-container v-else>
+    <v-container v-if="alreadyReset === true && pageLoading === false">
       <v-row align="center">
         <v-spacer />
         <v-col>
@@ -147,6 +151,7 @@ export default {
       alreadyReset: false,
       passwordResetTokenValid: false, //check if token is valid
       overlay: false,
+      pageLoading: true,
     };
   },
 
@@ -202,6 +207,7 @@ export default {
     try {
       await userService.checkResetToken(this.resetToken);
       this.passwordResetTokenValid = true;
+      this.pageLoading = false;
     } catch (error) {
       //this.resetFailMessage = error.response.data.message;
     }
@@ -213,7 +219,7 @@ export default {
 
     async resetPassword() {
       this.overlay = true;
-      var data = {
+      let data = {
         token: this.resetToken,
         password: this.password,
       };

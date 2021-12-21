@@ -66,9 +66,9 @@
                   </v-col>
                 </v-row>
 
-                <div v-if="this.shoppingCart.length > 0">
+                <div v-if="shoppingCart.length > 0">
                   <ShoppingCartListItem
-                    v-for="(prod, index) in this.shoppingCart"
+                    v-for="(prod, index) in shoppingCart"
                     :key="index"
                     :product="prod[0]"
                     :amount="prod[1]"
@@ -77,7 +77,7 @@
                   />
                 </div>
 
-                <div v-if="this.loadedCart.length > 0">
+                <div v-if="loadedCart.length > 0">
                   <v-divider />
                   <div class="text-left text-h5 my-3">
                     Loaded Cart:
@@ -103,7 +103,7 @@
                     </v-row>
                   </v-alert>
                   <ShoppingCartListItem
-                    v-for="(prod, index) in this.loadedCart"
+                    v-for="(prod, index) in loadedCart"
                     :key="index"
                     :product="prod[0]"
                     :amount="prod[1]"
@@ -114,7 +114,7 @@
 
                 <v-divider />
                 <v-row
-                  v-if="this.shoppingCart.length > 0"
+                  v-if="shoppingCart.length > 0"
                   no-gutters
                   height="60px"
                   class="mt-2"
@@ -129,11 +129,7 @@
                   </v-col>
                 </v-row>
 
-                <v-row
-                  v-if="this.shoppingCart.length > 0"
-                  no-gutters
-                  height="60px"
-                >
+                <v-row v-if="shoppingCart.length > 0" no-gutters height="60px">
                   <v-col cols="12" sm="2" offset-sm="9" offset-md="9">
                     <div class="text-left text-body-1">Total costs:</div>
                   </v-col>
@@ -143,14 +139,27 @@
                     </div>
                   </v-col>
                 </v-row>
-                <v-row
-                  v-if="this.shoppingCart.length > 0"
-                  no-gutters
-                  height="60px"
-                >
+                <v-row v-if="shoppingCart.length > 0" no-gutters height="60px">
                   <v-spacer />
                   <div class="text-caption text-right">
                     incl. VAT
+                  </div>
+                </v-row>
+
+                <v-row
+                  v-if="
+                    shoppingCart.length > 0 &&
+                      deliveryAvailable === false &&
+                      pickupAvailable === false
+                  "
+                >
+                  <div class="mt-5">
+                    <v-alert type="info" text dense class="text-left">
+                      Unfortunately, the product combination you have chosen
+                      cannot be processed. Make sure that all products in your
+                      shopping cart are available for either delivery or
+                      collection.
+                    </v-alert>
                   </div>
                 </v-row>
 
@@ -158,12 +167,7 @@
                   <v-spacer />
                   <v-btn
                     color="primary"
-                    :disabled="
-                      this.shoppingCart.length > 0 &&
-                      this.loadedCart.length === 0
-                        ? false
-                        : true
-                    "
+                    :disabled="goToCheckoutDisabled"
                     @click="goToStep2"
                   >
                     To Checkout
@@ -177,6 +181,8 @@
             <v-card flat>
               <v-container>
                 <ShoppingCartCheckout
+                  :delivery-available="deliveryAvailable"
+                  :pickup-available="pickupAvailable"
                   @step2-continue-button="continueButtonStep2"
                 />
                 <v-card-actions class="mt-3">
@@ -310,6 +316,53 @@ export default {
           parseFloat(calculateTotalCartSum(this.shoppingCart)) +
           parseFloat(this.shippingCosts)
         ).toFixed(2);
+      },
+    },
+
+    deliveryAvailable: {
+      get() {
+        if (this.shoppingCart) {
+          for (var i = 0; i < this.shoppingCart.length; i++) {
+            if (this.shoppingCart[i][0].delivery === false) {
+              return false;
+            }
+          }
+          return true;
+        }
+        return false;
+      },
+    },
+
+    pickupAvailable: {
+      get() {
+        if (this.shoppingCart) {
+          for (var i = 0; i < this.shoppingCart.length; i++) {
+            if (this.shoppingCart[i][0].pickup === false) {
+              return false;
+            }
+          }
+          return true;
+        }
+        return false;
+      },
+    },
+
+    goToCheckoutDisabled: {
+      get() {
+        // check if at least one item is in shopping cart
+        if (this.shoppingCart.length === 0) {
+          return true;
+        }
+
+        // check if at least delivery or pickup is available
+        if (
+          this.pickupAvailable === false &&
+          this.deliveryAvailable === false
+        ) {
+          return true;
+        }
+
+        return false;
       },
     },
   },

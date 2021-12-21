@@ -107,7 +107,7 @@ async function addToShoppingCart(data) {
     });
   } catch (error) {
     console.log(error);
-    return;
+    throw error;
   }
   const shoppingCart = response.data.shoppingCart;
   const shippingCosts = response.data.shippingCosts;
@@ -123,7 +123,7 @@ async function removeFromShoppingCart(data) {
     });
   } catch (error) {
     console.log(error);
-    return;
+    throw error;
   }
   const shoppingCart = response.data.shoppingCart;
   const shippingCosts = response.data.shippingCosts;
@@ -146,7 +146,7 @@ async function updateShoppingCart(data) {
     );
   } catch (error) {
     console.log(error);
-    return;
+    throw error;
   }
 
   return { shippingCosts: response.shippingCosts };

@@ -297,6 +297,7 @@
         :shipping-data="shippingData"
         :paypal-signup-link="paypalSignupLink"
         :opening-hours-data="openingHoursData"
+        :contact-data="contactData"
         @edit-store="updateStoreData"
         @overlay-start="startLoadingOverlay"
         @overlay-end="endLoadingOverlay"
@@ -754,8 +755,17 @@
               {{ $t("storeProfile.contactHeadline") }}
             </v-card-title>
             <v-card-text class="text-body-1 text-left ml-2 black--text">
-              <div>E-Mail: producer@gmx.de {{ contactData.emailAddress }}</div>
-              <div>Tel.num.: 0123 456789 {{ contactData.phoneNumber }}</div>
+              <div>
+                E-Mail:
+                {{ contactData.phoneNumber ? contactData.phoneNumber : "/" }}
+              </div>
+              <div>
+                Phone:
+                {{ contactData.emailAddress ? contactData.emailAddress : "/" }}
+              </div>
+
+              <!-- <div>E-Mail: {{ contactData.emailAddress }}</div>
+              <div>Tel.num.: {{ contactData.phoneNumber }}</div> -->
               <div v-if="contactData.website" class="mt-3">
                 <v-btn color="primary" @click="linkToProducerWebsite()">
                   <v-icon>mdi-web</v-icon>
@@ -1197,6 +1207,7 @@ export default {
 
     redirectToGoogleMaps() {
       const url = this.googleMapsRouteUrl;
+      console.log(url);
       window.open(url, "_blank");
     },
     // https://prjct-frontend.azurewebsites.net/store-profile/60ba8b63114d260f4415f636?merchantId=60ba8b63114d260f4415f636&merchantIdInPayPal=5FHJ5NA2X94VG&permissionsGranted=true&consentStatus=true&productIntentId=addipmt&productIntentID=addipmt&isEmailConfirmed=true&accountStatus=BUSINESS_ACCOUNT
@@ -1301,9 +1312,9 @@ export default {
       this.shippingData.costs = data.shippingCosts;
       this.shippingData.thresholdValue = data.shippingThresholdValue;
 
-      this.contactData.emailAddress = data.emailAddress;
-      this.contactData.phoneNumber = data.phoneNumber;
-      this.contactData.website = data.website;
+      this.contactData.emailAddress = data.contact.emailAddress;
+      this.contactData.phoneNumber = data.contact.phoneNumber;
+      this.contactData.website = data.contact.website;
 
       this.openingHoursData = data.openingHours;
       // this.dataset.openingHours = data.openingHours;
@@ -1486,7 +1497,7 @@ export default {
     },
 
     linkToProducerWebsite() {
-      window.open("www.google.de", "_blank");
+      window.open("https://" + this.contactData.website, "_blank");
     },
 
     print() {

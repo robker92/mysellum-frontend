@@ -750,6 +750,7 @@ export default {
     paypalSignupLink: String,
     shippingData: Object,
     openingHoursData: Object,
+    contactData: Object,
   },
 
   validations: {
@@ -1030,7 +1031,14 @@ export default {
         this.shippingThresholdValue = this.shippingData.thresholdValue;
         this.openingHours = this.openingHoursData;
       }
-      //MapData
+      // Contact
+      console.log(this.contactData);
+      if (this.contactData) {
+        this.emailAddress = this.contactData.emailAddress ?? "";
+        this.phoneNumber = this.contactData.phoneNumber ?? "";
+        this.website = this.contactData.website ?? "";
+      }
+      // MapData
       if (this.mapData) {
         this.addressLine1 = this.mapData.address.addressLine1;
         this.postcode = this.mapData.address.postcode;
@@ -1086,6 +1094,11 @@ export default {
         shippingCosts: parseFloat(this.shippingCosts),
         shippingThresholdValue: parseFloat(this.shippingThresholdValue),
         openingHours: this.openingHours,
+        contact: {
+          emailAddress: this.emailAddress,
+          phoneNumber: this.phoneNumber,
+          website: this.website,
+        },
       };
 
       //this.$emit("overlay-start");

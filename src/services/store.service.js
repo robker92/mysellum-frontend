@@ -16,7 +16,9 @@ export const storeService = {
 async function getSingleStore(storeId) {
   let response;
   try {
-    response = await baseClient.get(`/stores/${storeId}`);
+    response = await baseClient.get(`/stores/${storeId}`, {
+      headers: authHeader(),
+    });
   } catch (error) {
     errorHandler(error, "getSingleStore");
     throw error;

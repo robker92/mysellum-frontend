@@ -16,8 +16,28 @@
           writeOrderInfoToState();
         "
       >
-        <v-radio :label="`Delivery`" value="delivery" />
-        <v-radio :label="`Pickup`" value="pickup" :disabled="false" />
+        <v-radio
+          :label="
+            `Delivery ${
+              !deliveryAvailable
+                ? '(not available for all products in your cart)'
+                : ''
+            }`
+          "
+          value="delivery"
+          :disabled="!deliveryAvailable"
+        />
+        <v-radio
+          :label="
+            `Pickup ${
+              !pickupAvailable
+                ? '(not available for all products in your cart)'
+                : ''
+            }`
+          "
+          value="pickup"
+          :disabled="!pickupAvailable"
+        />
       </v-radio-group>
     </v-container>
 
@@ -355,6 +375,11 @@ export default {
 
   mixins: [validationMixin],
 
+  props: {
+    pickupAvailable: Boolean,
+    deliveryAvailable: Boolean,
+  },
+
   validations: {
     shippingFirstName: { required, maxLength: maxLength(20) },
     shippingLastName: { required, maxLength: maxLength(20) },
@@ -581,17 +606,17 @@ export default {
     checkRadioButtons() {
       return this.radioGroupPayment != "" ? false : true;
     },
-    buttonIsDisabled() {
-      if (
-        this.checkInputFieldsValid
-        // && this.checkRadioButtons == false
-      ) {
-        this.$emit("enable-step2-continue-button");
-        return false;
-      } else {
-        return true;
-      }
-    },
+    // buttonIsDisabled() {
+    //   if (
+    //     this.checkInputFieldsValid
+    //     // && this.checkRadioButtons == false
+    //   ) {
+    //     this.$emit("enable-step2-continue-button");
+    //     return false;
+    //   } else {
+    //     return true;
+    //   }
+    // },
   },
 
   methods: {
