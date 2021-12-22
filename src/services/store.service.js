@@ -39,7 +39,10 @@ async function getStoreProducts(data) {
   }
   // console.log(`/store-products/${storeId}?${searchSuffix}${priceSuffix}`);
   const response = await baseClient.get(
-    `/stores/${storeId}/products?${searchSuffix}${priceSuffix}`
+    `/stores/${storeId}/products?${searchSuffix}${priceSuffix}`,
+    {
+      headers: authHeader(),
+    }
   );
   return response.data.products;
 }

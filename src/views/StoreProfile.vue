@@ -27,6 +27,7 @@
       <div v-if="checkForStoreOwner" class="mt-3">&nbsp;</div>
       <span v-if="checkForStoreOwner" class="mb-3"> </span>
 
+      <!-- OPEN AND CLOSED BADGE -->
       <v-row class="mb-3 mx-1">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -60,6 +61,7 @@
 
         <v-divider vertical />
 
+        <!-- pickup AND delivery BADGE -->
         <v-tooltip v-if="dataset.pickup" bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-chip v-bind="attrs" class="ma-0 ml-3 primary" outlined v-on="on">
@@ -212,7 +214,7 @@
         </v-speed-dial>
       </v-row>
 
-      <!--  -->
+      <!-- IMAGES -->
       <v-row v-if="dataset" align="start">
         <v-col cols="12" xs="1" sm="2" md="2" lg="1" xl="1">
           <div
@@ -271,17 +273,20 @@
           </v-card>
         </v-col>
         <v-col v-if="dataset" cols="12" xs="12" sm="12" md="12" lg="6" xl="6">
-          <div class="text-h4 mb-3">
+          <div class="text-h4 mb-3 text-left">
             {{ dataset.profileData.title }}
           </div>
-          <v-chip
-            v-for="(tag, index) in dataset.profileData.tags"
-            :key="index"
-            outlined
-            class="ma-1"
-            color="primary"
-            >{{ tag }}</v-chip
-          >
+          <div class="text-left">
+            <v-chip
+              v-for="(tag, index) in dataset.profileData.tags"
+              :key="index"
+              outlined
+              class="ma-1 text-left"
+              color="primary"
+            >
+              {{ tag }}
+            </v-chip>
+          </div>
           <div
             class="text-body-1 mt-4"
             v-html="dataset.profileData.description"

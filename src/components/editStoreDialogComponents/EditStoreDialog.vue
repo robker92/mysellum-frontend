@@ -1073,6 +1073,7 @@ export default {
     },
 
     submitEditStore: async function() {
+      console.log(this.editedHtmlText);
       let payload = {
         storeId: this.$route.params.id,
         title: this.storeTitle,

@@ -254,7 +254,7 @@
                   @click:append="
                     showHelp(
                       'Product Activation Switch',
-                      'Using the switch you can control if a product can be seen by customers.'
+                      'Using the switch you can control if a product can be seen and purchased by customers.'
                     )
                   "
                 ></v-switch>
