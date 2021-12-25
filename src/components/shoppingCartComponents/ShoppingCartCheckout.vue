@@ -78,10 +78,7 @@
                       label="First Name*"
                       required
                       dense
-                      @input="
-                        $v.shippingFirstName.$touch();
-                        checkValidation();
-                      "
+                      @input="$v.shippingFirstName.$touch()"
                       @blur="$v.shippingFirstName.$touch()"
                     />
                   </v-col>
@@ -93,10 +90,7 @@
                       label="Last Name*"
                       required
                       dense
-                      @input="
-                        $v.shippingLastName.$touch();
-                        checkValidation();
-                      "
+                      @input="$v.shippingLastName.$touch()"
                       @blur="$v.shippingLastName.$touch()"
                     />
                   </v-col>
@@ -110,10 +104,7 @@
                       label="Address Line 1*"
                       required
                       dense
-                      @input="
-                        $v.shippingAddressLine1.$touch();
-                        checkValidation();
-                      "
+                      @input="$v.shippingAddressLine1.$touch()"
                       @blur="$v.shippingAddressLine1.$touch()"
                     />
                   </v-col>
@@ -130,10 +121,7 @@
                       type="number"
                       maxlength="5"
                       oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
-                      @input="
-                        $v.shippingPostcode.$touch();
-                        checkValidation();
-                      "
+                      @input="$v.shippingPostcode.$touch()"
                       @blur="$v.shippingPostcode.$touch()"
                     />
                   </v-col>
@@ -144,10 +132,7 @@
                       label="City*"
                       required
                       dense
-                      @input="
-                        $v.shippingCity.$touch();
-                        checkValidation();
-                      "
+                      @input="$v.shippingCity.$touch()"
                       @blur="$v.shippingCity.$touch()"
                     />
                   </v-col>
@@ -171,10 +156,7 @@
                         label="First Name*"
                         required
                         dense
-                        @input="
-                          $v.billingFirstName.$touch();
-                          checkValidation();
-                        "
+                        @input="$v.billingFirstName.$touch()"
                         @blur="$v.billingFirstName.$touch()"
                       />
                     </v-col>
@@ -186,10 +168,7 @@
                         label="Last Name*"
                         required
                         dense
-                        @input="
-                          $v.billingLastName.$touch();
-                          checkValidation();
-                        "
+                        @input="$v.billingLastName.$touch()"
                         @blur="$v.billingLastName.$touch()"
                       />
                     </v-col>
@@ -203,10 +182,7 @@
                         label="Address Line 1*"
                         required
                         dense
-                        @input="
-                          $v.billingAddressLine1.$touch();
-                          checkValidation();
-                        "
+                        @input="$v.billingAddressLine1.$touch()"
                         @blur="$v.billingAddressLine1.$touch()"
                       />
                     </v-col>
@@ -223,10 +199,7 @@
                         type="number"
                         maxlength="5"
                         oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
-                        @input="
-                          $v.billingPostcode.$touch();
-                          checkValidation();
-                        "
+                        @input="$v.billingPostcode.$touch()"
                         @blur="$v.billingPostcode.$touch()"
                       />
                     </v-col>
@@ -237,10 +210,7 @@
                         label="City*"
                         required
                         dense
-                        @input="
-                          $v.billingCity.$touch();
-                          checkValidation();
-                        "
+                        @input="$v.billingCity.$touch()"
                         @blur="$v.billingCity.$touch()"
                       />
                     </v-col>
@@ -271,10 +241,7 @@
                   label="First Name*"
                   required
                   dense
-                  @input="
-                    $v.billingFirstName.$touch();
-                    checkValidation();
-                  "
+                  @input="$v.billingFirstName.$touch()"
                   @blur="$v.billingFirstName.$touch()"
                 />
               </v-col>
@@ -286,10 +253,7 @@
                   label="Last Name*"
                   required
                   dense
-                  @input="
-                    $v.billingLastName.$touch();
-                    checkValidation();
-                  "
+                  @input="$v.billingLastName.$touch()"
                   @blur="$v.billingLastName.$touch()"
                 />
               </v-col>
@@ -303,10 +267,7 @@
                   label="Address Line 1*"
                   required
                   dense
-                  @input="
-                    $v.billingAddressLine1.$touch();
-                    checkValidation();
-                  "
+                  @input="$v.billingAddressLine1.$touch()"
                   @blur="$v.billingAddressLine1.$touch()"
                 />
               </v-col>
@@ -323,10 +284,7 @@
                   type="number"
                   maxlength="5"
                   oninput="if(Number(this.value.length) > Number(this.maxLength)) this.value = this.value.substring(0,this.value.length-1);"
-                  @input="
-                    $v.billingPostcode.$touch();
-                    checkValidation();
-                  "
+                  @input="$v.billingPostcode.$touch()"
                   @blur="$v.billingPostcode.$touch()"
                 />
               </v-col>
@@ -337,10 +295,7 @@
                   label="City*"
                   required
                   dense
-                  @input="
-                    $v.billingCity.$touch();
-                    checkValidation();
-                  "
+                  @input="$v.billingCity.$touch()"
                   @blur="$v.billingCity.$touch()"
                 />
               </v-col>
@@ -412,13 +367,60 @@ export default {
       billingAddressLine1: "",
       billingPostcode: "",
       billingCity: "",
-
-      //Credit Card Payment
-      creditCardName: "",
-      creditCardNumber: "",
-      creditCardExpiryDate: "",
-      creditCardSecurityCode: "",
     };
+  },
+
+  watch: {
+    shippingFirstName: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    shippingLastName: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    shippingAddressLine1: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    shippingPostcode: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    shippingCity: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    billingFirstName: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    billingLastName: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    billingAddressLine1: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    billingPostcode: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
+    billingCity: function(newVal) {
+      if (newVal) {
+        this.inputChangedRoutine();
+      }
+    },
   },
 
   async mounted() {
@@ -442,7 +444,8 @@ export default {
 
       // this.emptyOrderDataSuccess();
       this.writeOrderInfoToState();
-      this.checkValidation();
+      // this.checkValidation();
+
       return;
     }
   },
@@ -536,39 +539,6 @@ export default {
       return errors;
     },
 
-    checkInputFieldsValid() {
-      if (this.radioGroupDelivery === "delivery") {
-        if (this.checkShippingAddressValid) {
-          // shipping address valid
-          if (this.radioGroupAddress === "sameBillingAddress") {
-            return true;
-          } else if (
-            //Billing
-            this.checkBillingAddressValid
-          ) {
-            // billing address is also valid
-            return true;
-          } else {
-            // not valid
-            return false;
-          }
-          //Information valid
-        } else {
-          // not valid
-          return false;
-        }
-      } else {
-        if (
-          //Billing
-          this.checkBillingAddressValid
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    },
-
     checkShippingAddressValid() {
       if (
         //Shipping
@@ -603,61 +573,61 @@ export default {
       }
     },
 
+    checkInputFieldsValid() {
+      if (this.radioGroupDelivery === "delivery") {
+        if (this.checkShippingAddressValid) {
+          // shipping address valid
+          if (this.radioGroupAddress === "sameBillingAddress") {
+            return true;
+          } else if (
+            //Billing
+            this.checkBillingAddressValid
+          ) {
+            // billing address is also valid
+            return true;
+          } else {
+            // not valid
+            return false;
+          }
+        } else {
+          // not valid
+          return false;
+        }
+      } else {
+        if (
+          //Billing
+          this.checkBillingAddressValid
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
+
+    checkValidation() {
+      if (this.checkInputFieldsValid) {
+        this.$emit("step2-continue-button", false);
+        return false;
+      } else {
+        console.log(`hi`);
+        this.writeOrderInfoToState();
+        this.$emit("step2-continue-button", true);
+        return true;
+      }
+    },
+
     checkRadioButtons() {
       return this.radioGroupPayment != "" ? false : true;
     },
-    // buttonIsDisabled() {
-    //   if (
-    //     this.checkInputFieldsValid
-    //     // && this.checkRadioButtons == false
-    //   ) {
-    //     this.$emit("enable-step2-continue-button");
-    //     return false;
-    //   } else {
-    //     return true;
-    //   }
-    // },
   },
 
   methods: {
     ...mapActions("order", ["saveOrderDataToState", "emptyOrderDataSuccess"]),
 
-    fill() {
-      this.shippingFirstName = "Test";
-      this.shippingLastName = "Customer";
-      this.shippingAddressLine1 = "Elias-Holl-Straße 54";
-      this.shippingPostcode = "85049";
-      this.shippingCity = "Ingolstadt";
-
-      //Billing Address
-      this.billingFirstName = "Test";
-      this.billingLastName = "Customer";
-      this.billingAddressLine1 = "Elias-Holl-Straße 54";
-      this.billingPostcode = "85049";
-      this.billingCity = "Ingolstadt";
-    },
-    print() {
-      console.log(this.radioGroupAddress);
-      console.log(this.radioGroupPayment);
-      console.log(this.user);
-      console.log(this.loggedIn);
-      console.log(this.shippingAddressLine1);
-    },
-    printTest(value) {
-      console.log("hi");
-      this.shippingAddressLine1 = value;
-    },
-
-    checkValidation() {
-      if (
-        this.checkInputFieldsValid
-        // && this.checkRadioButtons == false
-      ) {
-        this.$emit("step2-continue-button", false);
-      } else {
-        this.writeOrderInfoToState();
-        this.$emit("step2-continue-button", true);
-      }
+    inputChangedRoutine() {
+      this.writeOrderInfoToState();
+      // this.checkValidation();
     },
 
     getShippingAddress() {

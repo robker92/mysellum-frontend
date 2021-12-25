@@ -99,7 +99,10 @@
           {{ numberCharactersInEditor }} / {{ storeDescriptionMax }}
         </div>
       </div>
-      <div v-if="$v.storeDescription.$invalid" class="text-body-2 red--text">
+      <div
+        v-if="storeDescriptionErrors.length > 0"
+        class="text-body-2 red--text"
+      >
         {{ storeDescriptionErrors[0] }}
       </div>
     </v-container>
@@ -123,7 +126,8 @@ export default {
       editedHtmlText: "", // Var to save the changed description
       storeDescription: "", // Var which holds the init description value
       storeDescriptionMin: 100,
-      storeDescriptionMax: 1000,
+      storeDescriptionMax: 10000,
+      storeDescriptionErrors: [],
     };
   },
   watch: {
@@ -142,25 +146,30 @@ export default {
     storeDescription: {
       required,
       minLength: minLength(100),
-      maxLength: maxLength(1000),
+      maxLength: maxLength(10000),
     },
   },
 
   computed: {
     numberCharactersInEditor: {
       get() {
-        // if (this.show == true) {
         return new DOMParser().parseFromString(this.editedHtmlText, "text/html")
           .body.innerText.length;
-        // } else {
-        //   return 0;
-        // }
       },
     },
-    storeDescriptionErrors() {
-      const errors = [];
-      if (this.numberCharactersInEditor > 1000) {
-        errors.push(
+  },
+
+  methods: {
+    onInput(e) {
+      this.editedHtmlText = this.$sanitize(e.target.innerHTML);
+      this.validateTextfield();
+      this.$emit("description-text-changed", this.editedHtmlText);
+    },
+
+    validateTextfield() {
+      this.storeDescriptionErrors = [];
+      if (this.numberCharactersInEditor > this.storeDescriptionMax) {
+        this.storeDescriptionErrors.push(
           `The store description must be at most ${this.storeDescriptionMax} characters long.`
         );
       }
@@ -168,31 +177,20 @@ export default {
         this.numberCharactersInEditor < 100 &&
         this.numberCharactersInEditor > 0
       ) {
-        errors.push(
+        this.storeDescriptionErrors.push(
           `The store description must be at least ${this.storeDescriptionMin} characters long.`
         );
       }
       if (this.numberCharactersInEditor === 0) {
-        errors.push("The store description is required.");
+        this.storeDescriptionErrors.push("The store description is required.");
       }
-      if (errors.length > 0) {
+      if (this.storeDescriptionErrors.length > 0) {
         this.$emit("description-invalid");
       }
-      if (errors.length === 0) {
+      if (this.storeDescriptionErrors.length === 0) {
         this.$emit("description-valid");
       }
-      return errors;
-    },
-  },
-
-  methods: {
-    onInput(e) {
-      //console.log(e.target.innerHTML);
-      this.editedHtmlText = this.$sanitize(e.target.innerHTML);
-      // console.log(this.editedHtmlText);
-      // this.$sanitize(e.target.innerHTML);
-      this.$v.storeDescription.$touch();
-      this.$emit("description-text-changed", this.editedHtmlText);
+      console.log(this.storeDescriptionErrors);
     },
 
     setFormat(command) {

@@ -394,6 +394,9 @@
                         'storeProfile.editStoreDialog.tabs.contact.phoneNumberLabel'
                       )
                     "
+                    :error-messages="phoneNumberErrors"
+                    @input="$v.phoneNumber.$touch()"
+                    @blur="$v.phoneNumber.$touch()"
                   />
                 </v-col>
               </v-row>
@@ -404,6 +407,9 @@
                     :label="
                       $t('storeProfile.editStoreDialog.tabs.contact.emailLabel')
                     "
+                    :error-messages="emailErrors"
+                    @input="$v.email.$touch()"
+                    @blur="$v.email.$touch()"
                   />
                 </v-col>
               </v-row>
@@ -525,38 +531,6 @@
                   <v-icon right>mdi-link-variant</v-icon>
                 </v-btn>
               </v-row>
-              <!-- <v-btn
-                text
-                href="https://www.paypal.com/us/webapps/mpp/security/seller-protection"
-                target="_blank"
-                class="no-uppercase"
-              >
-                Sign-up to Paypal
-              </v-btn> -->
-
-              <!-- <v-hover v-slot="{ hover }">
-                <v-card
-                  max-width="500px"
-                  max-height="100px"
-                  :elevation="hover ? 8 : 0"
-                  :class="{ 'on-hover': hover }"
-                  flat
-                  @click="signupPaypal"
-                >
-                  <v-container>
-                    <v-row align="center" class="ma-1">
-                      <v-img
-                        max-height="70"
-                        max-width="90"
-                        :src="paypalImageURL"
-                      ></v-img>
-                      <div class="ml-3">
-                        Sign-up to Paypal
-                      </div>
-                    </v-row>
-                  </v-container>
-                </v-card>
-              </v-hover> -->
               <v-row align="center" class="ma-3">
                 <div class="text-left text-body-1">
                   Afterwards, you can connect your PayPal account to your
@@ -633,6 +607,9 @@
                     suffix="€"
                     class="inputShippingThresholdValue"
                     type="number"
+                    :error-messages="shippingThresholdValueErrors"
+                    @input="$v.shippingThresholdValue.$touch()"
+                    @blur="$v.shippingThresholdValue.$touch()"
                   >
                   </v-text-field>
                   <v-text-field
@@ -641,6 +618,10 @@
                     suffix="€"
                     class="inputShippingCosts"
                     type="number"
+                    required
+                    :error-messages="shippingCostsErrors"
+                    @input="$v.shippingCosts.$touch()"
+                    @blur="$v.shippingCosts.$touch()"
                   >
                   </v-text-field>
                 </v-card>
@@ -702,7 +683,12 @@
         <v-btn color="primary" text @click="cancel">
           {{ $t("storeProfile.editStoreDialog.actions.closeButton") }}
         </v-btn>
-        <v-btn color="primary" dark @click="submitEditStore">
+        <v-btn
+          color="primary"
+          :dark="!editButtonDisabled"
+          :disabled="editButtonDisabled"
+          @click="submitEditStore"
+        >
           {{ $t("storeProfile.editStoreDialog.actions.saveButton") }}
         </v-btn>
       </v-card-actions>
@@ -714,7 +700,13 @@
 </template>
 
 <script>
-import { required, maxLength, minLength } from "vuelidate/lib/validators";
+import {
+  required,
+  maxLength,
+  minLength,
+  email,
+  numeric,
+} from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
 import AddStoreImageDialog from "./AddStoreImageDialog";
@@ -730,6 +722,16 @@ import { storeService } from "../../services";
 
 import { mapIconList } from "../../helpers";
 //console.log(mapIconList);
+
+const tagElementMaxLength = (tagArray) => {
+  console.log(tagArray);
+  for (const tag of tagArray) {
+    if (tag.length > 25) {
+      return false;
+    }
+  }
+  return true;
+};
 
 export default {
   name: "EditStoreDialog",
@@ -759,11 +761,6 @@ export default {
       minLength: minLength(10),
       maxLength: maxLength(100),
     },
-    // storeDescription: {
-    //   required,
-    //   minLength: minLength(100),
-    //   maxLength: maxLength(1000)
-    // },
     storeImages: {
       required,
       minLength: minLength(1),
@@ -772,13 +769,20 @@ export default {
     tagsComboBoxModel: {
       required,
       minLength: minLength(1),
-      maxLength: maxLength(15),
+      maxLength: maxLength(10),
+      tagElementMaxLength: tagElementMaxLength,
     },
+
+    // address
     city: { required, maxLength: maxLength(20) },
     postcode: { required },
     addressLine1: { required, maxLength: maxLength(40) },
     shippingCosts: { required },
     shippingThresholdValue: { required },
+
+    // contact
+    phoneNumber: { numeric, minLength: minLength(4), maxLength: maxLength(30) },
+    email: { email, minLength: minLength(6), maxLength: maxLength(30) },
   },
 
   data() {
@@ -796,7 +800,7 @@ export default {
       storeTitleMax: 100,
       storeSubtitle: "",
       storeDescription: "",
-      storeDescriptionInvalid: true,
+      storeDescriptionInvalid: false,
       editedHtmlText: "", //Variable for saved html text -> will be saved as store description in the end
       // storeDescriptionMin: 100,
       // storeDescriptionMax: 1000,
@@ -806,7 +810,7 @@ export default {
       imagesTextField: "",
       tagsComboBoxModel: [],
       tagsComboBoxModelMin: 1,
-      tagsComboBoxModelMax: 15,
+      tagsComboBoxModelMax: 10,
       tagsComboBoxItems: [
         "Food",
         "Meat",
@@ -905,7 +909,9 @@ export default {
         errors.push(
           `The store tag list must be at least ${this.tagsComboBoxModelMin} elements long.`
         );
-      !tagsArray.required && errors.push("A store tag is required.");
+      !tagsArray.tagElementMaxLength &&
+        errors.push(`A store tag list must be at most 25 characters long.`);
+      !tagsArray.required && errors.push("At least one store tag is required.");
       return errors;
     },
     storeImagesErrors() {
@@ -924,29 +930,6 @@ export default {
         errors.push("At least one store image is required.");
       return errors;
     },
-    // storeDescriptionErrors() {
-    //   const errors = [];
-    //   //var description = this.$v.storeDescription;
-    //   //if (!description.$dirty) return errors;
-    //   //console.log(this.numberCharactersInEditor);
-    //   if (this.numberCharactersInEditor > 1000) {
-    //     errors.push(
-    //       `The store description must be at most ${this.storeDescriptionMax} characters long.`
-    //     );
-    //   }
-    //   if (
-    //     this.numberCharactersInEditor < 100 &&
-    //     this.numberCharactersInEditor > 0
-    //   ) {
-    //     errors.push(
-    //       `The store description must be at least ${this.storeDescriptionMin} characters long.`
-    //     );
-    //   }
-    //   if (this.numberCharactersInEditor == 0) {
-    //     errors.push("The store description is required.");
-    //   }
-    //   return errors;
-    // },
     cityErrors() {
       const errors = [];
       if (!this.$v.city.$dirty) return errors;
@@ -970,7 +953,6 @@ export default {
         errors.push("The addressline must be at most 40 characters long.");
       return errors;
     },
-
     shippingCostsErrors() {
       const errors = [];
       if (!this.$v.shippingCosts.$dirty) return errors;
@@ -986,18 +968,49 @@ export default {
       return errors;
     },
 
+    phoneNumberErrors() {
+      const errors = [];
+      if (!this.$v.phoneNumber.$dirty) return errors;
+      !this.$v.phoneNumber.numeric &&
+        errors.push("Only numerics can be entered for the phone number.");
+      !this.$v.phoneNumber.maxLength &&
+        errors.push("The phonenumber must be at most 30 characters long.");
+      !this.$v.phoneNumber.minLength &&
+        errors.push("The entered phonenumber address is too short.");
+      return errors;
+    },
+
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.numeric &&
+        errors.push("Only a valid email can be entered.");
+      !this.$v.email.maxLength &&
+        errors.push("The email address must be at most 30 characters long.");
+      !this.$v.email.minLength &&
+        errors.push("The entered email address is too short.");
+      return errors;
+    },
+
     editButtonDisabled() {
       if (this.show === true) {
         if (
           this.storeDescriptionInvalid === false &&
-          // this.numberCharactersInEditor >= 100 &&
-          // this.numberCharactersInEditor <= 1000 &&
           !this.$v.storeTitle.$invalid &&
           !this.$v.storeImages.$invalid &&
-          !this.$v.tagsComboBoxModel.$invalid
+          !this.$v.tagsComboBoxModel.$invalid &&
+          !this.$v.city.$invalid &&
+          !this.$v.postcode.$invalid &&
+          !this.$v.addressLine1.$invalid &&
+          !this.$v.shippingCosts.$invalid &&
+          !this.$v.shippingThresholdValue.$invalid &&
+          !this.$v.email.$invalid &&
+          !this.$v.phoneNumber.$invalid
         ) {
+          // Button is not disabled
           return false;
         } else {
+          // Button is disabled
           return true;
         }
       } else {
@@ -1034,9 +1047,9 @@ export default {
       // Contact
       console.log(this.contactData);
       if (this.contactData) {
-        this.emailAddress = this.contactData.emailAddress ?? "";
-        this.phoneNumber = this.contactData.phoneNumber ?? "";
-        this.website = this.contactData.website ?? "";
+        this.emailAddress = this.contactData.emailAddress;
+        this.phoneNumber = this.contactData.phoneNumber;
+        this.website = this.contactData.website;
       }
       // MapData
       if (this.mapData) {
