@@ -264,9 +264,13 @@ export default {
       maxLength: maxLength(40),
       sameAsPassword: sameAs("password"),
     },
-    city: { required, maxLength: maxLength(20) },
+    city: { required, minLength: minLength(3), maxLength: maxLength(20) },
     postcode: { required },
-    addressLine1: { required, maxLength: maxLength(40) },
+    addressLine1: {
+      required,
+      minLength: minLength(3),
+      maxLength: maxLength(40),
+    },
     checkboxTermsConditions: {
       checked(val) {
         return val;
@@ -403,6 +407,8 @@ export default {
       if (!this.$v.city.$dirty) return errors;
       !this.$v.city.required &&
         errors.push(this.$t("registerDialog.cityFieldRequiredError"));
+      !this.$v.city.minLength &&
+        errors.push(this.$t("registerDialog.cityFieldMinLengthError"));
       !this.$v.city.maxLength &&
         errors.push(this.$t("registerDialog.cityFieldLengthError"));
       return errors;
@@ -419,6 +425,8 @@ export default {
       if (!this.$v.addressLine1.$dirty) return errors;
       !this.$v.addressLine1.required &&
         errors.push(this.$t("registerDialog.addressLine1FieldRequiredError"));
+      !this.$v.addressLine1.minLength &&
+        errors.push(this.$t("registerDialog.cityFieldMinLengthError"));
       !this.$v.addressLine1.maxLength &&
         errors.push(this.$t("registerDialog.addressLine1FieldLengthError"));
       return errors;

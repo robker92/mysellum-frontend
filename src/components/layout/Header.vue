@@ -274,7 +274,7 @@ import { mapState, mapActions } from "vuex";
 import RegisterDialog from "../RegisterDialog";
 import LoginDialog from "../LoginDialog";
 import CreateStoreDialog from "../CreateStoreDialog";
-import SettingsDialog from "../SettingsDialog";
+import SettingsDialog from "../settingsDialogComponents/SettingsDialog";
 
 import LanguageSwitcher from "../LanguageSwitcher";
 import { MysellumColors } from "../../helpers";

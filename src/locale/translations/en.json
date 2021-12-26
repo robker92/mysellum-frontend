@@ -76,7 +76,8 @@
         "passwordConfFieldIdenticalError": "The passwords must be identical.",
 
         "addressLine1Field": "Address Line 1",
-        "addressLine1FieldRequiredError": "A address Line is required.",
+        "addressLine1FieldRequiredError": "A address line is required.",
+        "addressLine1FieldMinLengthError": "The address line must be at least 3 characters long.",
         "addressLine1FieldLengthError": "The address line must be at most 40 characters long.",
 
         "postcodeField": "Postcode",
@@ -84,6 +85,7 @@
 
         "cityField": "City",
         "cityFieldRequiredError": "A city is required.",
+        "cityFieldMinLengthError": "The city must be at least 3 characters long.",
         "cityFieldLengthError": "The city must be at most 40 characters long.",
         
         "checkboxTermsConditions": "Do you accept the terms and conditions?",
