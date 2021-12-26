@@ -354,10 +354,7 @@ export default {
     async logoutUser() {
       if (this.shoppingCart.length > 0) {
         try {
-          await this.updateCart({
-            email: this.user.email,
-            cart: this.shoppingCart,
-          });
+          await this.updateCart(this.shoppingCart);
         } catch (error) {
           console.log(error);
         }

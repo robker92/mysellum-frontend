@@ -131,14 +131,13 @@ async function removeFromShoppingCart(data) {
   return { shoppingCart, shippingCosts };
 }
 
-async function updateShoppingCart(data) {
-  console.log(data.cart);
+async function updateShoppingCart(inputShoppingCart) {
   let response;
   try {
     response = await baseClient.patch(
-      `/cart/update/${data.email}`,
+      `/cart/update`,
       {
-        shoppingCart: data.cart,
+        shoppingCart: inputShoppingCart,
       },
       {
         headers: authHeader(),
@@ -149,7 +148,13 @@ async function updateShoppingCart(data) {
     throw error;
   }
 
-  return { shippingCosts: response.shippingCosts };
+  const shoppingCart = response.data.shoppingCart;
+  const shippingCosts = response.data.shippingCosts;
+
+  return {
+    shoppingCart,
+    shippingCosts,
+  };
 }
 
 async function resendVerificationEmail(data) {

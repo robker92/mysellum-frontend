@@ -28,6 +28,14 @@
       </ul>
     </div> -->
 
+    <div>
+      <v-card class="my-5" color="primary" height="350px" elevation="12" shaped>
+        <v-card-title class="white--text"
+          >So funktioniert MySellum
+        </v-card-title>
+      </v-card>
+    </div>
+
     <div class="text-h4 mt-8">
       Reasons to buy via Mysellum
     </div>

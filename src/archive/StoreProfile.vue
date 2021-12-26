@@ -88,8 +88,8 @@
     <v-btn @click="printData">Print</v-btn>
     <EditStoreDialog
       v-model="showEditStoreDialog"
-      :profileData="profileData"
-      v-on:edit-store="submitEditStore"
+      :profile-data="profileData"
+      @edit-store="submitEditStore"
     />
     <div v-if="checkForStoreOwner">
       <v-btn
@@ -122,7 +122,7 @@
       <v-btn @click="showAddStoreImageDialog = true">Add Image</v-btn>
       <AddStoreImageDialog
         v-model="showAddStoreImageDialog"
-        v-on:add-store-image="addNewImageToArray"
+        @add-store-image="addNewImageToArray"
       />
       <v-text-field
         v-model="profileData.title"
@@ -149,11 +149,11 @@
       <h1 v-if="profileData">{{ profileData.title }}</h1>
       <p v-if="profileData">{{ profileData.description }}</p>
       <v-chip
+        v-for="(tag, index) in this.profileData.tags"
+        :key="index"
         outlined
         class="ma-1"
         color="primary"
-        v-for="(tag, index) in this.profileData.tags"
-        :key="index"
         >{{ tag }}</v-chip
       >
     </div>
@@ -188,7 +188,7 @@
         </v-col>
       </v-row>
     </v-container> -->
-    <v-card class="mx-auto" max-width="344" outlined v-if="dataset">
+    <v-card v-if="dataset" class="mx-auto" max-width="344" outlined>
       <v-card-title>Address</v-card-title>
       <v-card-text>
         {{ dataset.mapData.address.street }}
@@ -202,7 +202,7 @@
       </v-card-text>
     </v-card>
     <div v-if="dataset" height="400px">
-      <GoogleMapProfile :mapData="mapData" />
+      <GoogleMapProfile :map-data="mapData" />
     </div>
     <!-- <v-divider></v-divider>
     Average Rating:
@@ -255,11 +255,11 @@
 
     <AddProductDialog
       v-model="showProductDialog"
-      :productToEdit="productToEdit"
-      v-on:add-new-product="addNewProductToArray"
-      v-on:update-product="editExistingProduct"
-      v-on:productToEdit-to-null="nullifyProductToEdit"
-      v-on:change-productToEdit-title="changeTitleProductToEdit"
+      :product-to-edit="productToEdit"
+      @add-new-product="addNewProductToArray"
+      @update-product="editExistingProduct"
+      @productToEdit-to-null="nullifyProductToEdit"
+      @change-productToEdit-title="changeTitleProductToEdit"
     />
     <v-tabs color="indigo" right icons-and-text centered>
       <v-tab>
@@ -291,30 +291,30 @@
           <v-row>
             <v-btn
               v-if="checkForStoreOwner"
-              @click.stop="showProductDialogNew"
               color="pink"
               dark
               class="ml-3"
+              @click.stop="showProductDialogNew"
             >
               <v-icon left> mdi-plus </v-icon>Add Product</v-btn
             >
           </v-row>
           <v-row>
             <v-col
+              v-for="prod in productList"
+              :key="prod.productId"
               cols="12"
               xs="12"
               sm="6"
               md="4"
               lg="3"
               xl="2"
-              v-for="prod in productList"
-              v-bind:key="prod.productId"
             >
               <StoreProfileListItemNew
-                v-bind:product="prod"
-                v-bind:modifiable="checkForStoreOwner"
-                v-on:delete-product="removeProductFromArray"
-                v-on:edit-product="showProductDialogEdit"
+                :product="prod"
+                :modifiable="checkForStoreOwner"
+                @delete-product="removeProductFromArray"
+                @edit-product="showProductDialogEdit"
               />
             </v-col>
           </v-row>
@@ -346,13 +346,13 @@
           />
         </div>
         <v-btn
-          @click.stop="showReviewDialogNew"
           v-show="!addButtonHidden"
           absolute
           top
           right
           dark
           color="pink"
+          @click.stop="showReviewDialogNew"
         >
           <v-icon>mdi-plus</v-icon>
           Add Review
@@ -360,28 +360,28 @@
 
         <ReviewDialog
           v-model="showReviewDialog"
-          :reviewToEdit="reviewToEdit"
-          v-on:add-new-review="addNewReviewToArray"
-          v-on:update-review="editExistingReview"
-          v-on:reviewToEdit-to-null="nullifyReviewToEdit"
-          v-on:change-reviewToEdit-rating="changeRatingReviewToEdit"
-          v-on:change-reviewToEdit-text="changeTextReviewToEdit"
+          :review-to-edit="reviewToEdit"
+          @add-new-review="addNewReviewToArray"
+          @update-review="editExistingReview"
+          @reviewToEdit-to-null="nullifyReviewToEdit"
+          @change-reviewToEdit-rating="changeRatingReviewToEdit"
+          @change-reviewToEdit-text="changeTextReviewToEdit"
         />
         <v-divider></v-divider>
         <div v-if="profileData.reviews">
           <StoreProfileReviewListItem
             v-for="rvw in computedReviews"
-            v-bind:key="rvw.reviewId"
-            v-bind:review="rvw"
-            v-on:remove-review="removeReviewfromArray"
-            v-on:edit-review="showReviewDialogEdit"
+            :key="rvw.reviewId"
+            :review="rvw"
+            @remove-review="removeReviewfromArray"
+            @edit-review="showReviewDialogEdit"
           />
         </div>
         <div v-if="profileData.reviews">
           <v-pagination
+            v-if="profileData.reviews.length > reviewsPerPage"
             v-model="currentPage"
             :length="numOfPages"
-            v-if="profileData.reviews.length > reviewsPerPage"
           />
         </div>
       </v-tab-item>
@@ -425,7 +425,7 @@ export default {
     ReviewDialog: ReviewDialog,
     AddProductDialog: AddProductDialog,
     AddStoreImageDialog: AddStoreImageDialog,
-    GoogleMapProfile: GoogleMapProfile
+    GoogleMapProfile: GoogleMapProfile,
   },
 
   data() {
@@ -455,21 +455,21 @@ export default {
         "Chicken",
         "Beverages",
         "Wine",
-        "Beer"
+        "Beer",
       ],
       //Pagination
       currentPage: 1,
-      reviewsPerPage: 5
+      reviewsPerPage: 5,
     };
   },
 
   watch: {
-    overlay(val) {
-      val &&
-        setTimeout(() => {
-          this.overlay = false;
-        }, 1000);
-    }
+    // overlay(val) {
+    //   val &&
+    //     setTimeout(() => {
+    //       this.overlay = false;
+    //     }, 1000);
+    // }
   },
 
   computed: {
@@ -511,13 +511,13 @@ export default {
       },
       set(value) {
         this.profileData.tags = value;
-      }
+      },
     },
     avgRatingComputed: {
       get() {
         return Math.round(this.avgRating * 10) / 10;
-      }
-    }
+      },
+    },
 
     //...mapState("shoppingCart", ["shoppingCart", "counter"])
   },
@@ -554,7 +554,7 @@ export default {
         storeId: this.$route.params.id,
         title: this.profileData.title,
         description: this.profileData.description,
-        tags: this.profileData.tags
+        tags: this.profileData.tags,
       };
       var editResult = await storeService.editStore(payload);
       console.log(editResult);
@@ -565,7 +565,7 @@ export default {
         title: data.title,
         description: data.description,
         tags: data.tags,
-        images: data.images
+        images: data.images,
       };
       this.overlay = true;
       var editResult = await storeService.editStore(payload);
@@ -600,14 +600,14 @@ export default {
     },
     editExistingReview(updatedReview) {
       var index = this.profileData.reviews.findIndex(
-        rv => rv.reviewId === updatedReview.review.reviewId
+        (rv) => rv.reviewId === updatedReview.review.reviewId
       );
       this.profileData.reviews.splice(index, 1, updatedReview.review);
       this.avgRating = parseFloat(updatedReview.avgRating);
     },
     removeReviewfromArray(eventData) {
       var indexOfReview = this.profileData.reviews.findIndex(
-        r => r.reviewId === eventData.reviewId
+        (r) => r.reviewId === eventData.reviewId
       );
       this.profileData.reviews.splice(indexOfReview, 1);
       this.avgRating = parseFloat(eventData.avgRating);
@@ -642,7 +642,7 @@ export default {
     },
     removeProductFromArray(productId) {
       var indexOfProduct = this.profileData.products.findIndex(
-        r => r.productId === productId
+        (r) => r.productId === productId
       );
       this.profileData.products.splice(indexOfProduct, 1);
     },
@@ -654,12 +654,12 @@ export default {
     },
     editExistingProduct(updatedProduct) {
       var index = this.profileData.products.findIndex(
-        prd => prd.productId === updatedProduct.productId
+        (prd) => prd.productId === updatedProduct.productId
       );
       //replace array element
       this.profileData.products.splice(index, 1, updatedProduct);
-    }
-  }
+    },
+  },
 };
 </script>
 

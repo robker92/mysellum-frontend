@@ -15,10 +15,6 @@ export async function addProductLoggedOutHelper(
   quantity,
   currentCart
 ) {
-  // console.log(currentCart);
-  // return new Promise((resolve) => {
-  // delete the image to save localstorage space
-  delete product["imgSrc"];
   let arrayElement = [product, quantity];
 
   let found = false;
@@ -90,9 +86,13 @@ export async function shoppingCartMerge(cart1, cart2) {
       cart1.push(cart2[i]);
     }
   }
-  const response = await shippingService.getShippingCosts(cart1);
+  // const response = await shippingService.getShippingCosts(cart1);
 
-  return { shoppingCart: cart1, shippingCosts: response.shippingCosts };
+  return cart1;
+  // {
+  //   shoppingCart: cart1,
+  //   // shippingCosts: response.shippingCosts
+  // };
 }
 
 export async function shoppingCartUndoMerge(cart1, cart2) {
@@ -115,7 +115,11 @@ export async function shoppingCartUndoMerge(cart1, cart2) {
     }
   }
 
-  const response = await shippingService.getShippingCosts(cart1);
+  // const response = await shippingService.getShippingCosts(cart1);
 
-  return { shoppingCart: cart1, shippingCosts: response.shippingCosts };
+  return cart1;
+  // {
+  //   shoppingCart: cart1,
+  //   // shippingCosts: response.shippingCosts
+  // };
 }

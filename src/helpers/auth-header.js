@@ -1,7 +1,7 @@
 export function authHeader() {
   // let authToken = getCookie("authToken");
   const authToken = localStorage.getItem("authToken");
-  console.log(authToken);
+  // console.log(authToken);
   if (authToken != "") {
     return {
       //Authorization: 'Bearer ' + user.token,

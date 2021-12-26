@@ -283,6 +283,9 @@
           <!-- <v-icon>mdi-content-save</v-icon> -->
         </v-btn>
       </v-card-actions>
+      <v-overlay v-model="overlay">
+        <v-progress-circular indeterminate size="128"></v-progress-circular>
+      </v-overlay>
     </v-card>
   </v-dialog>
 </template>
@@ -383,6 +386,8 @@ export default {
       showShowHelpDialog: false,
       helpDialogTitle: "",
       helpDialogMessage: "",
+
+      overlay: false,
     };
   },
 
@@ -551,6 +556,12 @@ export default {
           : "/";
       }
     },
+    // overlay(val) {
+    //   val &&
+    //     setTimeout(() => {
+    //       this.overlay = false;
+    //     }, 1000);
+    // },
   },
 
   methods: {
@@ -576,41 +587,38 @@ export default {
       };
 
       if (this.productToEdit === null) {
-        //Add new product
-        console.log("details");
+        // Add new product
+        console.log("image details");
         console.log(payload.imageDetails);
-        this.$emit("overlay-start");
-        //let newProduct;
+
+        this.overlay = true;
         let response;
         try {
           response = await productService.createProduct(payload);
         } catch (error) {
-          this.$emit("overlay-end");
+          this.overlay = false;
           return;
         }
         this.$emit("add-new-product", response.product);
-        this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully added!");
         //
       } else if (this.productToEdit !== null) {
         //Edit existing product
         console.log(this.productToEdit._id);
-        this.$emit("overlay-start");
-        //console.log(this.productToEdit.productId);
         payload["_id"] = this.productToEdit._id;
+        this.overlay = true;
         let response;
         try {
           response = await productService.editProduct(payload);
         } catch (error) {
-          this.$emit("overlay-end");
+          this.overlay = false;
           return;
         }
-
         this.$emit("update-product", response.product);
         this.$emit("recalculate-max-price");
-        this.$emit("overlay-end");
         this.addSuccessSnackbar("Product was successfully edited!");
       }
+      this.overlay = false;
       this.cancel();
     },
 

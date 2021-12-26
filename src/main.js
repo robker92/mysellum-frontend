@@ -38,7 +38,7 @@ function getStartingLocale() {
   const browserLocale = getBrowserLocale({
     countryCodeOnly: true,
   });
-  console.log(browserLocale);
+  console.log(`browserLocale: ${browserLocale}`);
 
   //Check if browser lang is English
   // if (browserLocale === "en") {
@@ -60,7 +60,7 @@ function getStartingLocale() {
     // });
     // this.$router.push(to.location.path);
     // console.log("true");
-    console.log(`Switched to the locale ${browserLocale}.`);
+    // console.log(`Switched to the locale ${browserLocale}.`);
     return browserLocale;
   } else {
     console.log(`The locale ${browserLocale} is not supported yet.`);

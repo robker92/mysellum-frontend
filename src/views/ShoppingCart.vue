@@ -178,68 +178,24 @@
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <v-card flat>
-              <v-container>
-                <ShoppingCartCheckout
-                  :delivery-available="deliveryAvailable"
-                  :pickup-available="pickupAvailable"
-                  @step2-continue-button="continueButtonStep2"
-                />
-                <v-card-actions class="mt-3">
-                  <v-btn text @click="e1 = e1 - 1">
-                    Back
-                  </v-btn>
-                  <v-spacer />
-                  <v-btn
-                    color="primary"
-                    :disabled="step2ContinueDisabled"
-                    @click="goToStep3"
-                  >
-                    To final Overview
-                  </v-btn>
-                </v-card-actions>
-              </v-container>
-            </v-card>
+            <ShoppingCartCheckout
+              :delivery-available="deliveryAvailable"
+              :pickup-available="pickupAvailable"
+              @step2-continue-button="continueButtonStep2"
+              @go-to-step3="goToStep3"
+              @go-back="e1 = e1 - 1"
+            />
           </v-stepper-content>
 
           <v-stepper-content step="3">
-            <v-card flat>
-              <v-container>
-                <div class="text-h5 text-left font-weight-medium mb-4">
-                  Final Overview
-                </div>
-                <ShoppingCartFinalOverview
-                  :computed-total-sum="computedTotalSum"
-                  :shipping-costs="shippingCosts"
-                />
-
-                <v-card-actions class="mt-3">
-                  <v-btn text @click="e1 = e1 - 1">
-                    back
-                  </v-btn>
-                  <v-spacer />
-                  <!-- <v-btn color="primary" @click="createOrder">
-                    Complete Purchase
-                  </v-btn> -->
-
-                  <!-- Smart Buttons -->
-                  <v-card
-                    v-if="shoppingCart.length > 0"
-                    width="250px"
-                    class="mt-3"
-                  >
-                    <v-container v-if="loggedIn === true">
-                      <PaypalSmartButton
-                        :order-data="getPaypalCreateOrderData()"
-                        @paypal-order-successful="paypalOrderCreated"
-                        @overlay-start="setOverlay(true)"
-                        @overlay-end="setOverlay(false)"
-                      />
-                    </v-container>
-                  </v-card>
-                </v-card-actions>
-              </v-container>
-            </v-card>
+            <ShoppingCartFinalOverview
+              :computed-total-sum="computedTotalSum"
+              :shipping-costs="shippingCosts"
+              @paypal-order-successful="paypalOrderCreated"
+              @overlay-start="setOverlay(true)"
+              @overlay-end="setOverlay(false)"
+              @go-back="e1 = e1 - 1"
+            />
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -255,9 +211,7 @@ import ShoppingCartCheckout from "../components/shoppingCartComponents/ShoppingC
 import ShoppingCartFinalOverview from "../components/shoppingCartComponents/ShoppingCartFinalOverview";
 import LoginDialog from "../components/LoginDialog";
 
-import { orderService, shippingService } from "../services";
-
-import PaypalSmartButton from "../components/shoppingCartComponents/PaypalSmartButton.vue";
+import { orderService } from "../services";
 
 export default {
   name: "ShoppingCartView",
@@ -267,13 +221,11 @@ export default {
     ShoppingCartCheckout,
     ShoppingCartFinalOverview,
     LoginDialog,
-    PaypalSmartButton,
   },
 
   data() {
     return {
       mapData: null,
-      // shippingCosts: 0,
       e1: 1,
       step2Editable: false,
       step3Editable: false,
@@ -282,15 +234,6 @@ export default {
       showLoginDialog: false,
 
       overlay: false,
-
-      // orderData2: {
-      //   description: "Buy thing",
-      //   amount: {
-      //     currency_code: "USD",
-      //     value: 1000,
-      //   },
-      // },
-      //step3CompletePurchaseDisabled: true
     };
   },
 
@@ -438,7 +381,7 @@ export default {
       try {
         await orderService.createOrder(data);
       } catch (error) {
-        //this.addErrorSnackbar("Error while creating the order.");
+        // this.addErrorSnackbar("Error while creating the order.");
         return;
       }
 
@@ -448,7 +391,7 @@ export default {
     },
 
     async mergeProcedure() {
-      //merge function
+      // merge function
       let mergedCart;
       try {
         mergedCart = await shoppingCartMerge(
@@ -459,14 +402,16 @@ export default {
         this.addErrorSnackbar("Error while merging.");
         return;
       }
-      //update cart in database
+      console.log(`Merged Cart:`);
+      console.log(mergedCart);
+      // update cart in database
       try {
-        await this.updateCart({ email: this.user.email, cart: mergedCart });
+        await this.updateCart(mergedCart);
       } catch (error) {
         this.addErrorSnackbar("Error while merging.");
         return;
       }
-      //at success remove items from loaded cart
+      // at success remove items from loaded cart
       this.emptyLoadedCart();
       calculateTotalCartSum(this.shoppingCart);
       this.addSuccessSnackbar("Shopping carts successfully merged!");
@@ -474,10 +419,7 @@ export default {
 
     async abortMerge() {
       try {
-        await this.updateCart({
-          email: this.user.email,
-          cart: this.shoppingCart,
-        });
+        await this.updateCart(this.shoppingCart);
       } catch (error) {
         this.addErrorSnackbar("Error while merge abort.");
         return;
@@ -490,16 +432,6 @@ export default {
       // empty shopping cart
       this.emptyShoppingCart();
       this.$router.push({ name: "SuccessfulOrder" });
-    },
-
-    getPaypalCreateOrderData() {
-      const data = {
-        products: this.shoppingCart,
-        billingAddress: this.orderData.billingAddress,
-        shippingAddress: this.orderData.shippingAddress,
-        currencyCode: "EUR",
-      };
-      return data;
     },
 
     setOverlay(value) {

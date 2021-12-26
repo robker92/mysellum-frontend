@@ -16,7 +16,7 @@ import { i18n } from "../main";
 // const productCounter = JSON.parse(localStorage.getItem("vuex"));
 const vuexObjct = JSON.parse(localStorage.getItem("vuex"));
 const loggedIn = getCookie("authToken");
-console.log(`user logged in: ${loggedIn ? true : false}`);
+// console.log(`user logged in: ${loggedIn ? true : false}`);
 const state = loggedIn
   ? {
       loggedIn: true,
@@ -151,16 +151,20 @@ const actions = {
     });
   },
 
-  updateCart({ dispatch, commit, state }, data) {
+  updateCart({ dispatch, commit, state }, shoppingCart) {
     return new Promise((resolve, reject) => {
       userService
-        .updateShoppingCart({
-          email: data.email,
-          cart: data.cart,
-        })
-        .then(() => {
-          commit("updateCartSuccess", data.cart);
-          resolve(data.cart);
+        .updateShoppingCart(shoppingCart)
+        .then((result) => {
+          console.log(result);
+          commit("updateCartSuccess", {
+            shoppingCart: result.shoppingCart,
+            shippingCosts: result.shippingCosts,
+          });
+          resolve({
+            shoppingCart: result.shoppingCart,
+            shippingCosts: result.shippingCosts,
+          });
         })
         .catch((error) => {
           commit("updateCartFailure", error);
@@ -286,6 +290,8 @@ const mutations = {
   },
 
   updateCartSuccess(state, data) {
+    console.log(`in update cart`);
+    console.log(data);
     state.shoppingCart = data.shoppingCart;
     state.shippingCosts = data.shippingCosts;
     //state.loadedCart = [];
