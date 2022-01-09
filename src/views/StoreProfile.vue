@@ -303,6 +303,7 @@
         :paypal-signup-link="paypalSignupLink"
         :opening-hours-data="openingHoursData"
         :contact-data="contactData"
+        :legal-documents="legalDocuments"
         @edit-store="updateStoreData"
         @overlay-start="startLoadingOverlay"
         @overlay-end="endLoadingOverlay"
@@ -795,7 +796,7 @@
           Legal
         </v-card-title>
         <v-card-text>
-          <div>
+          <!-- <div>
             <v-btn @click="downloadFile">Download File</v-btn>
             <a
               href="https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Shop AGB Beispiel.pdf"
@@ -803,6 +804,37 @@
             >
               View
             </a>
+          </div> -->
+
+          <div>
+            <v-row>
+              <v-col
+                v-for="(document, index) in legalDocuments"
+                :key="index"
+                cols="12"
+                xs="2"
+                sm="2"
+                md="2"
+                lg="2"
+                xl="2"
+              >
+                <v-hover v-slot="{ hover }">
+                  <v-card
+                    flat
+                    :elevation="hover ? 8 : 0"
+                    :class="{ 'on-hover': hover }"
+                    @click="downloadFile(document.fileSrc)"
+                  >
+                    <v-icon color="primary" class="mt-2">
+                      mdi-file
+                    </v-icon>
+                    <div>
+                      {{ document.label }}
+                    </div>
+                  </v-card>
+                </v-hover>
+              </v-col>
+            </v-row>
           </div>
         </v-card-text>
       </v-card>
@@ -1177,6 +1209,8 @@ export default {
     this.profileData = responseStore.profileData;
     this.shippingData = responseStore.shipping;
     this.contactData = responseStore.contact;
+    this.legalDocuments = responseStore.legalDocuments;
+    console.log(this.legalDocuments);
     this.openingHoursData = responseStore.openingHours;
     this.tagsString = this.dataset.profileData.tags.join(", ");
     // console.log(JSON.stringify(responseStore.openingHours));
@@ -1341,6 +1375,8 @@ export default {
       this.contactData.emailAddress = data.contact.emailAddress;
       this.contactData.phoneNumber = data.contact.phoneNumber;
       this.contactData.website = data.contact.website;
+
+      this.legalDocuments = data.legalDocuments;
 
       this.openingHoursData = data.openingHours;
       // this.dataset.openingHours = data.openingHours;
@@ -1530,11 +1566,9 @@ export default {
       console.log(`hi`);
     },
 
-    async downloadFile() {
+    async downloadFile(src) {
       // OPEN IN NEW TAB
-      window.open(
-        "https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Shop AGB Beispiel.pdf"
-      );
+      window.open(src);
 
       // DIRECTLY DOWNLOAD
       // const response = await axios({

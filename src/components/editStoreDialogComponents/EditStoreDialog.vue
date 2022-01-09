@@ -825,6 +825,7 @@ export default {
     shippingData: Object,
     openingHoursData: Object,
     contactData: Object,
+    legalDocuments: Array,
   },
 
   validations: {
@@ -939,14 +940,14 @@ export default {
       helpDialogMessage: "",
 
       // legal
-      legalDocuments: [
-        {
-          type: "AGB",
-          label: "AGB meines Ladens",
-          fileDetails: null,
-          fileSrc: "",
-        },
-      ],
+      // legalDocuments: [
+      //   {
+      //     type: "AGB",
+      //     label: "AGB meines Ladens",
+      //     fileDetails: null,
+      //     fileSrc: "",
+      //   },
+      // ],
     };
   },
 
@@ -1222,12 +1223,14 @@ export default {
 
       //this.$emit("overlay-start");
       this.overlay = true;
+      let response;
       try {
-        await storeService.editStore(payload);
+        response = await storeService.editStore(payload);
       } catch (error) {
         this.overlay = false;
         return;
       }
+      payload.legalDocuments = response.legalDocuments;
       this.$emit("edit-store", payload);
       // setTimeout(() => {
       //   this.overlay = false;

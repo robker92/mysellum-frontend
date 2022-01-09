@@ -16,7 +16,7 @@
             :key="index"
             align="center"
           >
-            <v-col>
+            <v-col cols="12" xs="3" sm="3" md="3" lg="3" xl="3">
               <v-select
                 v-model="document.type"
                 :items="['AGB', 'Datenschutz']"
@@ -26,7 +26,7 @@
                 @change="documentsChanged()"
               ></v-select>
             </v-col>
-            <v-col>
+            <v-col cols="12" xs="4" sm="4" md="4" lg="4" xl="4">
               <v-text-field
                 v-model="document.label"
                 label="Label"
@@ -35,18 +35,26 @@
                 @change="documentsChanged()"
               ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" xs="4" sm="4" md="4" lg="4" xl="4">
               <v-file-input
                 v-model="document.fileDetails"
                 show-size
-                accept=".pdf,.doc,.docx"
+                accept=".pdf"
                 label="File input"
                 :error-messages="fileErrors[index]"
                 @input="$v.legalDocuments.$touch()"
                 @change="fileChanged(index)"
               ></v-file-input>
             </v-col>
-            <v-col>
+            <v-col
+              v-if="index > 0"
+              cols="12"
+              xs="1"
+              sm="1"
+              md="1"
+              lg="1"
+              xl="1"
+            >
               <v-btn v-if="index > 0" icon @click="removeLegalDocument(index)">
                 <v-icon color="primary">
                   mdi-delete
@@ -251,7 +259,7 @@ export default {
       try {
         console.log(file);
         base64String = await getBase64StringFromFile(file);
-        console.log(base64String.substr(0, 50));
+        console.log(base64String.substr(0, 80));
         console.log(base64String.substr(base64String.length - 5));
         console.log(base64String.length);
       } catch (error) {
