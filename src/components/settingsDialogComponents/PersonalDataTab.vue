@@ -68,10 +68,26 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" text @click="cancel">
+        Close
+      </v-btn>
+      <v-btn
+        color="primary"
+        :dark="!saveButtonDisabled"
+        :disabled="saveButtonDisabled"
+        @click="saveUser"
+      >
+        Save
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import { userService } from "../../services";
 import {
   required,
   minLength,
@@ -79,6 +95,7 @@ import {
   email,
 } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
+import { mapActions } from "vuex";
 
 export default {
   name: "PersonalDataTab",
@@ -159,6 +176,21 @@ export default {
         errors.push(this.$t("registerDialog.addressLine1FieldLengthError"));
       return errors;
     },
+
+    saveButtonDisabled() {
+      if (
+        !this.$v.email.$invalid &&
+        !this.$v.phoneNumber.$invalid &&
+        !this.$v.city.$invalid &&
+        !this.$v.postcode.$invalid &&
+        !this.$v.addressLine1.$invalid
+      ) {
+        // Button is not disabled
+        return false;
+      } else {
+        return true;
+      }
+    },
   },
 
   watch: {
@@ -174,50 +206,35 @@ export default {
         this.city = newVal.city;
       }
     },
-    email: function(newVal) {
-      if (newVal) {
-        this.validatePersonalData();
-      }
-    },
-    phoneNumber: function(newVal) {
-      if (newVal) {
-        this.validatePersonalData();
-      }
-    },
-    addressLine1: function(newVal) {
-      if (newVal) {
-        this.validatePersonalData();
-      }
-    },
-    postcode: function(newVal) {
-      if (newVal) {
-        this.validatePersonalData();
-      }
-    },
-    city: function(newVal) {
-      if (newVal) {
-        this.validatePersonalData();
-      }
-    },
   },
 
   methods: {
-    validatePersonalData() {
-      if (
-        !this.$v.email.$invalid &&
-        !this.$v.phoneNumber.$invalid &&
-        !this.$v.city.$invalid &&
-        !this.$v.postcode.$invalid &&
-        !this.$v.addressLine1.$invalid
-      ) {
-        // Personal Data is valid
-        this.$emit("personal-data-validation", true);
-        return;
-      } else {
-        // not valid
-        this.$emit("personal-data-validation", false);
+    ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
+
+    async saveUser() {
+      const user = {
+        email: this.email,
+        phoneNumber: this.phoneNumber,
+
+        // Location
+        addressLine1: this.addressLine1,
+        postcode: this.postcode,
+        city: this.city,
+      };
+      try {
+        this.$emit("set-overlay", true);
+        await userService.updateUser(user);
+      } catch (error) {
+        this.$emit("set-overlay", false);
+        this.addErrorSnackbar("Error while saving data.");
         return;
       }
+      this.$emit("set-overlay", false);
+      this.addSuccessSnackbar("Data successfully saved!");
+    },
+
+    cancel() {
+      this.$emit("cancel-dialog");
     },
   },
 };

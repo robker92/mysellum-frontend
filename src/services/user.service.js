@@ -5,6 +5,7 @@ import { authHeader, getCookie } from "../helpers";
 
 export const userService = {
   getSingleUser,
+  updateUser,
   login,
   logout,
   register,
@@ -31,9 +32,21 @@ async function getSingleUser() {
   } catch (error) {
     throw error;
   }
-  console.log(response.data);
 
-  return response.data;
+  return response.data.user;
+}
+
+async function updateUser(data) {
+  let response;
+  try {
+    response = await baseClient.post(`/users`, data, {
+      headers: authHeader(),
+    });
+  } catch (error) {
+    throw error;
+  }
+
+  return response.data.user;
 }
 
 async function login(credentials) {
@@ -102,7 +115,7 @@ async function verifyRegistration(token) {
 async function addToShoppingCart(data) {
   let response;
   try {
-    response = await baseClient.patch(`/cart/add/${data["email"]}`, data, {
+    response = await baseClient.patch(`/cart/add`, data, {
       headers: authHeader(),
     });
   } catch (error) {
@@ -118,7 +131,7 @@ async function addToShoppingCart(data) {
 async function removeFromShoppingCart(data) {
   let response;
   try {
-    response = await baseClient.patch(`/cart/remove/${data["email"]}`, data, {
+    response = await baseClient.patch(`/cart/remove`, data, {
       headers: authHeader(),
     });
   } catch (error) {

@@ -788,6 +788,25 @@
         </v-col>
       </v-row>
 
+      <v-divider class="my-3" />
+
+      <v-card flat>
+        <v-card-title>
+          Legal
+        </v-card-title>
+        <v-card-text>
+          <div>
+            <v-btn @click="downloadFile">Download File</v-btn>
+            <a
+              href="https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Shop AGB Beispiel.pdf"
+              target="_blank"
+            >
+              View
+            </a>
+          </div>
+        </v-card-text>
+      </v-card>
+
       <v-overlay v-model="overlay">
         <v-progress-circular indeterminate size="80"></v-progress-circular>
       </v-overlay>
@@ -801,13 +820,15 @@
         color="primary"
       ></v-progress-circular>
     </div>
-    <div v-if="loadingErrorStore === true" class="text-body-1 ">
+
+    <div v-if="loadingErrorStore === true" class="text-body-1">
       {{ $t("storeProfile.storeLoadingError") }}
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 // Store Profile
 import StoreProfileProductListItem from "../components/storeProfileComponents/StoreProfileProductListItem";
 import StoreProfileReviewListItem from "../components/storeProfileComponents/StoreProfileReviewListItem";
@@ -1507,6 +1528,29 @@ export default {
 
     print() {
       console.log(`hi`);
+    },
+
+    async downloadFile() {
+      // OPEN IN NEW TAB
+      window.open(
+        "https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Shop AGB Beispiel.pdf"
+      );
+
+      // DIRECTLY DOWNLOAD
+      // const response = await axios({
+      //   url:
+      //     "https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Shop AGB Beispiel.pdf",
+      //   method: "GET",
+      //   responseType: "blob",
+      // });
+      // const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+      // const fileLink = document.createElement("a");
+
+      // fileLink.href = fileURL;
+      // fileLink.setAttribute("download", "file.pdf");
+      // document.body.appendChild(fileLink);
+
+      // fileLink.click();
     },
   },
 };

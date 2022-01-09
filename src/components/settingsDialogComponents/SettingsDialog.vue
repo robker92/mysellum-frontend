@@ -45,8 +45,9 @@
         <!-- PERSONAL DATA -->
         <v-tab-item>
           <PersonalDataTab
-            :user-data="{}"
-            @personal-data-validation="setPersonalDataValidation"
+            :user-data="userData"
+            @cancel-dialog="cancel"
+            @set-overlay="setOverlay"
           />
         </v-tab-item>
 
@@ -54,24 +55,28 @@
           <div>Hello World</div>
         </v-tab-item>
       </v-tabs>
-      <v-card-actions>
+      <!-- <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary" text @click="cancel">Close</v-btn>
         <v-btn
           color="primary"
           :dark="!saveButtonDisabled"
           :disabled="saveButtonDisabled"
-          @click="cancel"
+          @click="saveUser"
         >
           Save
         </v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
+      <v-overlay v-model="overlay">
+        <v-progress-circular indeterminate size="128"></v-progress-circular>
+      </v-overlay>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import PersonalDataTab from "./PersonalDataTab";
+import { userService } from "../../services";
 
 //minLength
 import { required, maxLength } from "vuelidate/lib/validators";
@@ -97,9 +102,8 @@ export default {
   data() {
     return {
       dialog: false,
-
-      saveButtonDisabled: true,
-      personalDataValid: false,
+      overlay: false,
+      userData: {},
     };
   },
 
@@ -114,25 +118,32 @@ export default {
     },
   },
 
-  methods: {
-    checkSaveButtonDisabled() {
-      if (!this.personalDataValid) {
-        // Button is not disabled
-        this.saveButtonDisabled = true;
-        return;
-      } else {
-        this.saveButtonDisabled = false;
-        return;
+  watch: {
+    value: function(newVal) {
+      if (newVal === true) {
+        this.loadUserData();
       }
     },
+  },
 
-    setPersonalDataValidation(value) {
-      this.personalDataValid = value;
-      this.checkSaveButtonDisabled();
+  methods: {
+    async loadUserData() {
+      let userData;
+      try {
+        userData = await userService.getSingleUser();
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+      this.userData = userData;
     },
 
     cancel() {
       this.show = false;
+    },
+
+    setOverlay(value) {
+      this.overlay = value;
     },
   },
 };

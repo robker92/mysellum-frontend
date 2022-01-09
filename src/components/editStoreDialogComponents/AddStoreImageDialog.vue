@@ -90,10 +90,9 @@
 </template>
 
 <script>
-import { storeService } from "../../services";
 import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
-import { getImgBase64 } from "../../helpers";
+import { getBase64StringFromFile } from "../../helpers";
 
 //Custom validator
 // TODO custom validator for image dimensions
@@ -124,7 +123,6 @@ export default {
   data() {
     return {
       dialog: false,
-      //imageSrc: "",
       imageTitle: "",
       file: null,
       url: "",
@@ -177,11 +175,11 @@ export default {
         return;
       }
 
-      let buffer;
+      let base64String;
       try {
         console.log(this.file);
-        buffer = await getImgBase64(this.file);
-        console.log(buffer.substr(0, 50));
+        base64String = await getBase64StringFromFile(this.file);
+        console.log(base64String.substr(0, 50));
         // console.log(Buffer.from(buffer, "base64"));
         // console.log(
         //   Buffer.from(buffer.substr("data:image/jpeg;base64,".length), "base64")
@@ -192,9 +190,8 @@ export default {
         console.log(error);
         return;
       }
-      // console.log(response);
       const data = {
-        src: buffer,
+        src: base64String,
         size: this.file.size,
         title: this.imageTitle,
         name: this.file.name,
@@ -203,8 +200,6 @@ export default {
 
       this.$emit("add-store-image", data);
 
-      //console.log(data);
-      //this.imageSrc = "";
       this.imageTitle = "";
       this.url = "";
       this.file = null;
@@ -212,40 +207,8 @@ export default {
       this.show = false;
     },
 
-    // async submitImage2() {
-    //   if (!this.file) {
-    //     return;
-    //   }
-
-    //   let buffer;
-    //   try {
-    //     buffer = await getImgBuffer(this.file);
-    //   } catch (error) {
-    //     console.log(error);
-    //     return;
-    //   }
-
-    //   const data = {
-    //     src: buffer,
-    //     size: this.file.size,
-    //     title: this.imageTitle,
-    //     name: this.file.name,
-    //     originalName: this.file.originalName,
-    //   };
-    //   console.log(data);
-
-    //   this.$emit("add-store-image", data);
-
-    //   this.imageTitle = "";
-    //   this.url = "";
-    //   this.file = null;
-    //   this.$v.$reset();
-    //   this.show = false;
-    // },
-
     cancel() {
       this.$v.$reset();
-      //this.imageSrc = "";
       this.imageTitle = "";
       this.url = "";
       this.file = null;

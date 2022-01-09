@@ -443,11 +443,11 @@ export default {
       }
 
       console.log(response);
-      this.shippingFirstName = response.user.firstName;
-      this.shippingLastName = response.user.lastName;
-      this.shippingAddressLine1 = response.user.addressLine1;
-      this.shippingPostcode = response.user.postcode;
-      this.shippingCity = response.user.city;
+      this.shippingFirstName = response.firstName;
+      this.shippingLastName = response.lastName;
+      this.shippingAddressLine1 = response.addressLine1;
+      this.shippingPostcode = response.postcode;
+      this.shippingCity = response.city;
 
       // this.emptyOrderDataSuccess();
       this.writeOrderInfoToState();

@@ -19,7 +19,7 @@
           v-bind="attrs"
           v-on="on"
         /> -->
-        <div v-bind="attrs" v-on="on" style="width: 30px;">
+        <div v-bind="attrs" style="width: 30px;" v-on="on">
           <country-flag :country="getCurrentLocale().flag" size="normal" />
         </div>
       </template>
@@ -37,15 +37,12 @@
               })}`
             }"v-model="selectedListItem"-->
       <v-list dense>
-        <v-list-item-group
-          :value="this.getCurrentLocale().index"
-          color="primary"
-        >
+        <v-list-item-group :value="getCurrentLocale().index" color="primary">
           <v-list-item
             v-for="(item, index) in items"
             :key="index"
-            @click="changeLocale2(item)"
             link
+            @click="changeLocale2(item)"
           >
             <v-list-item-icon>
               <country-flag :country="item.flag" />
@@ -70,7 +67,7 @@ export default {
   name: "LanguageSwitcherComponent",
 
   components: {
-    CountryFlag
+    CountryFlag,
   },
 
   data() {
@@ -83,14 +80,14 @@ export default {
         {
           name: "English",
           flag: "gb",
-          locale: "en"
+          locale: "en",
         },
         {
           name: "German",
           flag: "de",
-          locale: "de"
-        }
-      ]
+          locale: "de",
+        },
+      ],
     };
   },
 
@@ -123,22 +120,24 @@ export default {
       //console.log(this.currentLocale);
       console.log(this.chosenLocale);
       if (this.chosenLocale !== "en") {
-        import(`@/locale/translations/${this.chosenLocale}.json`).then(msgs => {
-          //console.log(msgs);
+        import(`@/locale/translations/${this.chosenLocale}.json`).then(
+          (msgs) => {
+            //console.log(msgs);
 
-          i18n.setLocaleMessage(this.chosenLocale, msgs.default || msgs);
-          i18n.locale = this.chosenLocale;
-          //let locale = this.$i18n.locale;
+            i18n.setLocaleMessage(this.chosenLocale, msgs.default || msgs);
+            i18n.locale = this.chosenLocale;
+            //let locale = this.$i18n.locale;
 
-          // let to = this.$router.resolve({ params: { locale } });
-          // this.$router.push(to.location);
+            // let to = this.$router.resolve({ params: { locale } });
+            // this.$router.push(to.location);
 
-          //let to = this.$router.resolve({ params: { locale } });
-          //console.log(this.$router.currentRoute.params.locale); current locale
-          if (this.chosenLocale !== this.$router.currentRoute.params.locale) {
-            this.pushToRouter(this.chosenLocale);
+            //let to = this.$router.resolve({ params: { locale } });
+            //console.log(this.$router.currentRoute.params.locale); current locale
+            if (this.chosenLocale !== this.$router.currentRoute.params.locale) {
+              this.pushToRouter(this.chosenLocale);
+            }
           }
-        });
+        );
       } else {
         i18n.locale = this.chosenLocale;
         if (this.chosenLocale !== this.$router.currentRoute.params.locale) {
@@ -157,14 +156,14 @@ export default {
       //console.log(chosenLocale);
       if (chosenLocale !== "en") {
         import(`@/locale/translations/${chosenLocale}.json`)
-          .then(msgs => {
+          .then((msgs) => {
             i18n.setLocaleMessage(chosenLocale, msgs.default || msgs);
             i18n.locale = chosenLocale;
             if (chosenLocale !== this.$router.currentRoute.params.locale) {
               this.pushToRouter(chosenLocale);
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log("Language not contained!");
             console.log(error);
           });
@@ -206,7 +205,7 @@ export default {
       console.log(this.chosenLocale2);
       console.log(this.currentLocaleComputed);
       console.log(this.getCurrentLocale());
-    }
-  }
+    },
+  },
 };
 </script>

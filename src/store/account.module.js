@@ -305,7 +305,7 @@ const mutations = {
   emptyShoppingCartSuccess(state) {
     state.shoppingCart = [];
     state.productCounter = 0;
-    state.shippingCosts = 0;
+    state.shippingCosts = "0";
   },
 
   setOwnedStoreIdSuccess(state, storeId) {

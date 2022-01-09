@@ -1,15 +1,15 @@
-export async function getImgBase64(file) {
+export async function getBase64StringFromFile(file) {
   return new Promise(function(resolve, reject) {
-    let buffer;
+    let base64String;
     const reader = new FileReader();
 
     reader.onloadend = async () => {
       // convert image file to base64 string
-      buffer = reader.result;
+      base64String = reader.result;
       //   console.log(buffer);
-      if (buffer) {
+      if (base64String) {
         // console.log(buffer);
-        resolve(buffer);
+        resolve(base64String);
       }
 
       reject();

@@ -60,9 +60,9 @@
         </v-tab>
         <v-tab>
           <v-icon left>
-            mdi-lock
+            mdi-scale-balance
           </v-icon>
-          {{ $t("storeProfile.editStoreDialog.tabs.security.headline") }}
+          {{ $t("storeProfile.editStoreDialog.tabs.legal.headline") }}
         </v-tab>
         <v-tab>
           <v-icon left>
@@ -281,7 +281,6 @@
                 <v-col>
                   <v-text-field
                     v-model="addressLine1"
-                    :counter="40"
                     :label="
                       $t(
                         'storeProfile.editStoreDialog.tabs.location.addresslineLabel'
@@ -295,7 +294,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="12" sm="2" md="2">
+                <v-col cols="12" xs="2" sm="2" md="2" lg="2" xl="2">
                   <v-text-field
                     v-model="postcode"
                     :label="
@@ -313,7 +312,7 @@
                     @blur="$v.postcode.$touch()"
                   />
                 </v-col>
-                <v-col cols="12" sm="10" md="10">
+                <v-col cols="12" xs="5" sm="5" md="5" lg="5" xl="5">
                   <v-text-field
                     v-model="city"
                     :label="
@@ -321,12 +320,38 @@
                         'storeProfile.editStoreDialog.tabs.location.cityLabel'
                       ) + '*'
                     "
-                    :counter="20"
                     required
                     :error-messages="cityErrors"
                     @input="$v.city.$touch()"
                     @blur="$v.city.$touch()"
                   />
+                </v-col>
+                <v-col cols="12" xs="5" sm="5" md="5" lg="5" xl="5">
+                  <!-- <v-text-field
+                    v-model="country"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.location.countryLabel'
+                      ) + '*'
+                    "
+                    required
+                    :error-messages="countryErrors"
+                    @input="$v.country.$touch()"
+                    @blur="$v.country.$touch()"
+                  /> -->
+                  <v-select
+                    v-model="country"
+                    :items="['Deutschland']"
+                    :label="
+                      $t(
+                        'storeProfile.editStoreDialog.tabs.location.countryLabel'
+                      ) + '*'
+                    "
+                    required
+                    :error-messages="countryErrors"
+                    @input="$v.country.$touch()"
+                    @blur="$v.country.$touch()"
+                  ></v-select>
                 </v-col>
               </v-row>
               <!-- <v-row>
@@ -556,101 +581,146 @@
               Here you can adjust your shipping preferences.
             </v-alert>
           </div>
-          <div class="text-h5 text-left">
-            Shipping Cost Logic
-          </div>
-          <v-container>
-            <v-row>
-              <v-col cols="12" md="4" lg="3">
-                <v-radio-group v-model="shippingMethod">
-                  <v-radio label="Always Free" value="free"></v-radio>
-                  <v-radio label="Fixed price" value="fixed"></v-radio>
-                  <v-radio label="With Threshold" value="threshold"></v-radio>
-                </v-radio-group>
-              </v-col>
-              <v-col cols="12" md="8" lg="9">
-                <v-card v-if="shippingMethod === 'free'" flat>
-                  <v-alert type="info" text dense class="text-left">
-                    You have chosen free shipping. With this option your
-                    customers will never pay shipping costs if they order your
-                    products.
-                  </v-alert>
-                </v-card>
-                <v-card v-if="shippingMethod === 'fixed'" flat>
-                  <v-alert type="info" text dense class="text-left">
-                    You have chosen fixed shipping costs. With this option your
-                    customers will always pay the same shipping costs regardless
-                    of how much they order.
-                  </v-alert>
-                  <v-text-field
-                    v-model="shippingCosts"
-                    label="Price"
-                    suffix="€"
-                    class="inputShippingCosts"
-                    type="number"
-                    required
-                    :error-messages="shippingCostsErrors"
-                    @input="$v.shippingCosts.$touch()"
-                    @blur="$v.shippingCosts.$touch()"
-                  >
-                  </v-text-field>
-                </v-card>
-                <v-card v-if="shippingMethod === 'threshold'" flat>
-                  <v-alert type="info" text dense class="text-left">
-                    You have chosen the threshold value variant. With this you
-                    can set a minimum order amount from which the delivery costs
-                    are free for the customer.
-                  </v-alert>
-                  <v-text-field
-                    v-model="shippingThresholdValue"
-                    label="Minimum Order Amount"
-                    suffix="€"
-                    class="inputShippingThresholdValue"
-                    type="number"
-                    :error-messages="shippingThresholdValueErrors"
-                    @input="$v.shippingThresholdValue.$touch()"
-                    @blur="$v.shippingThresholdValue.$touch()"
-                  >
-                  </v-text-field>
-                  <v-text-field
-                    v-model="shippingCosts"
-                    label="Price"
-                    suffix="€"
-                    class="inputShippingCosts"
-                    type="number"
-                    required
-                    :error-messages="shippingCostsErrors"
-                    @input="$v.shippingCosts.$touch()"
-                    @blur="$v.shippingCosts.$touch()"
-                  >
-                  </v-text-field>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat min-height="600px">
-            <v-card-text>
-              <p>
-                Morbi nec metus. Suspendisse faucibus, nunc et pellentesque
-                egestas, lacus ante convallis tellus, vitae iaculis lacus elit
-                id tortor. Sed mollis, eros et ultrices tempus, mauris ipsum
-                aliquam libero, non adipiscing dolor urna a orci. Curabitur
-                ligula sapien, tincidunt non, euismod vitae, posuere imperdiet,
-                leo. Nunc sed turpis.
-              </p>
+          <v-card height="50vh" class="ma-3">
+            <v-container>
+              <div class="text-h5 text-left">
+                Shipping Cost Logic
+              </div>
 
-              <p>
-                Suspendisse feugiat. Suspendisse faucibus, nunc et pellentesque
-                egestas, lacus ante convallis tellus, vitae iaculis lacus elit
-                id tortor. Proin viverra, ligula sit amet ultrices semper,
-                ligula arcu tristique sapien, a accumsan nisi mauris ac eros. In
-                hac habitasse platea dictumst. Fusce ac felis sit amet ligula
-                pharetra condimentum.
-              </p>
-            </v-card-text>
+              <v-row>
+                <v-col cols="12" md="4" lg="3">
+                  <v-radio-group v-model="shippingMethod">
+                    <v-radio label="Always Free" value="free"></v-radio>
+                    <v-radio label="Fixed price" value="fixed"></v-radio>
+                    <v-radio label="With Threshold" value="threshold"></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col cols="12" md="8" lg="9">
+                  <v-card v-if="shippingMethod === 'free'" flat>
+                    <v-alert type="info" text dense class="text-left">
+                      You have chosen free shipping. With this option your
+                      customers will never pay shipping costs if they order your
+                      products.
+                    </v-alert>
+                  </v-card>
+                  <v-card v-if="shippingMethod === 'fixed'" flat>
+                    <v-alert type="info" text dense class="text-left">
+                      You have chosen fixed shipping costs. With this option
+                      your customers will always pay the same shipping costs
+                      regardless of how much they order.
+                    </v-alert>
+                    <v-text-field
+                      v-model="shippingCosts"
+                      label="Price"
+                      suffix="€"
+                      class="inputShippingCosts"
+                      type="number"
+                      required
+                      :error-messages="shippingCostsErrors"
+                      @input="$v.shippingCosts.$touch()"
+                      @blur="$v.shippingCosts.$touch()"
+                    >
+                    </v-text-field>
+                  </v-card>
+                  <v-card v-if="shippingMethod === 'threshold'" flat>
+                    <v-alert type="info" text dense class="text-left">
+                      You have chosen the threshold value variant. With this you
+                      can set a minimum order amount from which the delivery
+                      costs are free for the customer.
+                    </v-alert>
+                    <v-text-field
+                      v-model="shippingThresholdValue"
+                      label="Minimum Order Amount"
+                      suffix="€"
+                      class="inputShippingThresholdValue"
+                      type="number"
+                      :error-messages="shippingThresholdValueErrors"
+                      @input="$v.shippingThresholdValue.$touch()"
+                      @blur="$v.shippingThresholdValue.$touch()"
+                    >
+                    </v-text-field>
+                    <v-text-field
+                      v-model="shippingCosts"
+                      label="Price"
+                      suffix="€"
+                      class="inputShippingCosts"
+                      type="number"
+                      required
+                      :error-messages="shippingCostsErrors"
+                      @input="$v.shippingCosts.$touch()"
+                      @blur="$v.shippingCosts.$touch()"
+                    >
+                    </v-text-field>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-card>
+        </v-tab-item>
+
+        <v-tab-item>
+          <!-- <div class="ma-3">
+            <v-alert type="info" text dense class="text-left">
+              Here you can upload your legal documents.
+            </v-alert>
+          </div>
+          <v-card class="ma-3">
+            <v-container>
+              <div class="text-h5 text-left">
+                Legal Documents
+              </div>
+              <v-card-text>
+                <v-row v-for="(row, index) in numRowsDocuments" :key="index">
+                  <v-col>
+                    <v-select
+                      :items="['AGB', 'Datenschutz']"
+                      label="Type"
+                      @change="legalSelectChanged(index)"
+                    ></v-select>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      label="Label"
+                      @change="legalLabelChanged(index)"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col>
+                    <v-file-input
+                      v-model="documentFile"
+                      accept=".pdf,.doc,.docx"
+                      label="File input"
+                      @change="legalFileChanged(index)"
+                    ></v-file-input>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-btn icon class="ml-2" @click="numRowsDocuments++">
+                    <v-icon color="primary">
+                      mdi-plus
+                    </v-icon>
+                  </v-btn>
+                  <v-spacer />
+                </v-row>
+
+                <div>
+                  You can use this template to create your own:
+                </div>
+                <div>
+                  <a
+                    href="https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Template.docx"
+                    target="_blank"
+                  >
+                    View
+                  </a>
+                </div>
+              </v-card-text>
+            </v-container>
+          </v-card> -->
+
+          <LegalTab
+            :legal-documents-array="legalDocuments"
+            @legal-documents-changed="legalDocumentsChanged"
+          />
         </v-tab-item>
 
         <v-tab-item>
@@ -712,6 +782,7 @@ import { validationMixin } from "vuelidate";
 import AddStoreImageDialog from "./AddStoreImageDialog";
 import EditStoreDialogDescriptionTextArea from "./DescriptionTextArea";
 import OpeningHoursTab from "./editStoreDialogTabs/OpeningHoursTab.vue";
+import LegalTab from "./editStoreDialogTabs/LegalTab.vue";
 import ShowHelpDialog from "../ShowHelpDialog";
 
 import { mapState, mapActions } from "vuex";
@@ -741,6 +812,7 @@ export default {
     ShowHelpDialog: ShowHelpDialog,
     EditStoreDialogDescriptionTextArea: EditStoreDialogDescriptionTextArea,
     OpeningHoursTab: OpeningHoursTab,
+    LegalTab: LegalTab,
   },
 
   mixins: [validationMixin],
@@ -774,9 +846,16 @@ export default {
     },
 
     // address
-    city: { required, maxLength: maxLength(20) },
-    postcode: { required },
-    addressLine1: { required, maxLength: maxLength(40) },
+    country: { required, minLength: minLength(2), maxLength: maxLength(30) },
+    city: { required, minLength: minLength(2), maxLength: maxLength(30) },
+    postcode: { required, minLength: minLength(3) },
+    addressLine1: {
+      required,
+      minLength: minLength(3),
+      maxLength: maxLength(40),
+    },
+
+    // Shipping costs
     shippingCosts: { required },
     shippingThresholdValue: { required },
 
@@ -845,6 +924,7 @@ export default {
       addressLine1: "",
       postcode: "",
       city: "",
+      country: "",
       lat: "",
       lng: "",
       //htmlText: "Hello <strong>this</strong> is a test", //Variable for Input Store Description
@@ -858,7 +938,15 @@ export default {
       helpDialogTitle: "",
       helpDialogMessage: "",
 
-      // paypal
+      // legal
+      legalDocuments: [
+        {
+          type: "AGB",
+          label: "AGB meines Ladens",
+          fileDetails: null,
+          fileSrc: "",
+        },
+      ],
     };
   },
 
@@ -930,27 +1018,41 @@ export default {
         errors.push("At least one store image is required.");
       return errors;
     },
+    countryErrors() {
+      const errors = [];
+      if (!this.$v.country.$dirty) return errors;
+      !this.$v.country.required && errors.push("The city is required.");
+      !this.$v.country.maxLength &&
+        errors.push("The entered city is too long.");
+      !this.$v.country.minLength &&
+        errors.push("The entered city is too short.");
+      return errors;
+    },
     cityErrors() {
       const errors = [];
       if (!this.$v.city.$dirty) return errors;
       !this.$v.city.required && errors.push("The city is required.");
-      !this.$v.city.maxLength &&
-        errors.push("The city must be at most 20 characters long.");
+      !this.$v.city.maxLength && errors.push("The entered city is too long.");
+      !this.$v.city.minLength && errors.push("The entered city is too short.");
       return errors;
     },
     postcodeErrors() {
       const errors = [];
       if (!this.$v.postcode.$dirty) return errors;
       !this.$v.postcode.required && errors.push("Postcode is required.");
+      !this.$v.postcode.minLength &&
+        errors.push("The entered postcode is too long.");
       return errors;
     },
     addressLine1Errors() {
       const errors = [];
       if (!this.$v.addressLine1.$dirty) return errors;
       !this.$v.addressLine1.required &&
-        errors.push("The addressline is required.");
+        errors.push("The entered addressline is required.");
       !this.$v.addressLine1.maxLength &&
-        errors.push("The addressline must be at most 40 characters long.");
+        errors.push("The entered addressline is too long.");
+      !this.$v.addressLine1.minLength &&
+        errors.push("The entered addressline is too short.");
       return errors;
     },
     shippingCostsErrors() {
@@ -1056,6 +1158,7 @@ export default {
         this.addressLine1 = this.mapData.address.addressLine1;
         this.postcode = this.mapData.address.postcode;
         this.city = this.mapData.address.city;
+        this.country = this.mapData.address.country;
         this.mapIcon = this.mapData.mapIcon || "";
         this.lat = this.mapData.location.lat;
         this.lng = this.mapData.location.lng;
@@ -1097,7 +1200,7 @@ export default {
           postcode: this.postcode,
           city: this.city,
           addressLine1: this.addressLine1,
-          country: "Germany",
+          country: this.country,
         },
         mapIcon: this.mapIcon,
         location: {
@@ -1108,6 +1211,8 @@ export default {
         shippingCosts: parseFloat(this.shippingCosts),
         shippingThresholdValue: parseFloat(this.shippingThresholdValue),
         openingHours: this.openingHours,
+        // LEGAL
+        legalDocuments: this.legalDocuments,
         contact: {
           emailAddress: this.emailAddress,
           phoneNumber: this.phoneNumber,
@@ -1204,6 +1309,12 @@ export default {
     signupPaypal() {
       const win = window.open(this.paypalSignupLink, "_blank");
       win.focus();
+    },
+
+    // LEGAL
+    legalDocumentsChanged(updatedLegalDocuments) {
+      this.legalDocuments = updatedLegalDocuments;
+      // console.log(this.legalDocuments);
     },
   },
 };

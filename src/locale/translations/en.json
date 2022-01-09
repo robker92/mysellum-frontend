@@ -434,8 +434,8 @@
                 "shipping": {
                     "headline": "Shipping"
                 },
-                "security": {
-                    "headline": "Security"
+                "legal": {
+                    "headline": "Legal"
                 },
                 "settings": {
                     "headline": "Settings"
