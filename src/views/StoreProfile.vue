@@ -828,7 +828,7 @@
                     <v-icon color="primary" class="mt-2">
                       mdi-file
                     </v-icon>
-                    <div>
+                    <div class="text-body-2 my-2">
                       {{ document.label }}
                     </div>
                   </v-card>
