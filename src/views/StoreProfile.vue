@@ -561,7 +561,7 @@
                 </v-col>
               </v-row>
 
-              <div v-if="productList.length > productsPerPage">
+              <div v-if="numOfPagesProducts > 1">
                 <v-pagination
                   v-model="productsCurrentPage"
                   :length="numOfPagesProducts"
@@ -825,10 +825,10 @@
                     :class="{ 'on-hover': hover }"
                     @click="downloadFile(document.fileSrc)"
                   >
-                    <v-icon color="primary" class="mt-2">
+                    <v-icon color="primary" class="mt-2" large>
                       mdi-file
                     </v-icon>
-                    <div class="text-body-2 my-2">
+                    <div class="text-body-1 my-2">
                       {{ document.label }}
                     </div>
                   </v-card>
@@ -1101,15 +1101,19 @@ export default {
     },
     numOfPagesProducts() {
       if (this.dataset) {
-        return Math.ceil(this.productList.length / this.productsPerPage);
+        // return Math.ceil(this.productList.length / this.productsPerPage);
+        return Math.ceil(this.productList.length / this.numProductsPerPage);
       }
       return 0;
     },
     productsSliceStart() {
-      return (this.productsCurrentPage - 1) * this.productsPerPage;
+      // return (this.productsCurrentPage - 1) * this.productsPerPage;
+      return (this.productsCurrentPage - 1) * this.numProductsPerPage;
+      
     },
     productsSliceEnd() {
-      return this.productsSliceStart + this.productsPerPage;
+      // return this.productsSliceStart + this.productsPerPage;
+      return this.productsSliceStart + this.numProductsPerPage;
     },
 
     checkPriceMax: {
@@ -1171,6 +1175,7 @@ export default {
         return false;
       },
     },
+
     reviewAlreadySubmitted: {
       //check if logged in user already submitted a review for this store
       get() {
@@ -1183,6 +1188,22 @@ export default {
         }
         return false;
       },
+    },
+
+    numProductsPerPage() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return 6;
+        case "sm":
+          return 6;
+        case "md":
+          return 9;
+        case "lg":
+          return 9;
+        // case "xl":
+        //   return 800;
+      }
+      return 12;
     },
 
     //...mapState("shoppingCart", ["shoppingCart", "counter"])
