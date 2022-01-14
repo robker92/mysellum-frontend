@@ -1205,7 +1205,7 @@ export default {
       }
       return 12;
     },
-
+    
     //...mapState("shoppingCart", ["shoppingCart", "counter"])
   },
   async mounted() {
