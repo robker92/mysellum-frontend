@@ -64,6 +64,7 @@ export default {
             this.$emit("overlay-start");
             // let response;
             // try {
+            console.log(JSON.stringify(this.orderData));
             let response = await paypalService.createPaypalOrder(
               this.orderData
             );

@@ -158,6 +158,7 @@ export default {
         products: this.shoppingCart,
         billingAddress: this.orderData.billingAddress,
         shippingAddress: this.orderData.shippingAddress,
+        deliveryMethod: this.orderData.deliveryMethod,
         currencyCode: "EUR",
       };
       return data;

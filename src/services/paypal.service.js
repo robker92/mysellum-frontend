@@ -33,6 +33,7 @@ async function fetchMerchantIds(data) {
 }
 
 async function createPaypalOrder(data) {
+  console.log(JSON.stringify(data));
   const response = await baseClient.post(`/paypal/create-order`, data, {
     headers: authHeader(),
   });
