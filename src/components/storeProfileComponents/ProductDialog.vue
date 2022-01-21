@@ -203,6 +203,47 @@
               ></v-checkbox>
             </v-col>
 
+            
+            <!-- Value Added Tax Rate -->
+            
+
+
+              <v-col>
+              <div class="text-h6 text-left">Value Added Tax Rate:</div>
+              <v-radio-group
+                v-model="taxRateRadios"
+                mandatory
+                append-icon="mdi-information"
+                @click:append="
+                  showHelp(
+                    'Value Added Tax Rate for your Product',
+                    'Please choose the correct tax rate for your product. In Germany, the usual VAT is 19%. The reduced one is 7%. Please inquire if your product falls under the reduced tax rate'
+                  )
+                "
+              >
+                <v-radio label="Normal tax rate" value="normal"></v-radio>
+                <v-radio label="Reduced tax rate" value="reduced"></v-radio>
+              </v-radio-group>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <!-- Product Activation -->
+            <v-col>
+              <div class="text-h6 text-left">Activation:</div>
+              <v-switch
+                v-model="activeSwitch"
+                :label="$t('storeProfile.productDialog.info.activeLabel')"
+                append-icon="mdi-information"
+                @click:append="
+                  showHelp(
+                    'Product Activation Switch',
+                    'Using the switch you can control if a product can be seen and purchased by customers.'
+                  )
+                "
+              ></v-switch>
+            </v-col>
+
             <!-- Date Info -->
             <v-col>
               <div class="text-h6 text-left">
@@ -236,30 +277,7 @@
                   </div>
                 </v-col>
               </v-row>
-              <v-row>
-                <!-- <v-col cols="12" xs="4" sm="4" md="3" lg="3" xl="3">
-                  <div class="text-body-2 text-left">
-                    {{ $t("storeProfile.productDialog.info.activeLabel") }}:
-                  </div>
-                </v-col>
-                <v-col> -->
-                <!-- <div v-if="datetimeEdited" class="text-body-2 text-left">
-                    {{ datetimeEdited }}
-                    :label="`Switch 1: ${switch1.toString()}`"
-                  </div> -->
-                <v-switch
-                  v-model="activeSwitch"
-                  :label="$t('storeProfile.productDialog.info.activeLabel')"
-                  append-icon="mdi-information"
-                  @click:append="
-                    showHelp(
-                      'Product Activation Switch',
-                      'Using the switch you can control if a product can be seen and purchased by customers.'
-                    )
-                  "
-                ></v-switch>
-                <!-- </v-col> -->
-              </v-row>
+              
             </v-col>
           </v-row>
         </v-container>
@@ -300,7 +318,7 @@ import { productService } from "../../services";
 import {
   getDateFormatDDMMYYYY,
   getTimeFromIsoDate,
-  getImgBase64,
+  getBase64StringFromFile
 } from "../../helpers";
 
 const file_size_validation = (file) => {
@@ -381,6 +399,7 @@ export default {
       datetimeCreated: "",
       datetimeEdited: "",
       activeSwitch: false,
+      taxRateRadios: "normal",
 
       // Help Dialog
       showShowHelpDialog: false,
@@ -520,7 +539,7 @@ export default {
   },
 
   watch: {
-    productToEdit: function(newVal) {
+    productToEdit: function (newVal) {
       if (newVal !== null) {
         console.log(newVal);
         this.modeEdit = true;
@@ -540,6 +559,7 @@ export default {
         this.pickupCheckbox = newVal.pickup;
         this.deliveryCheckbox = newVal.delivery;
         this.activeSwitch = newVal.active;
+        this.taxRateRadios = newVal.taxRate
         // this.delivery = newVal.delivery;
         // this.pickup = newVal.pickup;
         this.quantityType = newVal.quantityType;
@@ -567,12 +587,13 @@ export default {
   methods: {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
-    submitProduct: async function() {
+    submitProduct: async function () {
+      console.log(this.longDescription ?? "");
       let payload = {
         storeId: this.$route.params.id,
         title: this.title,
         description: this.description,
-        longDescription: this.longDescription,
+        longDescription: this.longDescription ?? "",
         imgSrc: this.imageBuffer,
         imageDetails: this.imageDetails,
         price: this.price,
@@ -583,6 +604,7 @@ export default {
         delivery: this.deliveryCheckbox,
         pickup: this.pickupCheckbox,
         active: this.activeSwitch,
+        taxRate: this.taxRateRadios,
         stockAmount: 1,
       };
 
@@ -632,7 +654,6 @@ export default {
     },
 
     async onFileChange(file) {
-      console.log(file);
       if (!file) {
         this.image = null;
         this.imageBuffer = "";
@@ -642,20 +663,21 @@ export default {
 
       let buffer;
       try {
-        buffer = await getImgBase64(file);
+        buffer = await getBase64StringFromFile(file);
         // const result = await storeService.getImageBuffer(this.image);
         // buffer = result.buffer;
         // console.log(buffer);
       } catch (error) {
         return;
       }
-
+      
       this.imageBuffer = buffer;
       this.imageDetails = {
         size: file.size,
         originalname: file.name,
         name: file.name,
       };
+      this.imageDetails
     },
 
     showHelp(title, message) {
@@ -683,6 +705,7 @@ export default {
       this.modeEdit = false;
       this.helpDialogTitle = "";
       this.helpDialogMessage = "";
+      this.taxRateRadios = "normal"
       this.$emit("productToEdit-to-null");
       this.show = false;
     },
@@ -710,7 +733,8 @@ export default {
       console.log(this.quantityValue);
       console.log(this.pickupCheckbox);
       console.log(this.deliveryCheckbox);
-      console.log(this.activeSwitch);
+      console.log(this.activeSwitch)
+      console.log(this.taxRateRadios);
     },
   },
 };

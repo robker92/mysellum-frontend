@@ -468,7 +468,7 @@ export default {
     },
 
     updateStock: async function() {
-      var data = {
+      const data = {
         storeId: this.$route.params.id,
         _id: this.product._id,
         stockAmount: parseInt(this.stockAmount),

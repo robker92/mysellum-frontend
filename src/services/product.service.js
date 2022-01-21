@@ -62,12 +62,13 @@ async function deleteProduct(data) {
 }
 
 async function updateStockAmount(data) {
-  let response;
+  const payload = { stockAmount: data.stockAmount };
 
+  let response;
   try {
     response = await baseClient.patch(
       `/stores/${data.storeId}/products/${data._id}/stock-amount`,
-      data,
+      payload,
       {
         headers: authHeader(),
       }
