@@ -7,7 +7,7 @@
         </div>
         <div
           class="text-left black--text"
-          v-for="(product, index) in this.products"
+          v-for="(product, index) in products"
           :key="index"
         >
           {{ product.title }}
@@ -19,7 +19,7 @@
         </div>
         <div
           class="text-left black--text"
-          v-for="(product, index) in this.products"
+          v-for="(product, index) in products"
           :key="index"
         >
           {{ product.quantityValueType }}
@@ -31,10 +31,10 @@
         </div>
         <div
           class="black--text"
-          v-for="(product, index) in this.products"
+          v-for="(product, index) in products"
           :key="index"
         >
-          {{ product.price }}{{ currencySymbol }}
+          {{ product.price }} {{ currencySymbol }}
         </div>
       </v-col>
       <v-col cols="12" sm="2" md="2">
@@ -42,7 +42,7 @@
           Quantity
         </div>
         <div
-          v-for="(product, index) in this.products"
+          v-for="(product, index) in products"
           :key="index"
           class="black--text"
         >
@@ -55,7 +55,7 @@
         </div>
         <div
           class="text-right black--text"
-          v-for="(product, index) in this.products"
+          v-for="(product, index) in products"
           :key="index"
         >
           {{ product.totalRowSum }}
@@ -79,13 +79,13 @@
       </v-col>
       <v-col cols="12" sm="2" md="2">
         <div class="text-right font-weight-bold black--text">
-          {{ grossItemTotal }}{{ currencySymbol }}
+          {{ grossItemTotal }} {{ currencySymbol }}
         </div>
         <div class="text-right black--text">
-          + {{ grossShippingCosts }}{{ currencySymbol }}
+          + {{ grossShippingCosts }} {{ currencySymbol }}
         </div>
         <div class="text-right black--text">
-          - {{ platformFeeTotal }}{{ currencySymbol }}
+          - {{ platformFeeTotal }} {{ currencySymbol }}
         </div>
       </v-col>
     </v-row>
@@ -103,10 +103,10 @@
       </v-col>
       <v-col cols="12" sm="2" md="2">
         <div class="text-right font-weight-bold black--text">
-          {{ transferTotal }}{{ currencySymbol }}
+          {{ transferTotal }} {{ currencySymbol }}
         </div>
         <div class="text-right black--text">
-          {{ taxForTransferAmount }}{{ currencySymbol }}
+          {{ taxForTransferAmount }} {{ currencySymbol }}
         </div>
       </v-col>
     </v-row>
@@ -120,11 +120,11 @@ export default {
   mixins: [],
   props: {
     products: Array,
-    totalSum: String,
-    totalTax: String,
-    transferAmount: String,
-    platformFee: String,
-    shippingCosts: String,
+    // totalSum: String,
+    // totalTax: String,
+    // transferAmount: String,
+    // platformFee: String,
+    // shippingCosts: String,
     currencySymbol: String,
 
     grossItemTotal: String,

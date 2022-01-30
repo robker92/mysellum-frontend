@@ -265,13 +265,12 @@
               Order Overview ({{ selectedOrderComputed.products.length }} Line
               Items):
             </div>
-
-            <StoreOrderOverviewProductTable
-              :products="computedProductArray"
+<!-- 
               :total-sum="selectedOrderComputed.totalSum"
               :total-tax="selectedOrderComputed.totalTax"
-              :shipping-costs="selectedOrderComputed.shippingCosts"
-
+              :shipping-costs="selectedOrderComputed.shippingCosts" -->
+            <StoreOrderOverviewProductTable
+              :products="computedProductArray"
               :gross-item-total="selectedOrderComputed.valueBreakdown.grossItemTotal"
               :gross-shipping-costs="selectedOrderComputed.valueBreakdown.grossShippingCosts"
               :platform-fee-total="selectedOrderComputed.valueBreakdown.platformFeeTotal"
@@ -482,9 +481,9 @@ export default {
             currentProduct.totalRowSum =
               (currentProduct.price * currentProduct.quantity)
                 .toFixed(2)
-                .toString() + currentProduct.currencySymbol;
+                .toString() + " " + currentProduct.currencySymbol;
             currentProduct.computedPrice =
-              currentProduct.price + currentProduct.currencySymbol;
+              currentProduct.price +  " " + currentProduct.currencySymbol;
 
             returnArray.push(currentProduct);
             currentProduct = {};
