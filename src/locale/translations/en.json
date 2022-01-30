@@ -273,6 +273,11 @@
                 "headline": "Payment",
                 "activatedLabel": "You have registered a payment method for your store.",
                 "notActivatedLabel": "You did not register a payment method for your store yet."
+            },
+            "legalDocumentsStep":{
+                "headline": "Legal Documents",
+                "activatedLabel": "You have uploaded an Conditions and a Data Privacy document for your store.",
+                "notActivatedLabel": "You did not upload an Conditions and a Data Privacy document for your store yet."
             }
         },
 

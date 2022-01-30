@@ -133,13 +133,15 @@
             <v-row class="mt-2" no-gutters>
               <v-col
                 cols="12"
-                sm="6"
-                md="6"
-                lg="6"
+                xs="3"
+                sm="5"
+                md="4"
+                lg="5"
+                xl="5"
                 class="mouse-pointer"
                 @click.stop="showProductDetails()"
               />
-              <v-col cols="12" sm="4" md="4" lg="4">
+              <v-col cols="12" xs="4" sm="4" md="4" lg="4" xl="4">
                 <v-combobox
                   v-model="productQuantity"
                   :items="quantityItemsComputed"
@@ -151,7 +153,7 @@
                   @blur="$v.quantity.$touch()"
                 ></v-combobox>
               </v-col>
-              <v-col cols="12" sm="2" md="2" lg="2">
+              <v-col cols="12" xs="2" sm="2" md="2" lg="2" xl="2">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn

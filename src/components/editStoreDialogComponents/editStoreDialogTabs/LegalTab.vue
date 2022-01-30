@@ -71,6 +71,7 @@
           </div> -->
 
           <v-row>
+            <v-spacer />
             <v-btn icon class="ml-2 mt-3" @click="addLegalDocument">
               <v-icon color="primary">
                 mdi-plus
@@ -79,11 +80,8 @@
             <v-spacer />
           </v-row>
 
-          <div>
-            You can use this template to create your own:
-          </div>
-          <div>
-            <a
+          <div class="text-body-1 text-left mt-5">
+            You can use this template to create your own documents: <a
               href="https://prjctstorageaccount.blob.core.windows.net/prjct-dev-other-files/Template.docx"
               target="_blank"
             >
@@ -230,8 +228,6 @@ export default {
 
     documentsChanged() {
       this.$emit("legal-documents-changed", this.legalDocuments);
-      // console.log(this.$v.legalDocuments);
-      // this.$v.legalDocuments.$touch();
     },
 
     // LEGAL

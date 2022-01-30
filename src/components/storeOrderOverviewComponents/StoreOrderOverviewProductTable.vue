@@ -79,13 +79,13 @@
       </v-col>
       <v-col cols="12" sm="2" md="2">
         <div class="text-right font-weight-bold black--text">
-          {{ totalSum }}{{ currencySymbol }}
+          {{ grossItemTotal }}{{ currencySymbol }}
         </div>
         <div class="text-right black--text">
-          + {{ shippingCosts }}{{ currencySymbol }}
+          + {{ grossShippingCosts }}{{ currencySymbol }}
         </div>
         <div class="text-right black--text">
-          - {{ platformFee }}{{ currencySymbol }}
+          - {{ platformFeeTotal }}{{ currencySymbol }}
         </div>
       </v-col>
     </v-row>
@@ -103,10 +103,10 @@
       </v-col>
       <v-col cols="12" sm="2" md="2">
         <div class="text-right font-weight-bold black--text">
-          {{ transferAmount }}{{ currencySymbol }}
+          {{ transferTotal }}{{ currencySymbol }}
         </div>
         <div class="text-right black--text">
-          {{ totalTax }}{{ currencySymbol }}
+          {{ taxForTransferAmount }}{{ currencySymbol }}
         </div>
       </v-col>
     </v-row>
@@ -125,7 +125,14 @@ export default {
     transferAmount: String,
     platformFee: String,
     shippingCosts: String,
-    currencySymbol: String
+    currencySymbol: String,
+
+    grossItemTotal: String,
+    grossShippingCosts: String,
+    platformFeeTotal: String,
+    transferTotal: String,
+    taxForTransferAmount: String,
+
   },
   data() {
     return {

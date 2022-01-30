@@ -270,9 +270,14 @@
               :products="computedProductArray"
               :total-sum="selectedOrderComputed.totalSum"
               :total-tax="selectedOrderComputed.totalTax"
-              :platform-fee="selectedOrderComputed.platformFee"
-              :transfer-amount="selectedOrderComputed.transferAmount"
               :shipping-costs="selectedOrderComputed.shippingCosts"
+
+              :gross-item-total="selectedOrderComputed.valueBreakdown.grossItemTotal"
+              :gross-shipping-costs="selectedOrderComputed.valueBreakdown.grossShippingCosts"
+              :platform-fee-total="selectedOrderComputed.valueBreakdown.platformFeeTotal"
+              :transfer-total="selectedOrderComputed.valueBreakdown.transferTotal"
+              :tax-for-transfer-amount="selectedOrderComputed.valueBreakdown.taxForTransferAmount"
+
               :currency-symbol="
                 getCurrencySymbol(selectedOrderComputed.currencyCode)
               "
@@ -739,6 +744,9 @@ export default {
     },
 
     getTotalSumWithComma(totalSum) {
+      if(!totalSum){
+        return
+      }
       let returnTotalSum = totalSum.replace(".", ",");
       return returnTotalSum;
     },

@@ -223,7 +223,7 @@
         </v-card>
       </v-col>
 
-      <!-- STEP 4 -->
+      <!-- STEP 4 - PAYMENT -->
       <v-col
         v-if="
           storeActivationSteps.paymentMethodRegistered === true &&
@@ -269,6 +269,64 @@
                 {{
                   $t(
                     "storeProfile.activationSteps.paymentStep.notActivatedLabel"
+                  )
+                }}
+              </div>
+            </v-list-item-content>
+
+            <v-list-item-avatar>
+              <v-icon color="red" large>mdi-close-box</v-icon>
+            </v-list-item-avatar>
+          </v-list-item>
+        </v-card>
+      </v-col>
+
+      <!-- STEP 5 - LEGAL DOCUMENTS -->
+      <v-col
+        v-if="
+          storeActivationSteps.legalDocumentsValid === true &&
+            checkAllSteps === false
+        "
+        cols="12"
+        lg="3"
+      >
+        <v-card outlined class="mx-auto">
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title class="text-h6 mb-1 text-left">
+                {{ $t("storeProfile.activationSteps.legalDocumentsStep.headline") }}
+              </v-list-item-title>
+              <div class="text-body-2 text-left">
+                {{
+                  $t("storeProfile.activationSteps.legalDocumentsStep.activatedLabel")
+                }}
+              </div>
+            </v-list-item-content>
+
+            <v-list-item-avatar>
+              <v-icon color="green" large>mdi-checkbox-marked</v-icon>
+            </v-list-item-avatar>
+          </v-list-item>
+        </v-card>
+      </v-col>
+      <v-col
+        v-if="
+          storeActivationSteps.legalDocumentsValid === false &&
+            checkAllSteps === false
+        "
+        cols="12"
+        lg="3"
+      >
+        <v-card outlined class="mx-auto">
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title class="text-h6 mb-1 text-left">
+                {{ $t("storeProfile.activationSteps.legalDocumentsStep.headline") }}
+              </v-list-item-title>
+              <div class="text-body-2 text-left">
+                {{
+                  $t(
+                    "storeProfile.activationSteps.legalDocumentsStep.notActivatedLabel"
                   )
                 }}
               </div>

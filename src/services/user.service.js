@@ -113,11 +113,16 @@ async function verifyRegistration(token) {
 }
 
 async function addToShoppingCart(data) {
+  // console.log(data);
   let response;
   try {
-    response = await baseClient.patch(`/cart/add`, data, {
-      headers: authHeader(),
-    });
+    response = await baseClient.patch(
+      `/cart/add`,
+      { product: data.product, amount: data.amount },
+      {
+        headers: authHeader(),
+      }
+    );
   } catch (error) {
     console.log(error);
     throw error;
@@ -131,9 +136,13 @@ async function addToShoppingCart(data) {
 async function removeFromShoppingCart(data) {
   let response;
   try {
-    response = await baseClient.patch(`/cart/remove`, data, {
-      headers: authHeader(),
-    });
+    response = await baseClient.patch(
+      `/cart/remove`,
+      { product: data.product, amount: data.amount },
+      {
+        headers: authHeader(),
+      }
+    );
   } catch (error) {
     console.log(error);
     throw error;
