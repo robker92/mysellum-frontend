@@ -327,15 +327,18 @@ export default {
     },
 
     addQueryParam(queryObject) {
-      this.$router.push({
-        query: Object.assign({}, this.$route.query, queryObject),
-      });
+      console.log(Object.assign({}, this.$route.query, queryObject));
+      this.$router.replace({ name: 'SearchPickup', query: Object.assign({}, this.$route.query, queryObject) })
+      // this.$router.replace({
+      //   query: Object.assign({}, this.$route.query, queryObject),
+      // });
     },
 
     removeQueryParam(param) {
       let query = Object.assign({}, this.$route.query);
       delete query[param];
-      this.$router.replace({ query });
+      this.$router.replace({ name: 'SearchPickup', query: query })
+      // this.$router.replace({ query });
     },
     // ###########################################################################################################
   },

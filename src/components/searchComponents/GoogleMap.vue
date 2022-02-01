@@ -761,7 +761,7 @@ export default {
     },
 
     addQueryParam(queryObject) {
-      this.$router.push({
+      this.$router.replace({
         query: Object.assign({}, this.$route.query, queryObject),
       });
     },
