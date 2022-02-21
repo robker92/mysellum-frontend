@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-row v-if="type === 'buy'">
       <v-col
         v-for="(element, index) in whyBuyList"
@@ -8,47 +8,34 @@
         lg="3"
       >
         <v-hover v-slot="{ hover }">
-          <v-card height="250">
-            <v-container fill-height fluid>
-              <v-row>
-                <v-col>
-                  <v-icon large :color="element.iconColor">
-                    {{ element.icon }}
-                  </v-icon>
-                  <div class="font-weight-bold mb-4">
-                    {{ element.title }}
-                  </div>
-                </v-col>
-              </v-row>
-              <!-- <div class="text-left">
-                {{ element.text }}
-              </div> -->
+          <v-card height="270">
+            <v-img height="200" :src="element.img" style="opacity: 0.8"></v-img>
+            <v-container>
+              <div class="font-weight-bold mb-2">
+                {{ title(element.id) }}
+              </div>
             </v-container>
             <!-- <v-expand-x-transition> -->
             <v-fab-transition>
               <!-- <v-scroll-transition> -->
-              <!-- 
-                :class="{ mysellum_green: true }" 
-                
-                class="d-flex transition-fast-in-fast-out v-card--reveal text--body-2 white--text"
-                :class="[
-                  'd-flex',
-                  'transition-fast-in-fast-out',
-                  'v-card--reveal',
-                  'text--body-2',
-                  'white--text',
-                  mysellum_green,
-                ]"-->
-              <div
+              <v-card
                 v-if="hover"
-                class="d-flex transition-fast-in-fast-out v-card--reveal text--body-2 white--text"
+                class="
+                  d-flex
+                  transition-fast-in-fast-out
+                  v-card--reveal
+                  text--body-2
+                  white--text
+                "
                 :style="{
                   height: '100%',
                   background: `${mysellum_main_green_hex} !important`,
                 }"
               >
-                {{ element.text }}
-              </div>
+                <v-container>
+                  {{ text(element.id) }}
+                </v-container>
+              </v-card>
               <!-- </v-expand-x-transition> -->
             </v-fab-transition>
             <!-- </v-scale-transition> -->
@@ -56,6 +43,7 @@
         </v-hover>
       </v-col>
     </v-row>
+
     <v-row v-if="type === 'sell'">
       <v-col
         v-for="(element, index) in whySellList"
@@ -64,41 +52,32 @@
         lg="3"
       >
         <v-hover v-slot="{ hover }">
-          <v-card height="250">
-            <v-container fill-height fluid>
-              <v-row>
-                <v-col>
-                  <v-icon large :color="element.iconColor">
-                    {{ element.icon }}
-                  </v-icon>
-                  <div class="font-weight-bold mb-4 ">
-                    {{ element.title }}
-                  </div>
-                  <!-- <div class="text-left">
-                {{ element.text }}
-              </div> -->
-                </v-col>
-              </v-row>
+          <v-card height="270">
+            <v-img height="200" :src="element.img" style="opacity: 0.8"></v-img>
+            <v-container>
+              <div class="font-weight-bold mb-2">
+                {{ title(element.id) }}
+              </div>
             </v-container>
             <v-fab-transition>
-              <div
+              <v-card
                 v-if="hover"
-                :class="
-                  `d-flex transition-fast-in-fast-out v-card--reveal text--body-2 white--text`
-                "
+                :class="`d-flex transition-fast-in-fast-out v-card--reveal text--body-2 white--text`"
                 :style="{
                   height: '100%',
                   background: `${mysellum_main_green_hex} !important`,
                 }"
               >
-                {{ element.text }}
-              </div>
+                <v-container>
+                  {{ text(element.id) }}
+                </v-container>
+              </v-card>
             </v-fab-transition>
           </v-card>
         </v-hover>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -116,78 +95,122 @@ export default {
       // Colors
       mysellum_main_green_hex: MysellumColors.MYSELLUM_MAIN_GREEN_HEX,
 
-      whyBuyTitle: "Warum du bei uns kaufen solltest",
       whyBuyList: [
         {
           icon: "mdi-account",
           iconColor: "primary",
-          title: "Erfahre bei wem du kaufst",
-          text:
-            "Auf Mysellum stellen sich die Produzenten dir vor, wodurch du dir sicher sein kannst, wessen Produkte du kaufst und dein Geld ankommt.",
+          id: "byWhom",
+          img: "https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
         {
           icon: "mdi-silverware",
           iconColor: "blue accent-3",
-          title: "Erfahre genau was du kaufst",
-          text:
-            "Die Produzenten liefern dir detaillierte Hinweise über ihre Produkte hinsichtlich Inhaltsstoffen, Herstellung, Tierhaltung etc.",
+          id: "what",
+          img: "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
         {
           icon: "mdi-currency-usd",
           iconColor: "green",
-          title: "Unterstütze die Produzenten",
-          text:
-            "Für ihre Produkte erhalten die Produzenten gerade einmal X % der Verkaufssumme in den Supermärkten. Durch den Direktverkauf über uns erhält er jedoch eine deutlich höhere Summe. Dadurch werden auch die Produzenten mit nicht-industriellen Herstellungsmethoden belohnt und unterstützt.",
+          id: "supportProducers",
+          img: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
         {
           icon: "mdi-molecule-co2",
           iconColor: "grey",
-          title: "Vermeide globale Transportwege",
-          text:
-            "Durch den lokalen Einkauf und den damit verbunden kurzen Transportwegen, wird der Co2 Fußabdruck niedrig gehalten und ein positiver Nebeneffekt für die Umwelt erzielt.",
+          id: "co2",
+          img: "https://images.unsplash.com/photo-1606185540834-d6e7483ee1a4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
         {
           icon: "mdi-star",
           iconColor: "yellow",
-          title: "Deine Umgebung",
-          text:
-            "Gute Weine, frischer Fisch, nachhaltige Steaks, leckerer Käse - entdecke die kulinarische Vielfalt deiner Umgebung!",
+          id: "knowSurroundings",
+          img: "https://images.unsplash.com/photo-1575686991348-bf3d4a0fe047?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
       ],
-      whySellTitle: "Warum du bei uns verkaufen solltest",
       whySellList: [
         {
           icon: "mdi-cash-multiple",
           iconColor: "green",
-          title: "Exzellente Konditionen",
-          text:
-            "Bei uns erhalten du und deine Produktion die fairen Bedingungen, die ihr schon immer verdient habt. Abgesehen von einer kleinen Umkostenpauschale erhaltet ihr über uns den vollen Verkaufspreis!",
+          id: "conditions",
+          img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
         {
           icon: "mdi-handshake",
           iconColor: "purple",
-          title: "Vorstellung Beim Kunden",
-          text:
-            "Ihr könnt Euch über Mysellum direkt bei Euren Kunden vorstellen und mit Eurer Nachhaltigkeit und Persönlichkeit werben. ",
+          id: "introduction",
+          img: "https://images.unsplash.com/photo-1624905917131-abae91e590ae?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         },
         {
           icon: "mdi-star",
           iconColor: "orange",
-          title: "Plattform Vorteil -> Mehr Bekanntheit als alleine",
-          text:
-            "Durch unsere Plattform werden viel mehr Menschen auf Euch aufmerksam verglichen mit einem separaten Online-Shop. Wenn ihr uns unterstützt, unterstützt ihr also gleichzeitig euch selbst!",
+          id: "platformAdvantage",
+          img: "https://images.unsplash.com/photo-1542382189-f2600a163c2f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80",
         },
         {
           icon: "mdi-hammer-wrench",
           iconColor: "black",
-          title: "Einfaches Setup -> direkt loslegen & Verkaufen",
-          text:
-            "Die Eröffnung eines Stores bei uns ist sehr intuitiv gestaltet, sodass Ihr Euch schnell zurechtfinden solltet. Bei Fragen steht Euch unser Support jederzeit zur Verfügung.",
+          id: "setup",
+          img: "https://images.unsplash.com/photo-1500468756762-a401b6f17b46?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80",
         },
       ],
     };
   },
-  computed: {},
+  computed: {
+    title() {
+      return (id) => {
+        switch (id) {
+          // reasons to buy
+          case "byWhom":
+            return this.$t("home.reasonsToBuy.byWhom.title");
+          case "what":
+            return this.$t("home.reasonsToBuy.what.title");
+          case "supportProducers":
+            return this.$t("home.reasonsToBuy.supportProducers.title");
+          case "co2":
+            return this.$t("home.reasonsToBuy.co2.title");
+          case "knowSurroundings":
+            return this.$t("home.reasonsToBuy.knowSurroundings.title");
+
+          // reasons to sell
+          case "conditions":
+            return this.$t("home.reasonsToSell.conditions.title");
+          case "introduction":
+            return this.$t("home.reasonsToSell.introduction.title");
+          case "platformAdvantage":
+            return this.$t("home.reasonsToSell.platformAdvantage.title");
+          case "setup":
+            return this.$t("home.reasonsToSell.setup.title");
+        }
+      };
+    },
+    text() {
+      return (id) => {
+        switch (id) {
+          // reasons to buy
+          case "byWhom":
+            return this.$t("home.reasonsToBuy.byWhom.text");
+          case "what":
+            return this.$t("home.reasonsToBuy.what.text");
+          case "supportProducers":
+            return this.$t("home.reasonsToBuy.supportProducers.text");
+          case "co2":
+            return this.$t("home.reasonsToBuy.co2.text");
+          case "knowSurroundings":
+            return this.$t("home.reasonsToBuy.knowSurroundings.text");
+
+          // reasons to sell
+          case "conditions":
+            return this.$t("home.reasonsToSell.conditions.text");
+          case "introduction":
+            return this.$t("home.reasonsToSell.introduction.text");
+          case "platformAdvantage":
+            return this.$t("home.reasonsToSell.platformAdvantage.text");
+          case "setup":
+            return this.$t("home.reasonsToSell.setup.text");
+        }
+      };
+    },
+  },
   watch: {},
   methods: {},
 };

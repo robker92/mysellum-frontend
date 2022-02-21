@@ -2,10 +2,10 @@
   <v-container>
     <div v-if="alreadySent === false">
       <div class="text-left text-h5">
-        {{ this.$t("forgotPassword.headline") }}
+        {{ this.$t("resendVerificationEmail.headline") }}
       </div>
       <v-alert border="left" type="info" outlined class="mt-5" dense>
-        {{ this.$t("forgotPassword.infoAlert") }}
+        {{ this.$t("resendVerificationEmail.infoAlert") }}
       </v-alert>
 
       <v-card class="mt-5 text-center">
@@ -54,12 +54,12 @@
             <v-spacer />
             <v-btn
               color="primary"
-              dark
+              :dark="!buttonIsDisabled"
               right
               :disabled="buttonIsDisabled"
               @click="sendResetEmail"
             >
-              {{ this.$t("forgotPassword.sendMailButtonLabel") }}
+              {{ this.$t("resendVerificationEmail.sendMailButtonLabel") }}
             </v-btn>
           </v-card-actions>
         </v-container>
@@ -70,11 +70,10 @@
         <v-spacer />
         <v-col cols="12" sm="2" md="2" lg="2">
           <v-img src="../assets/undraw-images/undraw_Mail_sent.svg" />
-          <!-- <v-icon color="primary">mdi-lock-check</v-icon> -->
         </v-col>
         <v-col cols="12" sm="6" md="6" lg="6">
           <div class="text-body-1 text-left">
-            {{ this.$t("forgotPassword.successfullySentBody") }}
+            {{ this.$t("resendVerificationEmail.successfullySentBody") }}
           </div>
         </v-col>
         <v-spacer />
@@ -167,19 +166,10 @@ export default {
       this.overlay = true;
       try {
         await userService.resendVerificationEmail(payload);
-        this.addSuccessSnackbar(this.$t("forgotPassword.sendMailSuccess"));
+        this.addSuccessSnackbar(this.$t("resendVerificationEmail.sendMailSuccess"));
         this.alreadySent = true;
-      } catch (error) {
-        let msg;
-        if (error.response.data.type === "whileSending") {
-          msg = this.$t("forgotPassword.sendMailWhileSendingError");
-        } else if (error.response.data.type === "notFound") {
-          msg = this.$t("forgotPassword.sendMailNotFoundError");
-        } else {
-          msg = this.$t("forgotPassword.sendMailOtherError");
-        }
-        this.addErrorSnackbar(msg);
-        //this.addErrorSnackbar("Error while sending the password reset mail!");
+      } catch (errorMsg) {
+        this.addErrorSnackbar(errorMsg);
       }
       this.overlay = false;
     },

@@ -4,7 +4,13 @@
       <v-progress-circular indeterminate size="80"></v-progress-circular>
     </v-container>
 
-    <v-container v-if="alreadyReset === false && pageLoading === false">
+    <v-container
+      v-if="
+        alreadyReset === false &&
+        pageLoading === false &&
+        passwordResetTokenValid === true
+      "
+    >
       <v-row
         v-if="passwordResetTokenValid === true"
         align="center"
@@ -79,15 +85,45 @@
       </v-row>
     </v-container>
 
-    <v-container v-if="alreadyReset === true && pageLoading === false">
+    
+    <v-container
+      v-if="
+        alreadyReset === true &&
+        pageLoading === false &&
+        passwordResetTokenValid === true
+      "
+    >
+    <v-card flat height="50"/>
       <v-row align="center">
         <v-spacer />
-        <v-col>
+        <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
           <div text-body-1>
             {{ this.$t("passwordReset.successfullyChangedBody") }}
           </div>
         </v-col>
-        <v-col cols="12" sm="2" md="2" lg="2">
+        <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+          <v-img src="../assets/undraw-images/undraw_authentication.svg" />
+        </v-col>
+        <v-spacer />
+      </v-row>
+    </v-container>
+
+    <v-container
+      v-if="
+        alreadyReset === false &&
+        pageLoading === false &&
+        passwordResetTokenValid === false
+      "
+    >
+    <v-card flat height="50"/>
+      <v-row align="center">
+        <v-spacer />
+        <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
+          <v-alert type="error">
+            {{ this.$t("passwordReset.resetTokenInvalid") }}
+          </v-alert>
+        </v-col>
+        <v-col cols="12" xs="6" sm="6" md="6" lg="6" xl="6">
           <v-img src="../assets/undraw-images/undraw_authentication.svg" />
         </v-col>
         <v-spacer />
@@ -193,7 +229,10 @@ export default {
       return errors;
     },
     buttonIsDisabled() {
-      if (!this.$v.$password && !this.$v.passwordConfirmation.$invalid) {
+      if (
+        !this.$v.password.$invalid &&
+        !this.$v.passwordConfirmation.$invalid
+      ) {
         //Register User with input data
         return false;
       } else {
@@ -209,7 +248,8 @@ export default {
       this.passwordResetTokenValid = true;
       this.pageLoading = false;
     } catch (error) {
-      //this.resetFailMessage = error.response.data.message;
+      this.passwordResetTokenValid = false;
+      this.pageLoading = false;
     }
     this.alreadyReset = false;
   },
@@ -227,14 +267,8 @@ export default {
         await userService.resetPassword(data);
         this.addSuccessSnackbar(this.$t("passwordReset.successfullyChanged"));
         this.alreadyReset = true;
-      } catch (error) {
-        let msg;
-        if (error.response.data.type === "failure") {
-          msg = this.$t("passwordReset.resetFailureError");
-        } else {
-          msg = this.$t("passwordReset.resetOtherError");
-        }
-        this.addErrorSnackbar(msg);
+      } catch (errorMsg) {
+        this.addErrorSnackbar(errorMsg);
       }
       this.overlay = false;
     },

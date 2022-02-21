@@ -1,7 +1,8 @@
 /* eslint-disable no-useless-catch */
 
 import { baseClient } from "./client";
-import { authHeader, getCookie } from "../helpers";
+import { authHeader, getCookie, errorTranslation } from "../helpers";
+import { i18n } from "../main.js";
 
 export const userService = {
   getSingleUser,
@@ -54,7 +55,8 @@ async function login(credentials) {
   try {
     response = await baseClient.post("/auth/login-user", credentials);
   } catch (error) {
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
   localStorage.setItem("authToken", response.data.authToken);
   // console.log(getCookie("authToken"));
@@ -82,7 +84,8 @@ async function register(data) {
   try {
     response = await baseClient.post("/auth/register-user", data);
   } catch (error) {
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
 
   return response.data;
@@ -113,7 +116,6 @@ async function verifyRegistration(token) {
 }
 
 async function addToShoppingCart(data) {
-  // console.log(data);
   let response;
   try {
     response = await baseClient.patch(
@@ -124,8 +126,9 @@ async function addToShoppingCart(data) {
       }
     );
   } catch (error) {
-    console.log(error);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    console.log(translatedMessage)
+    throw translatedMessage;
   }
   const shoppingCart = response.data.shoppingCart;
   const shippingCosts = response.data.shippingCosts;
@@ -144,8 +147,8 @@ async function removeFromShoppingCart(data) {
       }
     );
   } catch (error) {
-    console.log(error);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
   const shoppingCart = response.data.shoppingCart;
   const shippingCosts = response.data.shippingCosts;
@@ -166,8 +169,8 @@ async function updateShoppingCart(inputShoppingCart) {
       }
     );
   } catch (error) {
-    console.log(error);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
 
   const shoppingCart = response.data.shoppingCart;
@@ -184,8 +187,8 @@ async function resendVerificationEmail(data) {
   try {
     response = await baseClient.post(`/auth/resend-verification-email`, data);
   } catch (error) {
-    console.log(error.message);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
 
   return response.data;
@@ -196,8 +199,8 @@ async function sendResetPasswordMail(data) {
   try {
     response = await baseClient.post(`/auth/send-password-reset-mail`, data);
   } catch (error) {
-    console.log(error.message);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
 
   return response.data;
@@ -208,8 +211,8 @@ async function checkResetToken(token) {
   try {
     response = await baseClient.get(`/auth/check-reset-token/${token}`);
   } catch (error) {
-    console.log(error.message);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
 
   return response.data;
@@ -222,8 +225,8 @@ async function resetPassword(data) {
       password: data.password,
     });
   } catch (error) {
-    console.log(error.message);
-    throw error;
+    const translatedMessage = errorTranslation(error.response.data, i18n.locale)
+    throw translatedMessage;
   }
 
   return response.data;
@@ -262,37 +265,37 @@ async function removeStoreFromFavorites(storeId) {
 }
 
 //REFACTOR
-// eslint-disable-next-line no-unused-vars
-function handleResponse(fctn) {
-  console.log("@ handler");
-  const response = fctn;
-  if (response instanceof Error) {
-    console.log("@error at handler");
-    return Promise.reject(response);
-  }
-  return Promise.resolve(response);
-  //return response.then(text => {
-  // return response.then(text => {
-  //     const data = text && JSON.parse(text);
-  //     if (!response.ok) {
-  //         if (response.status === 401) {
-  //             // auto logout if 401 response returned from api
-  //             logout();
-  //             location.reload(true);
-  //         }
+// // eslint-disable-next-line no-unused-vars
+// function handleResponse(fctn) {
+//   console.log("@ handler");
+//   const response = fctn;
+//   if (response instanceof Error) {
+//     console.log("@error at handler");
+//     return Promise.reject(response);
+//   }
+//   return Promise.resolve(response);
+//   //return response.then(text => {
+//   // return response.then(text => {
+//   //     const data = text && JSON.parse(text);
+//   //     if (!response.ok) {
+//   //         if (response.status === 401) {
+//   //             // auto logout if 401 response returned from api
+//   //             logout();
+//   //             location.reload(true);
+//   //         }
 
-  //         const error = (data && data.message) || response.statusText;
-  //         throw error;
-  //     }
+//   //         const error = (data && data.message) || response.statusText;
+//   //         throw error;
+//   //     }
 
-  //     return data;
-  // });
-  // console.log("hi1")
-  // if (response instanceof Error) {
-  //     let data = response && JSON.parse(response);
-  //     let error = (data && data.message) || response.statusText;
-  //     throw error;
-  // } else {
-  //     Promise.resolve(response);
-  // }
-}
+//   //     return data;
+//   // });
+//   // console.log("hi1")
+//   // if (response instanceof Error) {
+//   //     let data = response && JSON.parse(response);
+//   //     let error = (data && data.message) || response.statusText;
+//   //     throw error;
+//   // } else {
+//   //     Promise.resolve(response);
+//   // }
+// }

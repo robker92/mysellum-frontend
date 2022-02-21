@@ -54,7 +54,7 @@
             <v-spacer />
             <v-btn
               color="primary"
-              dark
+              :dark="!buttonIsDisabled"
               right
               :disabled="buttonIsDisabled"
               @click="sendResetEmail"
@@ -70,7 +70,6 @@
         <v-spacer />
         <v-col cols="12" sm="2" md="2" lg="2">
           <v-img src="../assets/undraw-images/undraw_Mail_sent.svg" />
-          <!-- <v-icon color="primary">mdi-lock-check</v-icon> -->
         </v-col>
         <v-col cols="12" sm="6" md="6" lg="6">
           <div class="text-body-1 text-left">
@@ -169,17 +168,8 @@ export default {
         await userService.sendResetPasswordMail(payload);
         this.addSuccessSnackbar(this.$t("forgotPassword.sendMailSuccess"));
         this.alreadySent = true;
-      } catch (error) {
-        let msg;
-        if (error.response.data.type === "whileSending") {
-          msg = this.$t("forgotPassword.sendMailWhileSendingError");
-        } else if (error.response.data.type === "notFound") {
-          msg = this.$t("forgotPassword.sendMailNotFoundError");
-        } else {
-          msg = this.$t("forgotPassword.sendMailOtherError");
-        }
-        this.addErrorSnackbar(msg);
-        //this.addErrorSnackbar("Error while sending the password reset mail!");
+      } catch (errorMsg) {
+        this.addErrorSnackbar(errorMsg);
       }
       this.overlay = false;
     },

@@ -7,7 +7,7 @@
         <!-- <v-card-actions primary-title class="justify-center"> -->
         <!-- justify="center" align="center" -->
         <v-row>
-          <v-col cols="12" sm="8" md="8" lg="8" xl="8">
+          <v-col cols="12" xs="6" sm="7" md="8" lg="8" xl="8">
             <v-text-field
               v-model="searchTerm"
               label="Search"
@@ -18,7 +18,7 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="3" md="3" lg="3" xl="3">
+          <v-col cols="12" xs="2" sm="3" md="3" lg="3" xl="3">
             <v-select
               v-model="selectedDistributionItem"
               :items="distributionItems"
@@ -36,7 +36,7 @@
             </v-select>
           </v-col>
 
-          <v-col cols="12" sm="1" md="1" lg="1" xl="1">
+          <v-col cols="12" xs="2" sm="2" md="1" lg="1" xl="1">
             <v-btn
               :color="mysellum_main_green_name"
               dark

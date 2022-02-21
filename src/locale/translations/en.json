@@ -17,6 +17,72 @@
         "receivedOrdersButton": "Your received Orders"
     },
 
+    "home": {
+        "categories": {
+            "headline": "Explore Popular Categories In Your Region",
+            "meat": "Meat",
+            "fish": "Fish",
+            "wine": "Wine",
+            "beer": "Beer",
+            "bakery": "Bakery",
+            "dairyAndEggs": "Dairy And Eggs",
+            "farm": "Farm",
+            "vegetables": "Vegetables"
+        },
+        "introduction": {
+            "headline": "This is how MySellum works"
+        },
+        "reasonsToBuy": {
+            "headline": "Reasons to buy via Mysellum",
+            "byWhom": {
+                "title": "Find out who you are buying from",
+                "text": "On Mysellum, the producers introduce themselves to you, so you can be sure whose products you are buying and your money goes to them."
+            },
+            "what": {
+                "title": "Find out exactly what you are buying",
+                "text": "The producers provide you with detailed information about their products in terms of ingredients, production, animal husbandry, etc."
+            },
+            "supportProducers": {
+                "title": "Support the producers",
+                "text": "For their products, the producers receive just X% of the sales price in the supermarkets. By selling directly through us, however, he receives a significantly higher sum. This also rewards and supports producers with non-industrial production methods."
+            },
+            "co2": {
+                "title": "Avoid global transport routes",
+                "text": "Local purchasing and the associated short transport routes keep the Co2 footprint low and have a positive side effect on the environment."
+            },
+            "knowSurroundings": {
+                "title": "Get to know your surroundings",
+                "text": "Good wines, fresh fish, sustainable steaks, delicious cheese - discover the culinary diversity in your area!"
+            }
+        },
+        "reasonsToSell": {
+            "headline": "Reasons to sell via Mysellum",
+            "conditions": {
+                "title": "Excellent conditions",
+                "text": "With us, you and your production receive the fair conditions that you have always deserved. Apart from a small flat-rate fee, you will receive the full sales price from us!"
+            },
+            "introduction": {
+                "title": "Direct introduction to the customer",
+                "text": "You can introduce yourself directly to your customers via Mysellum and advertise with your sustainability and personality."
+            },
+            "platformAdvantage": {
+                "title": "Platform advantage -> More attention than alone",
+                "text": "Many more people will notice you through our platform compared to a separate online shop. If you support us, you support yourself at the same time!"
+            },
+            "setup": {
+                "title": "Simple setup -> get started right away & sell",
+                "text": "Opening a store with us is very intuitive, so you should find your way around quickly. If you have any questions, our support is always available."
+            }
+        },
+        "experiences": {
+            "headline": "Experiences by others"
+        },
+        "explore": {
+            "headlineDeliver": "Explore stores for delivery",
+            "headlinePickup": "Explore stores in your region"
+        }
+    },
+
     "loginDialog": {
         "dialogTitle": "Login",
 
@@ -102,13 +168,20 @@
     },
 
     "registrationVerification": {
-        "header": "Thank you for your registration!",
-        "body1": "We would like to welcome you on board of Mysellum.",
-        "body2": "Please verify your e-mail address to finish the onboarding process. We have sent you an e-mail containing a verification code.",
-
-        "verifyRegSuccess": "Your registration was successful!",
-        "verifyRegVerificationError": "E-Mail verification failed.",
-        "verifyRegOtherError": "An error occurred, we are sorry."
+        "idle": {
+            "header": "Thank you for your registration!",
+            "body1": "We would like to welcome you on board of Mysellum.",
+            "body2": "Please verify your email address to finish the onboarding process. We have sent you an email containing a verification code."    
+        },
+        "success": {
+            "header": "Your email has been successfully verified!",
+            "body1": "If you have questions or if you need support, don't hesitate to reach out to us.",
+            "body2": "Enjoy our platform!"
+        },
+        "failure": {
+            "header": "We are sorry, but an error occurred during the verification process or the token expired already.",
+            "body1": "Please try to refresh the page, resend the verification email or contact our customer support."
+        }
     },
 
     "forgotPassword": {
@@ -116,10 +189,17 @@
         "infoAlert": "If you have forgotten your password or your access has been blocked, you can request a password reset email below by providing your mail address as well as your birthdate.",
         "sendMailButtonLabel": "Send mail",
         "successfullySentBody": "E-Mail was successfully sent! Please check your mailbox and follow the contained link to reset your password.",
-
         "sendMailWhileSendingError": "Error while sending!",
         "sendMailNotFoundError": "User was not found!",
         "sendMailOtherError": "An error occurred, we are sorry.",
+        "sendMailSuccess": "E-Mail was successfully sent to your address."
+    },
+
+    "resendVerificationEmail": {
+        "headline": "Resend Verification Email",
+        "infoAlert": "If you need a new verification email, you can have a new one sent to you here by entering your email address and your date of birth.",
+        "sendMailButtonLabel": "Send email",
+        "successfullySentBody": "Email was successfully sent! Please check your mailbox and follow the contained link to activate your profile.",
         "sendMailSuccess": "E-Mail was successfully sent to your address."
     },
 
@@ -130,8 +210,9 @@
 
         "successfullyChangedBody": "Your password was successfully changed! You can now login with your new password. Have fun on our platform!",
         "successfullyChanged": "Password was successfully changed. You can now login with your new password.",
-        "checkInvalidError": "Password reset link is invalid or has expired. Please request the passwort reset e-mail again or contact our customer support via the contact form.",
-
+        "resetTokenInvalid": "Password reset token is invalid or has expired. Please request the passwort reset email again or contact our customer support via the contact form.",
+        
+        "checkInvalidError": "Password reset link is invalid or has expired. Please request the passwort reset email again or contact our customer support via the contact form.",
         "resetFailureError": "Password reset failed.",
         "resetOtherError": "An error occurred, we are sorry."
     },
@@ -223,6 +304,11 @@
         "addressHeadline": "Address",
 
         "contactHeadline": "Contact",
+        "contactEmailLabel": "E-Mail",
+        "contactPhoneLabel": "Phone",
+
+        "legalHeadline": "Legal",
+        "legalNoDocumentsText": "No legal documents uploaded yet.",
 
         "planRouteButtonLabel": "Plan route",
 

@@ -509,7 +509,7 @@ export default {
 
   mounted() {
     // eslint-disable-next-line no-undef
-    this.service = new google.maps.places.AutocompleteService();
+    // this.service = new google.maps.places.AutocompleteService();
   },
 
   methods: {
@@ -551,21 +551,14 @@ export default {
         postcode: this.postcode.toString(),
         addressLine1: this.addressLine1,
       };
-      console.log(user);
+      
       try {
         await userService.register(user);
-      } catch (error) {
-        let msg;
-        if (error.response.data.type === "alreadyUsed") {
-          msg = this.$t("registerDialog.submitRegAlreadyUsedError");
-        } else if (error.response.data.type === "whileMailSending") {
-          msg = this.$t("registerDialog.submitRegWhileSendingError");
-        } else {
-          msg = this.$t("registerDialog.submitRegOtherError");
-        }
-        this.addErrorSnackbar(msg);
+      } catch (errorMsg) {
+        this.addErrorSnackbar(errorMsg);
         return;
       }
+
       this.cancel();
       this.$router.push({ name: "RegistrationVerification" });
     },

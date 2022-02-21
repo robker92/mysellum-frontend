@@ -1,12 +1,8 @@
 <template>
   <v-container>
     <SearchArea />
-    <!-- 
-    <div class="text-h4 mt-8  mb-6">
-      Willkommen bei <strong>Mysellum</strong> - deiner Online Markthalle
-    </div> -->
 
-    <v-row dense class="mt-3">
+    <v-row dense class="mt-8 mb-4">
       <v-spacer />
       <div class="text-center">
         <v-img src="@/assets/mysellum_text_with_subtitle.png" width="800" />
@@ -14,46 +10,37 @@
       <v-spacer />
     </v-row>
 
-    <div class="text-h4 mt-8">
-      Explore Popular Categories In Your Region
+    <div class="text-h4 mt-16">
+      {{ this.$t("home.categories.headline") }}
     </div>
+
     <ProductCategories class="mt-3" />
+    <div style="margin-top: 40px; display: inline-block" />
 
-    <!-- <div>
-      Landing Page Content:
-      <ul class="text-left">
-        <li>What is mysellum?</li>
-        <li>Why you should use it</li>
-        <li>How to become a store owner</li>
-      </ul>
-    </div> -->
+    <v-card flat height="300" />
 
-    <div>
-      <v-card class="my-5" color="primary" height="350px" elevation="12" shaped>
-        <v-card-title class="white--text"
-          >So funktioniert MySellum
-        </v-card-title>
-      </v-card>
-    </div>
+    <HowDoesItWork class="mb-9"/>
 
-    <div class="text-h4 mt-8">
-      Reasons to buy via Mysellum
-    </div>
-    <Reasons type="buy" class="mt-3" />
+    <v-card flat height="300" />
 
-    <div class="text-h4 mt-8">
-      Reasons to sell via Mysellum
-    </div>
-    <Reasons type="sell" class="mt-3" />
+    <div class="text-h4">{{ $t("home.reasonsToBuy.headline") }}</div>
+    <Reasons type="buy" class="my-3" />
 
-    <div class="text-h4 mt-8">
-      Experiences by others
-    </div>
+    <v-card flat height="300" />
+
+    <div class="text-h4">{{ $t("home.reasonsToSell.headline") }}</div>
+    <Reasons type="sell" class="my-3" />
+
+    <v-card flat height="300" />
+
+    <div class="text-h4">{{ $t("home.experiences.headline") }}</div>
     <Testimonials class="mt-3" />
 
-    <v-row dense class="mt-8">
+    <v-card flat height="300" class=""/>
+
+    <v-row dense class="">
       <v-spacer />
-      <v-col cols="12" xs="12" sm="12" md="6" lg="5" xl="4">
+      <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
         <v-hover v-slot:default="{ hover }">
           <v-card
             :class="{ 'on-hover': hover }"
@@ -64,9 +51,7 @@
             }"
           >
             <v-container>
-              <div class="text-h5 mb-3">
-                Explore stores that deliver
-              </div>
+              <div class="text-h5 mb-3">{{ $t("home.explore.headlineDeliver") }}</div>
               <v-img
                 src="../assets/home_searchDelivery3.jpg"
                 :height="imgHeight"
@@ -78,7 +63,7 @@
         </v-hover>
       </v-col>
 
-      <v-col cols="12" xs="12" sm="12" md="6" lg="5" xl="4">
+      <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6">
         <v-hover v-slot:default="{ hover }">
           <v-card
             :class="{ 'on-hover': hover }"
@@ -87,9 +72,7 @@
             flat
           >
             <v-container>
-              <div class="text-h5 mb-3">
-                Explore stores in your region
-              </div>
+              <div class="text-h5 mb-3">{{ $t("home.explore.headlinePickup") }}</div>
               <v-img
                 src="../assets/home_searchPickup1.jpg"
                 :height="imgHeight"
@@ -110,6 +93,7 @@ import SearchArea from "../components/homeComponents/SearchArea";
 import ProductCategories from "../components/homeComponents/ProductCategories";
 import Testimonials from "../components/aboutComponents/Testimonials.vue";
 import Reasons from "../components/aboutComponents/Reasons.vue";
+import HowDoesItWork from "../components/aboutComponents/HowDoesItWork.vue";
 
 export default {
   name: "HomeView",
@@ -118,6 +102,7 @@ export default {
     ProductCategories: ProductCategories,
     Testimonials: Testimonials,
     Reasons: Reasons,
+    HowDoesItWork: HowDoesItWork
   },
   data() {
     return {
@@ -153,5 +138,9 @@ export default {
 <style>
 a {
   text-decoration: none;
+}
+
+.marginTop40 {
+  margin-top: 30px;
 }
 </style>

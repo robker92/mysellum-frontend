@@ -23,18 +23,18 @@
         class="ml-2"
       />
 
-      <v-divider v-if="checkForStoreOwner" class="my-3" />
-      <div v-if="checkForStoreOwner" class="mt-3">&nbsp;</div>
-      <span v-if="checkForStoreOwner" class="mb-3"> </span>
+      <!-- <v-card flat height="25"/>  -->
+      <v-divider v-if="checkForStoreOwner" />
+      <v-card flat height="30"/> 
 
       <!-- OPEN AND CLOSED BADGE -->
-      <v-row class="mb-3 mx-1">
+      <v-row class="mb-2 mx-1">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-chip
               v-if="storeOpened"
               v-bind="attrs"
-              class="ma-0 mr-3"
+              class="mr-3"
               color="green"
               text-color="white"
               v-on="on"
@@ -45,7 +45,7 @@
             <v-chip
               v-else
               v-bind="attrs"
-              class="ma-0 mr-3"
+              class="mr-3"
               v-on="on"
               @click="$vuetify.goTo($refs.openingHours, scrollingOptions)"
             >
@@ -59,12 +59,12 @@
           <span v-else>{{ $t("storeProfile.closedBadgeTooltip") }}</span>
         </v-tooltip>
 
-        <v-divider vertical />
+        <!-- <v-divider vertical /> -->
 
         <!-- pickup AND delivery BADGE -->
         <v-tooltip v-if="dataset.pickup" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-chip v-bind="attrs" class="ma-0 ml-3 primary" outlined v-on="on">
+            <v-chip v-bind="attrs" class="ml-3 primary" outlined v-on="on">
               <v-icon left color="primary">mdi-hand-heart</v-icon>
               {{ $t("storeProfile.pickupBadgeLabel") }}
             </v-chip>
@@ -76,7 +76,7 @@
 
         <v-tooltip v-if="dataset.delivery" bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-chip v-bind="attrs" class="ma-0 ml-3 primary" outlined v-on="on">
+            <v-chip v-bind="attrs" class="ml-3 primary" outlined v-on="on">
               <v-icon left color="primary">mdi-truck-delivery</v-icon>
               {{ $t("storeProfile.deliveryBadgeLabel") }}
             </v-chip>
@@ -213,6 +213,8 @@
           </v-btn>
         </v-speed-dial>
       </v-row>
+
+      <v-card flat height="30"/>
 
       <!-- IMAGES -->
       <v-row v-if="dataset" align="start">
@@ -762,11 +764,11 @@
             </v-card-title>
             <v-card-text class="text-body-1 text-left ml-2 black--text">
               <div>
-                E-Mail:
+                {{ $t("storeProfile.contactEmailLabel") }}:
                 {{ contactData.phoneNumber ? contactData.phoneNumber : "/" }}
               </div>
               <div>
-                Phone:
+                {{ $t("storeProfile.contactPhoneLabel") }}:
                 {{ contactData.emailAddress ? contactData.emailAddress : "/" }}
               </div>
 
@@ -793,7 +795,7 @@
 
       <v-card flat>
         <v-card-title>
-          Legal
+          {{ $t("storeProfile.legalHeadline") }}
         </v-card-title>
         <v-card-text>
           <!-- <div>
@@ -806,7 +808,7 @@
             </a>
           </div> -->
 
-          <div>
+          <div v-if="legalDocuments.length > 0">
             <v-row>
               <v-col
                 v-for="(document, index) in legalDocuments"
@@ -836,6 +838,9 @@
               </v-col>
             </v-row>
           </div>
+          <div v-else class="text-body-1 text-left">
+            {{ $t("storeProfile.legalNoDocumentsText") }}
+          </div>
         </v-card-text>
       </v-card>
 
@@ -860,7 +865,6 @@
 </template>
 
 <script>
-import axios from "axios";
 // Store Profile
 import StoreProfileProductListItem from "../components/storeProfileComponents/StoreProfileProductListItem";
 import StoreProfileReviewListItem from "../components/storeProfileComponents/StoreProfileReviewListItem";

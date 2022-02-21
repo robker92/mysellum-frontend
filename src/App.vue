@@ -68,6 +68,8 @@
       </v-container>
     </v-main>
 
+    <v-card flat height="500" class=""/>
+
     <Footer />
   </v-app>
 </template>

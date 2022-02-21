@@ -148,28 +148,15 @@ export default {
     ...mapActions("snackbar", ["addSuccessSnackbar", "addErrorSnackbar"]),
 
     submitLogin: async function() {
-      var credentials = {
+      const credentials = {
         email: this.email,
         password: this.password,
       };
 
       try {
         await this.login(credentials);
-      } catch (error) {
-        console.log(error);
-        // console.log(error.response);
-        let msg;
-        if (error.response && error.response.data.type === "incorrect") {
-          msg = this.$t("loginDialog.submitLoginIncorrectError");
-        } else if (
-          error.response &&
-          error.response.data.type === "verification"
-        ) {
-          msg = this.$t("loginDialog.submitLoginVerificationError");
-        } else {
-          msg = this.$t("loginDialog.submitLoginOtherError");
-        }
-        this.addErrorSnackbar(msg);
+      } catch (errorMsg) {
+        this.addErrorSnackbar(errorMsg);
         return;
       }
       this.addSuccessSnackbar(this.$t("loginDialog.submitLoginSuccess"));
@@ -182,14 +169,6 @@ export default {
       this.password = "";
       this.showPassword = false;
       this.show = false;
-    },
-
-    handleSubmit() {
-      this.submitted = true;
-      const { username, password } = this;
-      if (username && password) {
-        this.login({ username, password });
-      }
     },
   },
 };

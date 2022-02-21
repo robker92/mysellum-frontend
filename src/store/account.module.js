@@ -97,6 +97,7 @@ const actions = {
   },
 
   addProduct({ commit, dispatch }, data) {
+    return new Promise((resolve, reject) => {
     userService
       .addToShoppingCart(data)
       .then((data) => {
@@ -104,11 +105,16 @@ const actions = {
           shoppingCart: data.shoppingCart,
           shippingCosts: data.shippingCosts,
         });
+        resolve();
       })
-      .catch((error) => {
-        errorHandler(error, "addProduct");
-        commit("addProductFailure", error);
+      .catch((errorMsg) => {
+        console.log("at store")
+        console.log(errorMsg)
+        commit("addProductToCartFailure")
+        reject(errorMsg);
+        // throw errorMsg
       });
+    });
   },
 
   removeProduct({ commit }, data) {
@@ -120,10 +126,10 @@ const actions = {
           shippingCosts: data.shippingCosts,
         });
       })
-      .catch((error) => {
-        errorHandler(error, "removeProduct");
-        commit("removeProductFailure", error);
+      .catch((errorMsg) => {
+        throw errorMsg
       });
+      
   },
 
   addProductLoggedOut({ commit, state }, data) {
@@ -166,9 +172,8 @@ const actions = {
             shippingCosts: result.shippingCosts,
           });
         })
-        .catch((error) => {
-          commit("updateCartFailure", error);
-          reject(error);
+        .catch((errorMsg) => {
+          reject(errorMsg);
         });
     });
   },
@@ -325,6 +330,10 @@ const mutations = {
   },
 
   removeStoreFromFavoritesFailure() {},
+
+  addProductToCartFailure() {
+    throw "error"
+  }
 };
 
 export const account = {

@@ -418,15 +418,17 @@ export default {
       } else {
         // Logged In routine
         try {
-          this.addProduct({
+          await this.addProduct({
             email: this.user.email,
             product: this.product,
             amount: this.productQuantity,
           });
-        } catch (error) {
-          console.log(error);
+        } catch (errorMsg) {
+          console.log("at error handler")
+          // Error comes from Backend
+          console.log(errorMsg);
           this.addErrorSnackbar(
-            "Error while adding product to the shopping cart."
+            errorMsg
           );
           return;
         }

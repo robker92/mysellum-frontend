@@ -172,7 +172,7 @@
 
           <v-stepper-content step="3">
             <StoreImagesArea
-              :mode="this.StoreImagesAreaMode.CREATE"
+              :mode="StoreImagesAreaMode.CREATE"
               @set-store-images-array="setStoreImagesArray"
               @disable-continue-button-3="disableSubmitButton"
               @enable-continue-button-3="enableSubmitButton"
@@ -221,6 +221,9 @@
         </v-stepper>
       </v-card-text>
     </v-card>
+    <v-overlay v-model="overlay">
+      <v-progress-circular indeterminate size="80"></v-progress-circular>
+    </v-overlay>
   </v-dialog>
 </template>
 
@@ -307,6 +310,7 @@ export default {
       mapIcon: "",
       helpDialogTitle: "",
       helpDialogMessage: "",
+      overlay: false
     };
   },
   computed: {
@@ -430,7 +434,6 @@ export default {
 
     submitCreation: async function() {
       var payload = {
-        userEmail: this.user.email,
         title: this.storeTitle,
         subtitle: this.storeSubtitle,
         description: this.editedHtmlText,
@@ -444,21 +447,23 @@ export default {
         },
         mapIcon: this.mapIcon,
       };
-      console.log(payload);
+      
+      this.overlay = true
 
       let storeId;
       try {
         const response = await storeService.createStore(payload);
         storeId = response.store._id;
-        console.log(response);
       } catch (error) {
-        console.log(error);
+        this.addErrorSnackbar("An error occurred during store creation, we are sorry.");
+        this.overlay = false
         return;
       }
-      //this.createStore(payload);
 
       this.setOwnedStoreId(storeId);
+      this.$router.push({ name: "StoreProfile", params: { id: storeId } })
       this.addSuccessSnackbar("Store successfully created!");
+      this.overlay = false
       this.cancel();
     },
 
