@@ -1,4 +1,4 @@
-# Project
+# MySellum Frontend
 Contains Frontend and Backend
 
 ## Frontend
