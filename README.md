@@ -11,7 +11,7 @@ Other features:
 - Payment via Paypal
 - Indication of stock levels and automatic update in the ordering process
 - Save favorites
-- Authentication and authorization is self-implemented including registration (pw hashed and salted), confirmation email, login, forgotten password
+- Authentication and authorization is self-implemented including registration (pw hashed and salted), confirmation email, login, password reset
 
 
 ## Frontend
