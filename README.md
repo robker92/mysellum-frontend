@@ -1,13 +1,14 @@
-# MySellum Frontend
-Contains Frontend and Backend
+# MySellum
+
+An e-commerce platform where local food producers can register. A map search using Google Maps allows customers to quickly discover stores near them.
+
+Other features:
+- Ordering process that allows you to shop at multiple stores at the same time
+- Payment via Paypal
+- Indication of stock levels and automatic update in the ordering process
+- Save favorites
+- Authentication and authorization is self-implemented including registration (pw hashed and salted), confirmation email, login, forgotten password
+
 
 ## Frontend
 Current Technologies: **Vuejs** (with Vuetify)
-
-## Further Links
-Vue.js Documentation: https://vuejs.org/v2/guide/index.html <br/>
-Vuetify Component Browser: https://vuetifyjs.com/en/components/alerts/ <br/>
-Vuex Tutorial (Used Partially): https://jasonwatmore.com/post/2018/07/14/vue-vuex-user-registration-and-login-tutorial-example <br/>
-Vuex Documentation: https://vuex.vuejs.org/ <br/>
-
-
