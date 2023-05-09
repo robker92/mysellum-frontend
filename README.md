@@ -3,6 +3,7 @@
 An e-commerce platform where local food producers can register. A map search using Google Maps allows customers to quickly discover stores near them.
 
 Search UI:
+
 ![mysellum search ui](https://github.com/robker92/mysellum-frontend/blob/master/readme-search-ui.jpg)
 
 Other features:
